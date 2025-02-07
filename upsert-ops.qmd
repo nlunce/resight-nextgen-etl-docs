@@ -1,0 +1,318 @@
+---
+title: 'AWS Glue vs Spark on EMR for UPSERT Operations'
+subtitle: 'Technical Architecture Decision Document'
+author: 'Nathan Lunceford'
+date: 'January 21 2025'
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+  pdf:
+    toc: true
+    number-sections: true
+    colorlinks: true
+---
+
+# Summary
+
+This document compares two AWS-based Apache Spark solutions for handling UPSERT operations from S3 to multiple target databases including MSSQL and Apache Iceberg:
+
+1. AWS Glue: A managed Apache Spark service
+2. Apache Spark on Amazon EMR: A more configurable Spark deployment
+
+:::{.callout-note}
+Both solutions use Apache Spark as their processing engine. The key differences lie in management, configuration, and operational aspects rather than core processing capabilities.
+
+:::
+
+# Understanding the Options
+
+## AWS Glue {.unnumbered}
+
+AWS Glue provides a managed Apache Spark environment with:
+
+- Built-in Apache Spark engine (same as EMR)
+- AWS-specific optimizations and tooling
+- Both Spark SQL and PySpark interfaces
+- Additional features like DynamicFrames
+- Managed infrastructure and scaling
+
+## Spark on EMR {.unnumbered}
+
+Amazon EMR provides a more traditional Spark deployment with:
+
+- Full Apache Spark ecosystem
+- Complete configuration control
+- Custom cluster management
+- Direct access to Spark internals
+- Infrastructure flexibility
+
+# Cost Analysis
+
+## AWS Glue Costs
+
+::: {.panel-tabset}
+
+### Pricing Structure
+
+- $0.44 per DPU-Hour (1 DPU = 4 vCPU, 16GB memory)
+- Minimum 10-minute billing
+- Development endpoints additional cost
+
+### Hidden Savings
+
+- No cluster management costs
+- Includes Spark optimization
+- Less operational overhead
+
+### Considerations
+
+- More expensive per compute hour
+- Less granular scaling
+- Simplified cost model
+
+:::
+
+## EMR Costs
+
+:::{.panel-tabset}
+
+### Direct Costs
+
+- EC2 instance costs
+- EMR service charges
+- Storage and data transfer
+
+### Optimization Options
+
+- Spot instance usage
+- More granular scaling
+- Resource optimization
+
+### Hidden Costs
+
+- Operational overhead
+- Management complexity
+- Required expertise
+
+:::
+
+# Performance Comparison
+
+## AWS Glue Performance
+
+```{.python}
+# Example Glue Spark UPSERT implementation
+from awsglue.context import GlueContext
+from pyspark.context import SparkContext
+
+# Initialize Glue Spark context
+glueContext = GlueContext(SparkContext.getOrCreate())
+spark = glueContext.spark_session
+
+# Read from S3 (using standard Spark)
+source_df = spark.read.parquet("s3://bucket/path")
+
+# MSSQL UPSERT
+def perform_mssql_upsert(df):
+    # Write to staging table using Spark JDBC
+    df.write \
+        .format("jdbc") \
+        .option("url", jdbc_url) \
+        .option("dbtable", "staging_table") \
+        .mode("overwrite") \
+        .save()
+
+    # Execute MERGE using Spark SQL
+    spark.sql("""
+    MERGE INTO target_table t
+    USING staging_table s
+    ON t.key = s.key
+    WHEN MATCHED THEN UPDATE...
+    WHEN NOT MATCHED THEN INSERT...
+    """)
+```
+
+:::{.callout-tip}
+
+## Glue Performance Strengths
+
+- Pre-configured Spark optimizations
+- AWS service-specific tuning
+- Auto-scaling built in
+- Warm pools reduce startup time
+
+:::
+
+:::{.callout-warning}
+
+## Glue Performance Limitations
+
+- Less Spark configuration flexibility
+- Fixed worker configurations
+- Limited Spark version control
+
+:::
+
+## EMR Performance
+
+```{.python}
+# Example EMR Spark UPSERT implementation
+from pyspark.sql import SparkSession
+
+# Initialize Spark session
+spark = SparkSession.builder \
+    .appName("EMR UPSERT") \
+    .getOrCreate()
+
+# Read from S3 (identical to Glue)
+source_df = spark.read.parquet("s3://bucket/path")
+
+# MSSQL UPSERT (identical to Glue)
+def perform_mssql_upsert(df):
+    df.write \
+        .format("jdbc") \
+        .option("url", jdbc_url) \
+        .option("dbtable", "staging_table") \
+        .mode("overwrite") \
+        .save()
+```
+
+::: {.callout-tip}
+
+## EMR Performance Strengths
+
+- Full Spark configuration control
+- Custom Spark properties
+- Better performance for large jobs
+- Fine-grained optimization
+
+:::
+
+:::{.callout-warning}
+
+## EMR Performance Limitations
+
+- Requires Spark expertise
+- Infrastructure management overhead
+- Cluster startup time
+
+:::
+
+# Development Experience
+
+## Key Differences
+
+| Aspect                | AWS Glue          | Spark on EMR |
+| --------------------- | ----------------- | ------------ |
+| Setup Complexity      | Low               | High         |
+| Configuration Options | Limited           | Extensive    |
+| Development Tools     | AWS Console + IDE | Any IDE      |
+| Local Testing         | Limited           | Full Support |
+| Debugging             | Basic             | Advanced     |
+
+## Integration Capabilities
+
+::: {.panel-tabset}
+
+### AWS Glue
+
+- Native AWS integration
+- Pre-configured connectors
+- Standard Spark JDBC
+- Basic Iceberg support
+
+### Spark on EMR
+
+- Full connector ecosystem
+- Custom connectors
+- All Spark data sources
+- Complete Iceberg support
+
+:::
+
+# Monitoring and Operations
+
+## Monitoring Options
+
+::: {.panel-tabset}
+
+### AWS Glue
+
+- CloudWatch integration
+- Built-in dashboards
+- Auto-retry capability
+- AWS-native alerting
+
+### Spark on EMR
+
+- Full Spark metrics
+- Custom monitoring
+- Detailed job tracking
+- Third-party tools
+
+:::
+
+## Operational Requirements
+
+| Requirement     | AWS Glue    | Spark on EMR  |
+| --------------- | ----------- | ------------- |
+| Spark Expertise | Basic       | Advanced      |
+| DevOps Support  | Minimal     | Substantial   |
+| Maintenance     | AWS Managed | Self Managed  |
+| Scaling         | Automatic   | Manual/Custom |
+
+# Recommendation
+
+## Short Term
+
+Recommend starting with AWS Glue due to:
+
+- Faster implementation
+- Managed environment
+- Sufficient for current scale
+- Lower operational overhead
+
+## Long Term
+
+Consider migration to EMR if:
+
+- Approaching cost crossover point
+- Requiring more performance optimization
+- Team has built Spark expertise
+- Need more control over infrastructure
+
+# Implementation Plan
+
+## Phase 1: Initial Setup
+
+1. Set up development environment
+2. Create test jobs
+3. Establish monitoring
+4. Document procedures
+
+## Phase 2: Production Migration
+
+1. Migrate simple jobs
+2. Add error handling
+3. Implement monitoring
+4. Document operations
+
+## Phase 3: Optimization
+
+1. Performance tuning
+2. Cost optimization
+3. Process refinement
+4. Team training
+
+:::{.callout-note}
+
+## Next Steps
+
+1. Prototype both solutions
+2. Test with production data volumes
+3. Calculate actual costs
+
+:::

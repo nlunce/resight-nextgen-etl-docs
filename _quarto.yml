@@ -1,0 +1,38 @@
+project:
+  type: website
+  preview:
+    port: 3000
+    browser: true
+    watch-inputs: true
+    navigate: true
+  output-dir: docs
+  
+website:
+  title: 'ReSight - Next Gen ETL'
+  sidebar:
+    style: "floating"
+    contents:
+      - text: "Dev Plan and Overview"
+        href: index.qmd
+      - text: "Distributor Onboarding System"
+        href: distributor-onboarding-system.qmd
+      - text: "UPSERT Operations"
+        href: upsert-ops.qmd
+      - text: "UPSERT Operations Cost Analysis"
+        href: upsert-ops-cost-analysis.qmd
+
+
+
+format:
+  html:
+    theme:
+      light: flatly
+      dark: darkly
+    css: styles.css
+
+execute:
+  warning: false
+  message: false
+
+jupyter: python3
+

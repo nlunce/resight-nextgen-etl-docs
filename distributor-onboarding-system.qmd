@@ -1,0 +1,88 @@
+---
+title: 'Distributor Onboarding System'
+author: 'Nathan Lunceford'
+date: 'February 6, 2025'
+description: 'A structured plan for implementing a distributor onboarding system using a C# backend, Apache MiNiFi, and NiFi to automate ERP system integrations.'
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    number-sections: true
+    code-fold: true
+  pdf:
+    toc: true
+    number-sections: true
+    colorlinks: true
+jupyter: python3
+---
+
+# Overview
+
+This document outlines the implementation of a **self-service distributor onboarding system** that simplifies the process of integrating various **ERP systems** with our data pipeline. The system consists of:
+
+
+
+- **A web portal for distributor registration and ERP selection**.
+- **A C# (ASP.NET Core) backend for managing ERP authentication and configurations**.
+- **Apache MiNiFi deployed at distributor sites for local ERP data extraction**.
+- **Apache NiFi for central data ingestion, transformation, and routing to AWS S3**.
+
+This approach ensures **scalability, security, and ease of use** for non-technical distributors.
+
+## System Components
+
+### **Web Portal (Next.js + Auth0)**
+- Distributors **log in via Auth0**.
+- Select their **ERP system** from a dropdown list.
+- Enter **API credentials, database connection details, or FTP settings**.
+- Download a **pre-configured MiNiFi agent** for their system.
+
+### **Backend API (C# + ASP.NET Core)**
+- **Handles distributor authentication & authorization**.
+- **Validates ERP credentials** and ensures secure storage.
+- **Generates MiNiFi configuration files dynamically** based on ERP type.
+- **Communicates with Apache NiFi to register new distributors**.
+
+### **Apache MiNiFi (Deployed at Distributor’s Location)**
+- **Extracts ERP data via API, database queries, or FTP/SFTP**.
+- **Buffers and transmits data securely to NiFi**.
+- **Handles network outages with built-in retry mechanisms**.
+
+### **Apache NiFi (Central Data Processing Hub)**
+- **Receives data from MiNiFi agents**.
+- **Transforms and routes data to AWS S3**.
+- **Handles error logging, retries, and alerting**.
+
+
+
+## ERP System Integration Strategy
+
+### **ERP Categorization & Integration Methods**
+| **ERP Type** | **Integration Method** | **Examples** |
+|-------------|----------------------|-------------|
+| **API-Based** | REST/SOAP API Calls | NetSuite, SAP ERP, QuickBooks, ASC Portal |
+| **Database-Driven** | SQL (JDBC/ODBC) Queries | Sage 300, Epicor Prophet 21, CloudSuite |
+| **File-Based** | FTP/SFTP, CSV/XML Parsing | TGI Enterprise 21, OneView, HP (Excel) |
+| **Legacy Systems** | AS/400, Custom In-House Systems | DARTS, Samco Software |
+
+### **Integration Workflow**
+```{mermaid}
+graph TD;
+    A[Distributor Logs into Portal] --> B[Selects ERP & Enters Credentials];
+    B --> C[Backend Validates ERP Connection];
+    C --> D[MiNiFi Configuration is Auto-Generated];
+    D --> E[Distributor Downloads & Installs MiNiFi];
+    E --> F[MiNiFi Extracts Data from ERP];
+    F --> G[MiNiFi Sends Data to NiFi];
+    G --> H[NiFi Routes Data to AWS S3];
+    H --> I[Data Available for Analytics & Reporting];
+```
+
+
+## Expected Benefits
+
+- **Simplified onboarding** – Non-technical distributors can self-register and integrate their ERP systems.  
+- **Automated ERP data extraction** – Reduces manual intervention.  
+- **Secure & scalable solution** – MiNiFi ensures local data security and retries failed transfers.  
+- **Cloud-ready architecture** – AWS S3 and NiFi provide a robust and extensible pipeline.  
+
