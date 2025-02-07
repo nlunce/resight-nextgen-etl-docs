@@ -1,15 +1,13 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
-<head>
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
 
-<meta charset="utf-8" />
-<meta name="generator" content="quarto-1.5.57" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-
-<meta name="author" content="Nathan Lunceford" />
-<meta name="dcterms.date" content="2025-01-21" />
+<meta name="author" content="Nathan Lunceford">
+<meta name="dcterms.date" content="2025-01-21">
 
 <title>AWS Glue vs Spark on EMR for UPSERT Operations – ReSight - Next Gen ETL</title>
 <style>
@@ -60,7 +58,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }
 </style>
 
-<!-- htmldependencies:E3FAD763 -->
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -90,25 +106,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 
 
-<link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="styles.css">
 </head>
 
-<body>
+<body class="nav-sidebar floating">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn"
-      data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" 
-      aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation"
-      onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <h1 class="quarto-secondary-nav-title no-breadcrumbs"></h1>
-        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" role="link"
-        aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation"
-        onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./upsert-ops.html">UPSERT Operations</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
@@ -122,9 +133,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="/">
-      ReSight - Next Gen ETL
-      </a> 
+      <a href="./">ReSight - Next Gen ETL</a> 
         <div class="sidebar-tools-main">
   <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
@@ -139,35 +148,77 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="/index.html" class="sidebar-item-text sidebar-link">
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Dev Plan and Overview</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="/distributor-onboarding-system.html" class="sidebar-item-text sidebar-link">
+  <a href="./distributor-onboarding-system.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Distributor Onboarding System</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="/upsert-ops.html" class="sidebar-item-text sidebar-link active">
+  <a href="./upsert-ops.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">UPSERT Operations</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="/upsert-ops-cost-analysis.html" class="sidebar-item-text sidebar-link">
+  <a href="./upsert-ops-cost-analysis.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">UPSERT Operations Cost Analysis</span></a>
   </div>
 </li>
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" ></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <div id="quarto-toc-target"></div>
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#summary" id="toc-summary" class="nav-link active" data-scroll-target="#summary"><span class="header-section-number">1</span> Summary</a></li>
+  <li><a href="#understanding-the-options" id="toc-understanding-the-options" class="nav-link" data-scroll-target="#understanding-the-options"><span class="header-section-number">2</span> Understanding the Options</a>
+  <ul class="collapse">
+  <li><a href="#aws-glue" id="toc-aws-glue" class="nav-link" data-scroll-target="#aws-glue">AWS Glue</a></li>
+  <li><a href="#spark-on-emr" id="toc-spark-on-emr" class="nav-link" data-scroll-target="#spark-on-emr">Spark on EMR</a></li>
+  </ul></li>
+  <li><a href="#cost-analysis" id="toc-cost-analysis" class="nav-link" data-scroll-target="#cost-analysis"><span class="header-section-number">3</span> Cost Analysis</a>
+  <ul class="collapse">
+  <li><a href="#aws-glue-costs" id="toc-aws-glue-costs" class="nav-link" data-scroll-target="#aws-glue-costs"><span class="header-section-number">3.1</span> AWS Glue Costs</a></li>
+  <li><a href="#emr-costs" id="toc-emr-costs" class="nav-link" data-scroll-target="#emr-costs"><span class="header-section-number">3.2</span> EMR Costs</a></li>
+  </ul></li>
+  <li><a href="#performance-comparison" id="toc-performance-comparison" class="nav-link" data-scroll-target="#performance-comparison"><span class="header-section-number">4</span> Performance Comparison</a>
+  <ul class="collapse">
+  <li><a href="#aws-glue-performance" id="toc-aws-glue-performance" class="nav-link" data-scroll-target="#aws-glue-performance"><span class="header-section-number">4.1</span> AWS Glue Performance</a></li>
+  <li><a href="#emr-performance" id="toc-emr-performance" class="nav-link" data-scroll-target="#emr-performance"><span class="header-section-number">4.2</span> EMR Performance</a></li>
+  </ul></li>
+  <li><a href="#development-experience" id="toc-development-experience" class="nav-link" data-scroll-target="#development-experience"><span class="header-section-number">5</span> Development Experience</a>
+  <ul class="collapse">
+  <li><a href="#key-differences" id="toc-key-differences" class="nav-link" data-scroll-target="#key-differences"><span class="header-section-number">5.1</span> Key Differences</a></li>
+  <li><a href="#integration-capabilities" id="toc-integration-capabilities" class="nav-link" data-scroll-target="#integration-capabilities"><span class="header-section-number">5.2</span> Integration Capabilities</a></li>
+  </ul></li>
+  <li><a href="#monitoring-and-operations" id="toc-monitoring-and-operations" class="nav-link" data-scroll-target="#monitoring-and-operations"><span class="header-section-number">6</span> Monitoring and Operations</a>
+  <ul class="collapse">
+  <li><a href="#monitoring-options" id="toc-monitoring-options" class="nav-link" data-scroll-target="#monitoring-options"><span class="header-section-number">6.1</span> Monitoring Options</a></li>
+  <li><a href="#operational-requirements" id="toc-operational-requirements" class="nav-link" data-scroll-target="#operational-requirements"><span class="header-section-number">6.2</span> Operational Requirements</a></li>
+  </ul></li>
+  <li><a href="#recommendation" id="toc-recommendation" class="nav-link" data-scroll-target="#recommendation"><span class="header-section-number">7</span> Recommendation</a>
+  <ul class="collapse">
+  <li><a href="#short-term" id="toc-short-term" class="nav-link" data-scroll-target="#short-term"><span class="header-section-number">7.1</span> Short Term</a></li>
+  <li><a href="#long-term" id="toc-long-term" class="nav-link" data-scroll-target="#long-term"><span class="header-section-number">7.2</span> Long Term</a></li>
+  </ul></li>
+  <li><a href="#implementation-plan" id="toc-implementation-plan" class="nav-link" data-scroll-target="#implementation-plan"><span class="header-section-number">8</span> Implementation Plan</a>
+  <ul class="collapse">
+  <li><a href="#phase-1-initial-setup" id="toc-phase-1-initial-setup" class="nav-link" data-scroll-target="#phase-1-initial-setup"><span class="header-section-number">8.1</span> Phase 1: Initial Setup</a></li>
+  <li><a href="#phase-2-production-migration" id="toc-phase-2-production-migration" class="nav-link" data-scroll-target="#phase-2-production-migration"><span class="header-section-number">8.2</span> Phase 2: Production Migration</a></li>
+  <li><a href="#phase-3-optimization" id="toc-phase-3-optimization" class="nav-link" data-scroll-target="#phase-3-optimization"><span class="header-section-number">8.3</span> Phase 3: Optimization</a></li>
+  </ul></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="upsert-ops.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -203,49 +254,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<nav id="TOC" role="doc-toc">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#summary" id="toc-summary"><span class="header-section-number">1</span> Summary</a></li>
-  <li><a href="#understanding-the-options" id="toc-understanding-the-options"><span class="header-section-number">2</span> Understanding the Options</a>
-  <ul>
-  <li><a href="#aws-glue" id="toc-aws-glue">AWS Glue</a></li>
-  <li><a href="#spark-on-emr" id="toc-spark-on-emr">Spark on EMR</a></li>
-  </ul></li>
-  <li><a href="#cost-analysis" id="toc-cost-analysis"><span class="header-section-number">3</span> Cost Analysis</a>
-  <ul>
-  <li><a href="#aws-glue-costs" id="toc-aws-glue-costs"><span class="header-section-number">3.1</span> AWS Glue Costs</a></li>
-  <li><a href="#emr-costs" id="toc-emr-costs"><span class="header-section-number">3.2</span> EMR Costs</a></li>
-  </ul></li>
-  <li><a href="#performance-comparison" id="toc-performance-comparison"><span class="header-section-number">4</span> Performance Comparison</a>
-  <ul>
-  <li><a href="#aws-glue-performance" id="toc-aws-glue-performance"><span class="header-section-number">4.1</span> AWS Glue Performance</a></li>
-  <li><a href="#emr-performance" id="toc-emr-performance"><span class="header-section-number">4.2</span> EMR Performance</a></li>
-  </ul></li>
-  <li><a href="#development-experience" id="toc-development-experience"><span class="header-section-number">5</span> Development Experience</a>
-  <ul>
-  <li><a href="#key-differences" id="toc-key-differences"><span class="header-section-number">5.1</span> Key Differences</a></li>
-  <li><a href="#integration-capabilities" id="toc-integration-capabilities"><span class="header-section-number">5.2</span> Integration Capabilities</a></li>
-  </ul></li>
-  <li><a href="#monitoring-and-operations" id="toc-monitoring-and-operations"><span class="header-section-number">6</span> Monitoring and Operations</a>
-  <ul>
-  <li><a href="#monitoring-options" id="toc-monitoring-options"><span class="header-section-number">6.1</span> Monitoring Options</a></li>
-  <li><a href="#operational-requirements" id="toc-operational-requirements"><span class="header-section-number">6.2</span> Operational Requirements</a></li>
-  </ul></li>
-  <li><a href="#recommendation" id="toc-recommendation"><span class="header-section-number">7</span> Recommendation</a>
-  <ul>
-  <li><a href="#short-term" id="toc-short-term"><span class="header-section-number">7.1</span> Short Term</a></li>
-  <li><a href="#long-term" id="toc-long-term"><span class="header-section-number">7.2</span> Long Term</a></li>
-  </ul></li>
-  <li><a href="#implementation-plan" id="toc-implementation-plan"><span class="header-section-number">8</span> Implementation Plan</a>
-  <ul>
-  <li><a href="#phase-1-initial-setup" id="toc-phase-1-initial-setup"><span class="header-section-number">8.1</span> Phase 1: Initial Setup</a></li>
-  <li><a href="#phase-2-production-migration" id="toc-phase-2-production-migration"><span class="header-section-number">8.2</span> Phase 2: Production Migration</a></li>
-  <li><a href="#phase-3-optimization" id="toc-phase-3-optimization"><span class="header-section-number">8.3</span> Phase 3: Optimization</a></li>
-  </ul></li>
-  </ul>
-</nav>
+
 <section id="summary" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> Summary</h1>
 <p>This document compares two AWS-based Apache Spark solutions for handling UPSERT operations from S3 to multiple target databases including MSSQL and Apache Iceberg:</p>
@@ -256,7 +265,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
-<i class='callout-icon'></i>
+<i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
 Note
@@ -270,7 +279,7 @@ Note
 <section id="understanding-the-options" class="level1" data-number="2">
 <h1 data-number="2"><span class="header-section-number">2</span> Understanding the Options</h1>
 <section id="aws-glue" class="level2 unnumbered">
-<h2 class="unnumbered">AWS Glue</h2>
+<h2 class="unnumbered anchored" data-anchor-id="aws-glue">AWS Glue</h2>
 <p>AWS Glue provides a managed Apache Spark environment with:</p>
 <ul>
 <li>Built-in Apache Spark engine (same as EMR)</li>
@@ -281,7 +290,7 @@ Note
 </ul>
 </section>
 <section id="spark-on-emr" class="level2 unnumbered">
-<h2 class="unnumbered">Spark on EMR</h2>
+<h2 class="unnumbered anchored" data-anchor-id="spark-on-emr">Spark on EMR</h2>
 <p>Amazon EMR provides a more traditional Spark deployment with:</p>
 <ul>
 <li>Full Apache Spark ecosystem</li>
@@ -295,8 +304,8 @@ Note
 <section id="cost-analysis" class="level1" data-number="3">
 <h1 data-number="3"><span class="header-section-number">3</span> Cost Analysis</h1>
 <section id="aws-glue-costs" class="level2" data-number="3.1">
-<h2 data-number="3.1"><span class="header-section-number">3.1</span> AWS Glue Costs</h2>
-<div class="panel-tabset">
+<h2 data-number="3.1" class="anchored" data-anchor-id="aws-glue-costs"><span class="header-section-number">3.1</span> AWS Glue Costs</h2>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Pricing Structure</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Hidden Savings</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">Considerations</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
@@ -324,8 +333,8 @@ Note
 </div>
 </section>
 <section id="emr-costs" class="level2" data-number="3.2">
-<h2 data-number="3.2"><span class="header-section-number">3.2</span> EMR Costs</h2>
-<div class="panel-tabset">
+<h2 data-number="3.2" class="anchored" data-anchor-id="emr-costs"><span class="header-section-number">3.2</span> EMR Costs</h2>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Direct Costs</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Optimization Options</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false">Hidden Costs</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
@@ -356,8 +365,8 @@ Note
 <section id="performance-comparison" class="level1" data-number="4">
 <h1 data-number="4"><span class="header-section-number">4</span> Performance Comparison</h1>
 <section id="aws-glue-performance" class="level2" data-number="4.1">
-<h2 data-number="4.1"><span class="header-section-number">4.1</span> AWS Glue Performance</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example Glue Spark UPSERT implementation</span></span>
+<h2 data-number="4.1" class="anchored" data-anchor-id="aws-glue-performance"><span class="header-section-number">4.1</span> AWS Glue Performance</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example Glue Spark UPSERT implementation</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> awsglue.context <span class="im">import</span> GlueContext</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pyspark.context <span class="im">import</span> SparkContext</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -366,30 +375,30 @@ Note
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>spark <span class="op">=</span> glueContext.spark_session</span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Read from S3 (using standard Spark)</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>source_df <span class="op">=</span> spark.read.parquet(<span class="st">&quot;s3://bucket/path&quot;</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>source_df <span class="op">=</span> spark.read.parquet(<span class="st">"s3://bucket/path"</span>)</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># MSSQL UPSERT</span></span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> perform_mssql_upsert(df):</span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Write to staging table using Spark JDBC</span></span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    df.write <span class="op">\</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        .<span class="bu">format</span>(<span class="st">&quot;jdbc&quot;</span>) <span class="op">\</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        .option(<span class="st">&quot;url&quot;</span>, jdbc_url) <span class="op">\</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>        .option(<span class="st">&quot;dbtable&quot;</span>, <span class="st">&quot;staging_table&quot;</span>) <span class="op">\</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>        .mode(<span class="st">&quot;overwrite&quot;</span>) <span class="op">\</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        .<span class="bu">format</span>(<span class="st">"jdbc"</span>) <span class="op">\</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        .option(<span class="st">"url"</span>, jdbc_url) <span class="op">\</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>        .option(<span class="st">"dbtable"</span>, <span class="st">"staging_table"</span>) <span class="op">\</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>        .mode(<span class="st">"overwrite"</span>) <span class="op">\</span></span>
 <span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>        .save()</span>
 <span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Execute MERGE using Spark SQL</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    spark.sql(<span class="st">&quot;&quot;&quot;</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    spark.sql(<span class="st">"""</span></span>
 <span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="st">    MERGE INTO target_table t</span></span>
 <span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="st">    USING staging_table s</span></span>
 <span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="st">    ON t.key = s.key</span></span>
 <span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="st">    WHEN MATCHED THEN UPDATE...</span></span>
 <span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="st">    WHEN NOT MATCHED THEN INSERT...</span></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="st">    &quot;&quot;&quot;</span>)</span></code></pre></div>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="st">    """</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
-<i class='callout-icon'></i>
+<i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
 Glue Performance Strengths
@@ -407,7 +416,7 @@ Glue Performance Strengths
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
-<i class='callout-icon'></i>
+<i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
 Glue Performance Limitations
@@ -423,30 +432,30 @@ Glue Performance Limitations
 </div>
 </section>
 <section id="emr-performance" class="level2" data-number="4.2">
-<h2 data-number="4.2"><span class="header-section-number">4.2</span> EMR Performance</h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example EMR Spark UPSERT implementation</span></span>
+<h2 data-number="4.2" class="anchored" data-anchor-id="emr-performance"><span class="header-section-number">4.2</span> EMR Performance</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example EMR Spark UPSERT implementation</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pyspark.sql <span class="im">import</span> SparkSession</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize Spark session</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>spark <span class="op">=</span> SparkSession.builder <span class="op">\</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    .appName(<span class="st">&quot;EMR UPSERT&quot;</span>) <span class="op">\</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    .appName(<span class="st">"EMR UPSERT"</span>) <span class="op">\</span></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    .getOrCreate()</span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Read from S3 (identical to Glue)</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>source_df <span class="op">=</span> spark.read.parquet(<span class="st">&quot;s3://bucket/path&quot;</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>source_df <span class="op">=</span> spark.read.parquet(<span class="st">"s3://bucket/path"</span>)</span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># MSSQL UPSERT (identical to Glue)</span></span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> perform_mssql_upsert(df):</span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    df.write <span class="op">\</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        .<span class="bu">format</span>(<span class="st">&quot;jdbc&quot;</span>) <span class="op">\</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        .option(<span class="st">&quot;url&quot;</span>, jdbc_url) <span class="op">\</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        .option(<span class="st">&quot;dbtable&quot;</span>, <span class="st">&quot;staging_table&quot;</span>) <span class="op">\</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        .mode(<span class="st">&quot;overwrite&quot;</span>) <span class="op">\</span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        .save()</span></code></pre></div>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        .<span class="bu">format</span>(<span class="st">"jdbc"</span>) <span class="op">\</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        .option(<span class="st">"url"</span>, jdbc_url) <span class="op">\</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        .option(<span class="st">"dbtable"</span>, <span class="st">"staging_table"</span>) <span class="op">\</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        .mode(<span class="st">"overwrite"</span>) <span class="op">\</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        .save()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
-<i class='callout-icon'></i>
+<i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
 EMR Performance Strengths
@@ -464,7 +473,7 @@ EMR Performance Strengths
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
-<i class='callout-icon'></i>
+<i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
 EMR Performance Limitations
@@ -483,8 +492,8 @@ EMR Performance Limitations
 <section id="development-experience" class="level1" data-number="5">
 <h1 data-number="5"><span class="header-section-number">5</span> Development Experience</h1>
 <section id="key-differences" class="level2" data-number="5.1">
-<h2 data-number="5.1"><span class="header-section-number">5.1</span> Key Differences</h2>
-<table class="caption-top">
+<h2 data-number="5.1" class="anchored" data-anchor-id="key-differences"><span class="header-section-number">5.1</span> Key Differences</h2>
+<table class="caption-top table">
 <thead>
 <tr class="header">
 <th>Aspect</th>
@@ -522,8 +531,8 @@ EMR Performance Limitations
 </table>
 </section>
 <section id="integration-capabilities" class="level2" data-number="5.2">
-<h2 data-number="5.2"><span class="header-section-number">5.2</span> Integration Capabilities</h2>
-<div class="panel-tabset">
+<h2 data-number="5.2" class="anchored" data-anchor-id="integration-capabilities"><span class="header-section-number">5.2</span> Integration Capabilities</h2>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">AWS Glue</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Spark on EMR</a></li></ul>
 <div class="tab-content">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
@@ -549,8 +558,8 @@ EMR Performance Limitations
 <section id="monitoring-and-operations" class="level1" data-number="6">
 <h1 data-number="6"><span class="header-section-number">6</span> Monitoring and Operations</h1>
 <section id="monitoring-options" class="level2" data-number="6.1">
-<h2 data-number="6.1"><span class="header-section-number">6.1</span> Monitoring Options</h2>
-<div class="panel-tabset">
+<h2 data-number="6.1" class="anchored" data-anchor-id="monitoring-options"><span class="header-section-number">6.1</span> Monitoring Options</h2>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">AWS Glue</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">Spark on EMR</a></li></ul>
 <div class="tab-content">
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
@@ -573,8 +582,8 @@ EMR Performance Limitations
 </div>
 </section>
 <section id="operational-requirements" class="level2" data-number="6.2">
-<h2 data-number="6.2"><span class="header-section-number">6.2</span> Operational Requirements</h2>
-<table class="caption-top">
+<h2 data-number="6.2" class="anchored" data-anchor-id="operational-requirements"><span class="header-section-number">6.2</span> Operational Requirements</h2>
+<table class="caption-top table">
 <thead>
 <tr class="header">
 <th>Requirement</th>
@@ -610,7 +619,7 @@ EMR Performance Limitations
 <section id="recommendation" class="level1" data-number="7">
 <h1 data-number="7"><span class="header-section-number">7</span> Recommendation</h1>
 <section id="short-term" class="level2" data-number="7.1">
-<h2 data-number="7.1"><span class="header-section-number">7.1</span> Short Term</h2>
+<h2 data-number="7.1" class="anchored" data-anchor-id="short-term"><span class="header-section-number">7.1</span> Short Term</h2>
 <p>Recommend starting with AWS Glue due to:</p>
 <ul>
 <li>Faster implementation</li>
@@ -620,7 +629,7 @@ EMR Performance Limitations
 </ul>
 </section>
 <section id="long-term" class="level2" data-number="7.2">
-<h2 data-number="7.2"><span class="header-section-number">7.2</span> Long Term</h2>
+<h2 data-number="7.2" class="anchored" data-anchor-id="long-term"><span class="header-section-number">7.2</span> Long Term</h2>
 <p>Consider migration to EMR if:</p>
 <ul>
 <li>Approaching cost crossover point</li>
@@ -633,7 +642,7 @@ EMR Performance Limitations
 <section id="implementation-plan" class="level1" data-number="8">
 <h1 data-number="8"><span class="header-section-number">8</span> Implementation Plan</h1>
 <section id="phase-1-initial-setup" class="level2" data-number="8.1">
-<h2 data-number="8.1"><span class="header-section-number">8.1</span> Phase 1: Initial Setup</h2>
+<h2 data-number="8.1" class="anchored" data-anchor-id="phase-1-initial-setup"><span class="header-section-number">8.1</span> Phase 1: Initial Setup</h2>
 <ol type="1">
 <li>Set up development environment</li>
 <li>Create test jobs</li>
@@ -642,7 +651,7 @@ EMR Performance Limitations
 </ol>
 </section>
 <section id="phase-2-production-migration" class="level2" data-number="8.2">
-<h2 data-number="8.2"><span class="header-section-number">8.2</span> Phase 2: Production Migration</h2>
+<h2 data-number="8.2" class="anchored" data-anchor-id="phase-2-production-migration"><span class="header-section-number">8.2</span> Phase 2: Production Migration</h2>
 <ol type="1">
 <li>Migrate simple jobs</li>
 <li>Add error handling</li>
@@ -651,7 +660,7 @@ EMR Performance Limitations
 </ol>
 </section>
 <section id="phase-3-optimization" class="level2" data-number="8.3">
-<h2 data-number="8.3"><span class="header-section-number">8.3</span> Phase 3: Optimization</h2>
+<h2 data-number="8.3" class="anchored" data-anchor-id="phase-3-optimization"><span class="header-section-number">8.3</span> Phase 3: Optimization</h2>
 <ol type="1">
 <li>Performance tuning</li>
 <li>Cost optimization</li>
@@ -661,7 +670,7 @@ EMR Performance Limitations
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
-<i class='callout-icon'></i>
+<i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
 Next Steps
@@ -675,17 +684,13 @@ Next Steps
 </ol>
 </div>
 </div>
-<div id="quarto-navigation-envelope" class="hidden">
-<p><span class="hidden quarto-markdown-envelope-contents" data-render-id="quarto-int-sidebar-title">ReSight - Next Gen ETL</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="quarto-int-navbar-title">ReSight - Next Gen ETL</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="quarto-int-next">UPSERT Operations Cost Analysis</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="quarto-int-prev">Distributor Onboarding System</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="quarto-int-sidebar:/index.htmlDev-Plan-and-Overview">Dev Plan and Overview</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="quarto-int-sidebar:/distributor-onboarding-system.htmlDistributor-Onboarding-System">Distributor Onboarding System</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="quarto-int-sidebar:/upsert-ops.htmlUPSERT-Operations">UPSERT Operations</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="quarto-int-sidebar:/upsert-ops-cost-analysis.htmlUPSERT-Operations-Cost-Analysis">UPSERT Operations Cost Analysis</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="quarto-breadcrumbs-UPSERT-Operations">UPSERT Operations</span></p>
-</div>
-<div id="quarto-meta-markdown" class="hidden">
-<p><span class="hidden quarto-markdown-envelope-contents" data-render-id="quarto-metatitle">AWS Glue vs Spark on EMR for UPSERT Operations – ReSight - Next Gen ETL</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="quarto-twittercardtitle">AWS Glue vs Spark on EMR for UPSERT Operations – ReSight - Next Gen ETL</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="quarto-ogcardtitle">AWS Glue vs Spark on EMR for UPSERT Operations – ReSight - Next Gen ETL</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="quarto-metasitename">ReSight - Next Gen ETL</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="quarto-twittercarddesc">Technical Architecture Decision Document</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="quarto-ogcardddesc">Technical Architecture Decision Document</span></p>
-</div>
+
+
 </section>
 </section>
 
 </main> <!-- /main -->
-<script id = "quarto-html-after-body" type="application/javascript">
+<script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
     const mode = bsSheetEl.getAttribute("data-mode");
@@ -1251,6 +1256,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 </div> <!-- /content -->
 
-</body>
 
-</html>
+
+
+</body></html>
