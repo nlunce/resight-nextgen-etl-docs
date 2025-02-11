@@ -1,0 +1,202 @@
+---
+title: "ETL Pipeline Planning Questions"
+date: 'February 11, 2025'
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    number-sections: true
+    code-fold: true
+  pdf:
+    toc: true
+    number-sections: true
+    colorlinks: true
+jupyter: python3
+---
+
+# Data Source Access
+
+### How will you handle different API rate limits across these diverse systems?
+
+::: {.callout-note collapse="true"}
+# Answer
+We'll implement a centralized rate limiting solution using DynamoDB to store and manage rate limits for each ERP system. Our approach includes:
+
+A DynamoDB table storing each ERP's configuration including:
+
+Rate limits and burst limits
+Contact information
+Alert thresholds
+Version history
+Approval status
+
+
+AWS API Gateway for enforcing these limits, with usage plans dynamically configured based on the DynamoDB data.
+A Lambda function that syncs DynamoDB configurations with API Gateway usage plans, ensuring rate limits are always up to date.
+CloudWatch monitoring to track API usage against limits, with automated alerts at configurable thresholds (e.g., 80% warning, 95% critical).
+An admin API for managing rate limits with an approval workflow for any changes.
+
+This solution provides centralized management, version control, audit trails, and automated monitoring - all essential for managing multiple ERP integrations at scale."
+
+:::
+
+### What's your backup plan for ERPs that don't provide API access?
+
+::: {.callout-note collapse="true"}
+# Answer
+
+
+
+:::
+
+### How will you maintain and secure credentials for 30+ different systems?
+
+::: {.callout-note collapse="true"}
+# Answer
+
+
+
+:::
+
+### How will you handle API/connection failures for real-time synchronization?
+
+::: {.callout-note collapse="true"}
+# Answer
+
+
+
+:::
+
+# Data Standardization
+
+### Have you mapped the schema differences between all these ERPs?
+
+::: {.callout-note collapse="true"}
+# Answer
+
+
+
+:::
+
+### How will you handle inconsistent field names/data types across systems?
+
+::: {.callout-note collapse="true"}
+# Answer
+
+
+
+:::
+
+### What's your plan for handling different date/time formats from various systems?
+
+::: {.callout-note collapse="true"}
+# Answer
+
+
+
+:::
+
+### How will you maintain data lineage tracking across these diverse sources?
+
+::: {.callout-note collapse="true"}
+# Answer
+
+
+
+:::
+
+# Processing & Storage
+
+### What's your strategy for handling late-arriving data?
+
+::: {.callout-note collapse="true"}
+# Answer
+
+
+
+:::
+
+### How will you handle schema evolution in your Iceberg tables?
+
+::: {.callout-note collapse="true"}
+# Answer
+
+
+
+:::
+
+### What's your plan for data validation before loading into S3?
+
+::: {.callout-note collapse="true"}
+# Answer
+
+
+
+:::
+
+### How are you handling data versioning and rollbacks?
+
+::: {.callout-note collapse="true"}
+# Answer
+
+
+
+:::
+
+# Operational Concerns
+
+### What's your monitoring strategy for pipeline failures?
+
+::: {.callout-note collapse="true"}
+# Answer
+
+
+
+:::
+
+### How will you handle partial load failures?
+
+::: {.callout-note collapse="true"}
+# Answer
+
+
+
+:::
+
+### What's your data retention policy in the drop zone?
+
+::: {.callout-note collapse="true"}
+# Answer
+
+
+
+:::
+
+### How will you manage pipeline dependencies between different ERP loads?
+
+::: {.callout-note collapse="true"}
+# Answer
+
+
+
+:::
+
+# Additional Questions
+
+### What are the data sync frequency requirements for each system?
+
+::: {.callout-note collapse="true"}
+# Answer
+
+
+
+:::
+
+### Are there any specific SLAs for data freshness that need to be met?
+
+::: {.callout-note collapse="true"}
+# Answer
+
+
+
+:::

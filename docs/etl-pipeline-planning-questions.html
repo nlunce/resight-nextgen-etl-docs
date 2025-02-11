@@ -6,10 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Nathan Lunceford">
-<meta name="dcterms.date" content="2025-02-06">
+<meta name="dcterms.date" content="2025-02-11">
 
-<title>Distributor Onboarding System – ReSight - Next Gen ETL</title>
+<title>ETL Pipeline Planning Questions – ReSight - Next Gen ETL</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -70,9 +69,6 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
-<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
-<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
 <link rel="stylesheet" href="styles.css">
@@ -87,7 +83,9 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./distributor-onboarding-system.html">Distributor Onboarding System</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">
+      ReSight - Next Gen ETL
+      </li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -123,7 +121,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./distributor-onboarding-system.html" class="sidebar-item-text sidebar-link active">
+  <a href="./distributor-onboarding-system.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Distributor Onboarding System</span></a>
   </div>
 </li>
@@ -149,38 +147,31 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">1</span> Overview</a>
-  <ul class="collapse">
-  <li><a href="#system-components" id="toc-system-components" class="nav-link" data-scroll-target="#system-components"><span class="header-section-number">1.1</span> System Components</a></li>
-  <li><a href="#erp-system-integration-strategy" id="toc-erp-system-integration-strategy" class="nav-link" data-scroll-target="#erp-system-integration-strategy"><span class="header-section-number">1.2</span> ERP System Integration Strategy</a></li>
-  <li><a href="#expected-benefits" id="toc-expected-benefits" class="nav-link" data-scroll-target="#expected-benefits"><span class="header-section-number">1.3</span> Expected Benefits</a></li>
-  </ul></li>
+  <li><a href="#data-source-access" id="toc-data-source-access" class="nav-link active" data-scroll-target="#data-source-access"><span class="header-section-number">1</span> Data Source Access</a></li>
+  <li><a href="#data-standardization" id="toc-data-standardization" class="nav-link" data-scroll-target="#data-standardization"><span class="header-section-number">2</span> Data Standardization</a></li>
+  <li><a href="#processing-storage" id="toc-processing-storage" class="nav-link" data-scroll-target="#processing-storage"><span class="header-section-number">3</span> Processing &amp; Storage</a></li>
+  <li><a href="#operational-concerns" id="toc-operational-concerns" class="nav-link" data-scroll-target="#operational-concerns"><span class="header-section-number">4</span> Operational Concerns</a></li>
+  <li><a href="#additional-questions" id="toc-additional-questions" class="nav-link" data-scroll-target="#additional-questions"><span class="header-section-number">5</span> Additional Questions</a></li>
   </ul>
-<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="distributor-onboarding-system.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="etl-pipeline-planning-questions.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Distributor Onboarding System</h1>
+<h1 class="title">ETL Pipeline Planning Questions</h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>Nathan Lunceford </p>
-          </div>
-  </div>
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">February 6, 2025</p>
+      <p class="date">February 11, 2025</p>
     </div>
   </div>
   
@@ -192,129 +183,365 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="overview" class="level1" data-number="1">
-<h1 data-number="1"><span class="header-section-number">1</span> Overview</h1>
-<p>This document outlines the implementation of a <strong>self-service distributor onboarding system</strong> that simplifies the process of integrating various <strong>ERP systems</strong> with our data pipeline. The system consists of:</p>
-<ul>
-<li><strong>A web portal for distributor registration and ERP selection</strong>.</li>
-<li><strong>A C# (ASP.NET Core) backend for managing ERP authentication and configurations</strong>.</li>
-<li><strong>Apache MiNiFi deployed at distributor sites for local ERP data extraction</strong>.</li>
-<li><strong>Apache NiFi for central data ingestion, transformation, and routing to AWS S3</strong>.</li>
-</ul>
-<p>This approach ensures <strong>scalability, security, and ease of use</strong> for non-technical distributors.</p>
-<section id="system-components" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="system-components"><span class="header-section-number">1.1</span> System Components</h2>
-<section id="web-portal-next.js-auth0" class="level3" data-number="1.1.1">
-<h3 data-number="1.1.1" class="anchored" data-anchor-id="web-portal-next.js-auth0"><span class="header-section-number">1.1.1</span> <strong>Web Portal (Next.js + Auth0)</strong></h3>
-<ul>
-<li>Distributors <strong>log in via Auth0</strong>.</li>
-<li>Select their <strong>ERP system</strong> from a dropdown list.</li>
-<li>Enter <strong>API credentials, database connection details, or FTP settings</strong>.</li>
-<li>Download a <strong>pre-configured MiNiFi agent</strong> for their system.</li>
-</ul>
-</section>
-<section id="backend-api-c-asp.net-core" class="level3" data-number="1.1.2">
-<h3 data-number="1.1.2" class="anchored" data-anchor-id="backend-api-c-asp.net-core"><span class="header-section-number">1.1.2</span> <strong>Backend API (C# + ASP.NET Core)</strong></h3>
-<ul>
-<li><strong>Handles distributor authentication &amp; authorization</strong>.</li>
-<li><strong>Validates ERP credentials</strong> and ensures secure storage.</li>
-<li><strong>Generates MiNiFi configuration files dynamically</strong> based on ERP type.</li>
-<li><strong>Communicates with Apache NiFi to register new distributors</strong>.</li>
-</ul>
-</section>
-<section id="apache-minifi-deployed-at-distributors-location" class="level3" data-number="1.1.3">
-<h3 data-number="1.1.3" class="anchored" data-anchor-id="apache-minifi-deployed-at-distributors-location"><span class="header-section-number">1.1.3</span> <strong>Apache MiNiFi (Deployed at Distributor’s Location)</strong></h3>
-<ul>
-<li><strong>Extracts ERP data via API, database queries, or FTP/SFTP</strong>.</li>
-<li><strong>Buffers and transmits data securely to NiFi</strong>.</li>
-<li><strong>Handles network outages with built-in retry mechanisms</strong>.</li>
-</ul>
-</section>
-<section id="apache-nifi-central-data-processing-hub" class="level3" data-number="1.1.4">
-<h3 data-number="1.1.4" class="anchored" data-anchor-id="apache-nifi-central-data-processing-hub"><span class="header-section-number">1.1.4</span> <strong>Apache NiFi (Central Data Processing Hub)</strong></h3>
-<ul>
-<li><strong>Receives data from MiNiFi agents</strong>.</li>
-<li><strong>Transforms and routes data to AWS S3</strong>.</li>
-<li><strong>Handles error logging, retries, and alerting</strong>.</li>
-</ul>
-</section>
-</section>
-<section id="erp-system-integration-strategy" class="level2" data-number="1.2">
-<h2 data-number="1.2" class="anchored" data-anchor-id="erp-system-integration-strategy"><span class="header-section-number">1.2</span> ERP System Integration Strategy</h2>
-<section id="erp-categorization-integration-methods" class="level3" data-number="1.2.1">
-<h3 data-number="1.2.1" class="anchored" data-anchor-id="erp-categorization-integration-methods"><span class="header-section-number">1.2.1</span> <strong>ERP Categorization &amp; Integration Methods</strong></h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 27%">
-<col style="width: 45%">
-<col style="width: 27%">
-</colgroup>
-<thead>
-<tr class="header">
-<th><strong>ERP Type</strong></th>
-<th><strong>Integration Method</strong></th>
-<th><strong>Examples</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>API-Based</strong></td>
-<td>REST/SOAP API Calls</td>
-<td>NetSuite, SAP ERP, QuickBooks, ASC Portal</td>
-</tr>
-<tr class="even">
-<td><strong>Database-Driven</strong></td>
-<td>SQL (JDBC/ODBC) Queries</td>
-<td>Sage 300, Epicor Prophet 21, CloudSuite</td>
-</tr>
-<tr class="odd">
-<td><strong>File-Based</strong></td>
-<td>FTP/SFTP, CSV/XML Parsing</td>
-<td>TGI Enterprise 21, OneView, HP (Excel)</td>
-</tr>
-<tr class="even">
-<td><strong>Legacy Systems</strong></td>
-<td>AS/400, Custom In-House Systems</td>
-<td>DARTS, Samco Software</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="integration-workflow" class="level3" data-number="1.2.2">
-<h3 data-number="1.2.2" class="anchored" data-anchor-id="integration-workflow"><span class="header-section-number">1.2.2</span> <strong>Integration Workflow</strong></h3>
-<div class="cell" data-layout-align="default">
-<div class="cell-output-display">
-<div>
-<p></p><figure class="figure"><p></p>
-<div>
-<pre class="mermaid mermaid-js">graph TD;
-    A[Distributor Logs into Portal] --&gt; B[Selects ERP &amp; Enters Credentials];
-    B --&gt; C[Backend Validates ERP Connection];
-    C --&gt; D[MiNiFi Configuration is Auto-Generated];
-    D --&gt; E[Distributor Downloads &amp; Installs MiNiFi];
-    E --&gt; F[MiNiFi Extracts Data from ERP];
-    F --&gt; G[MiNiFi Sends Data to NiFi];
-    G --&gt; H[NiFi Routes Data to AWS S3];
-    H --&gt; I[Data Available for Analytics &amp; Reporting];
-</pre>
+<section id="data-source-access" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Data Source Access</h1>
+<section id="how-will-you-handle-different-api-rate-limits-across-these-diverse-systems" class="level3" data-number="1.0.1">
+<h3 data-number="1.0.1" class="anchored" data-anchor-id="how-will-you-handle-different-api-rate-limits-across-these-diverse-systems"><span class="header-section-number">1.0.1</span> How will you handle different API rate limits across these diverse systems?</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
-<p></p></figure><p></p>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>We’ll implement a centralized rate limiting solution using DynamoDB to store and manage rate limits for each ERP system. Our approach includes:</p>
+<p>A DynamoDB table storing each ERP’s configuration including:</p>
+<p>Rate limits and burst limits Contact information Alert thresholds Version history Approval status</p>
+<p>AWS API Gateway for enforcing these limits, with usage plans dynamically configured based on the DynamoDB data. A Lambda function that syncs DynamoDB configurations with API Gateway usage plans, ensuring rate limits are always up to date. CloudWatch monitoring to track API usage against limits, with automated alerts at configurable thresholds (e.g., 80% warning, 95% critical). An admin API for managing rate limits with an approval workflow for any changes.</p>
+<p>This solution provides centralized management, version control, audit trails, and automated monitoring - all essential for managing multiple ERP integrations at scale.”</p>
+</div>
+</div>
+</div>
+</section>
+<section id="whats-your-backup-plan-for-erps-that-dont-provide-api-access" class="level3" data-number="1.0.2">
+<h3 data-number="1.0.2" class="anchored" data-anchor-id="whats-your-backup-plan-for-erps-that-dont-provide-api-access"><span class="header-section-number">1.0.2</span> What’s your backup plan for ERPs that don’t provide API access?</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+
+</div>
+</div>
+</div>
+</section>
+<section id="how-will-you-maintain-and-secure-credentials-for-30-different-systems" class="level3" data-number="1.0.3">
+<h3 data-number="1.0.3" class="anchored" data-anchor-id="how-will-you-maintain-and-secure-credentials-for-30-different-systems"><span class="header-section-number">1.0.3</span> How will you maintain and secure credentials for 30+ different systems?</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+
+</div>
+</div>
+</div>
+</section>
+<section id="how-will-you-handle-apiconnection-failures-for-real-time-synchronization" class="level3" data-number="1.0.4">
+<h3 data-number="1.0.4" class="anchored" data-anchor-id="how-will-you-handle-apiconnection-failures-for-real-time-synchronization"><span class="header-section-number">1.0.4</span> How will you handle API/connection failures for real-time synchronization?</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+
 </div>
 </div>
 </div>
 </section>
 </section>
-<section id="expected-benefits" class="level2" data-number="1.3">
-<h2 data-number="1.3" class="anchored" data-anchor-id="expected-benefits"><span class="header-section-number">1.3</span> Expected Benefits</h2>
-<ul>
-<li><strong>Simplified onboarding</strong> – Non-technical distributors can self-register and integrate their ERP systems.<br>
-</li>
-<li><strong>Automated ERP data extraction</strong> – Reduces manual intervention.<br>
-</li>
-<li><strong>Secure &amp; scalable solution</strong> – MiNiFi ensures local data security and retries failed transfers.<br>
-</li>
-<li><strong>Cloud-ready architecture</strong> – AWS S3 and NiFi provide a robust and extensible pipeline.</li>
-</ul>
+<section id="data-standardization" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Data Standardization</h1>
+<section id="have-you-mapped-the-schema-differences-between-all-these-erps" class="level3" data-number="2.0.1">
+<h3 data-number="2.0.1" class="anchored" data-anchor-id="have-you-mapped-the-schema-differences-between-all-these-erps"><span class="header-section-number">2.0.1</span> Have you mapped the schema differences between all these ERPs?</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+
+</div>
+</div>
+</div>
+</section>
+<section id="how-will-you-handle-inconsistent-field-namesdata-types-across-systems" class="level3" data-number="2.0.2">
+<h3 data-number="2.0.2" class="anchored" data-anchor-id="how-will-you-handle-inconsistent-field-namesdata-types-across-systems"><span class="header-section-number">2.0.2</span> How will you handle inconsistent field names/data types across systems?</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+
+</div>
+</div>
+</div>
+</section>
+<section id="whats-your-plan-for-handling-different-datetime-formats-from-various-systems" class="level3" data-number="2.0.3">
+<h3 data-number="2.0.3" class="anchored" data-anchor-id="whats-your-plan-for-handling-different-datetime-formats-from-various-systems"><span class="header-section-number">2.0.3</span> What’s your plan for handling different date/time formats from various systems?</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+
+</div>
+</div>
+</div>
+</section>
+<section id="how-will-you-maintain-data-lineage-tracking-across-these-diverse-sources" class="level3" data-number="2.0.4">
+<h3 data-number="2.0.4" class="anchored" data-anchor-id="how-will-you-maintain-data-lineage-tracking-across-these-diverse-sources"><span class="header-section-number">2.0.4</span> How will you maintain data lineage tracking across these diverse sources?</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="processing-storage" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Processing &amp; Storage</h1>
+<section id="whats-your-strategy-for-handling-late-arriving-data" class="level3" data-number="3.0.1">
+<h3 data-number="3.0.1" class="anchored" data-anchor-id="whats-your-strategy-for-handling-late-arriving-data"><span class="header-section-number">3.0.1</span> What’s your strategy for handling late-arriving data?</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+
+</div>
+</div>
+</div>
+</section>
+<section id="how-will-you-handle-schema-evolution-in-your-iceberg-tables" class="level3" data-number="3.0.2">
+<h3 data-number="3.0.2" class="anchored" data-anchor-id="how-will-you-handle-schema-evolution-in-your-iceberg-tables"><span class="header-section-number">3.0.2</span> How will you handle schema evolution in your Iceberg tables?</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+
+</div>
+</div>
+</div>
+</section>
+<section id="whats-your-plan-for-data-validation-before-loading-into-s3" class="level3" data-number="3.0.3">
+<h3 data-number="3.0.3" class="anchored" data-anchor-id="whats-your-plan-for-data-validation-before-loading-into-s3"><span class="header-section-number">3.0.3</span> What’s your plan for data validation before loading into S3?</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+
+</div>
+</div>
+</div>
+</section>
+<section id="how-are-you-handling-data-versioning-and-rollbacks" class="level3" data-number="3.0.4">
+<h3 data-number="3.0.4" class="anchored" data-anchor-id="how-are-you-handling-data-versioning-and-rollbacks"><span class="header-section-number">3.0.4</span> How are you handling data versioning and rollbacks?</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="operational-concerns" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Operational Concerns</h1>
+<section id="whats-your-monitoring-strategy-for-pipeline-failures" class="level3" data-number="4.0.1">
+<h3 data-number="4.0.1" class="anchored" data-anchor-id="whats-your-monitoring-strategy-for-pipeline-failures"><span class="header-section-number">4.0.1</span> What’s your monitoring strategy for pipeline failures?</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+
+</div>
+</div>
+</div>
+</section>
+<section id="how-will-you-handle-partial-load-failures" class="level3" data-number="4.0.2">
+<h3 data-number="4.0.2" class="anchored" data-anchor-id="how-will-you-handle-partial-load-failures"><span class="header-section-number">4.0.2</span> How will you handle partial load failures?</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+
+</div>
+</div>
+</div>
+</section>
+<section id="whats-your-data-retention-policy-in-the-drop-zone" class="level3" data-number="4.0.3">
+<h3 data-number="4.0.3" class="anchored" data-anchor-id="whats-your-data-retention-policy-in-the-drop-zone"><span class="header-section-number">4.0.3</span> What’s your data retention policy in the drop zone?</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+
+</div>
+</div>
+</div>
+</section>
+<section id="how-will-you-manage-pipeline-dependencies-between-different-erp-loads" class="level3" data-number="4.0.4">
+<h3 data-number="4.0.4" class="anchored" data-anchor-id="how-will-you-manage-pipeline-dependencies-between-different-erp-loads"><span class="header-section-number">4.0.4</span> How will you manage pipeline dependencies between different ERP loads?</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="additional-questions" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Additional Questions</h1>
+<section id="what-are-the-data-sync-frequency-requirements-for-each-system" class="level3" data-number="5.0.1">
+<h3 data-number="5.0.1" class="anchored" data-anchor-id="what-are-the-data-sync-frequency-requirements-for-each-system"><span class="header-section-number">5.0.1</span> What are the data sync frequency requirements for each system?</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-17" class="callout-17-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+
+</div>
+</div>
+</div>
+</section>
+<section id="are-there-any-specific-slas-for-data-freshness-that-need-to-be-met" class="level3" data-number="5.0.2">
+<h3 data-number="5.0.2" class="anchored" data-anchor-id="are-there-any-specific-slas-for-data-freshness-that-need-to-be-met"><span class="header-section-number">5.0.2</span> Are there any specific SLAs for data freshness that need to be met?</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-18" class="callout-18-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+
+</div>
+</div>
+</div>
 
 
 </section>
