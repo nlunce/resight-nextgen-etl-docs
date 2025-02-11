@@ -2,7 +2,6 @@
 title: 'Distributor Onboarding System'
 author: 'Nathan Lunceford'
 date: 'February 6, 2025'
-description: 'A structured plan for implementing a distributor onboarding system using a C# backend, Apache MiNiFi, and NiFi to automate ERP system integrations.'
 format:
   html:
     toc: true
