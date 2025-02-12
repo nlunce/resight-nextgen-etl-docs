@@ -45,7 +45,47 @@ This solution provides centralized management, version control, audit trails, an
 ::: {.callout-note collapse="true"}
 # Answer
 
+For our ETL pipeline, we have specific strategies for each type of ERP system:
 
+**API-Based ERPs:**
+
+- Implement centralized rate limiting using DynamoDB to store API configurations
+- Use AWS API Gateway to manage and enforce rate limits
+- Set up CloudWatch monitoring for usage tracking
+- Deploy Lambda functions for each API integration
+
+
+**Database-Driven ERPs:**
+
+- Use AWS Database Migration Service (DMS) for continuous replication
+- Set up read replicas to minimize load on source systems
+- Implement Change Data Capture (CDC) to track only changed records
+- Use AWS Secrets Manager for database credentials
+
+
+**File-Based ERPs:**
+
+- Create dedicated S3 buckets for each system
+- Use AWS Transfer Family for secure SFTP access
+- Deploy Lambda functions to monitor and process new files
+- Implement file integrity checks and validation
+
+
+**Legacy Systems:**
+
+- Custom extract programs for regular data exports
+- Scheduled batch processes for data extraction
+- File-based transfers to S3 using AWS Transfer Family
+- Validation checks for data completeness
+
+
+**Common Infrastructure Across All Types:**
+
+- CloudWatch monitoring and alerting
+- Data validation before loading
+- Audit logging of all transfers
+- Error handling and retry mechanisms
+- Centralized credential management using AWS Secrets Manager
 
 :::
 
@@ -54,16 +94,82 @@ This solution provides centralized management, version control, audit trails, an
 ::: {.callout-note collapse="true"}
 # Answer
 
+We'll implement a two-part credential management system:
 
+1. AWS Secrets Manager for sensitive credentials:
+   
+   - All ERP credentials (API keys, passwords)
+   - Automatic credential rotation
+   - Built-in encryption using KMS
+   - IAM role-based access control
+
+2. DynamoDB for configuration and references:
+ 
+```json
+{
+    "erpId": "erp_a",
+    "version": "v1",
+    "secretArn": "arn:aws:secretsmanager:region:account:secret:erp-a-credentials",
+    "integration": {
+        "type": "API-Based",
+        "method": "REST"
+    },
+    "metadata": {
+        "owner": "team_a",
+        "contact": "team_a@company.com"
+    }
+}
+```
+
+Lambda functions access credentials by:
+
+1. Fetching configuration from DynamoDB
+2. Using secretArn to retrieve actual credentials from Secrets Manager
+3. Each Lambda has IAM roles with least-privilege access
+
+This provides:
+
+- Secure credential storage
+- Central configuration management
+- Audit logging through CloudWatch
+- Automated credential rotation
+- Version control of configurations"
 
 :::
 
-### How will you handle API/connection failures for real-time synchronization?
+### How will you handle API/connection failures?
 
 ::: {.callout-note collapse="true"}
 # Answer
 
+Since our ETL pipeline runs once daily rather than real-time, our failure handling focuses on job completion certainty:
 
+**Clear Job Status Tracking**
+
+  - Each daily job has a unique identifier
+  - We track success/failure status for each ERP system
+  - All errors are logged with specific failure reasons
+
+**Failure Recovery Process**
+
+  - Failed jobs automatically retry up to 3 times
+  - One hour delay between retry attempts
+  - After all retries fail, triggers team notification
+  - Manual investigation required before next day's run
+
+**Validation Checks**
+
+  - Verify data completeness before marking job as successful
+  - Compare record counts with expected ranges
+  - Check for data quality issues
+
+**Monitoring & Alerts**
+
+  - Daily job completion status dashboard
+  - Immediate alerts for failed jobs
+  - Historical job status tracking for pattern analysis
+
+This approach ensures we always know whether each day's data fetch succeeded or failed, and exactly why any failures occurred.
 
 :::
 
@@ -75,6 +181,29 @@ This solution provides centralized management, version control, audit trails, an
 # Answer
 
 
+We manage schema differences through a standardized mapping approach:
+
+**Central Data Dictionary**
+
+- Maintain a master schema in DynamoDB defining our standard format
+- Each ERP has a mapping configuration showing how its fields translate to our standard
+- Include data type conversions and formatting rules
+
+**Data Standardization Process**
+
+- Raw data is first stored in its original format
+- Transformation layer converts to our standard schema
+- All dates normalized to UTC
+- Consistent naming conventions applied
+- Field values standardized (e.g., 'Y'/'N' to true/false)
+
+**Quality Assurance**
+
+- Automated validation of transformed data
+- Alerts for unexpected data formats
+- Track any fields that can't be mapped
+- Regular audits of mapping accuracy
+
 
 :::
 
@@ -84,6 +213,38 @@ This solution provides centralized management, version control, audit trails, an
 # Answer
 
 
+We handle field name and data type inconsistencies through a transformation layer:
+
+**Field Name Standardization**
+
+- Use mapping tables in DynamoDB to define standard names
+- Each ERP entry includes:
+  - Original field name
+  - Standardized field name
+  - Business context
+  - Required transformations
+
+**Data Type Handling**
+
+- Number formats (handle different decimal separators)
+- Date/time formats (normalize to UTC)
+- Text encodings (convert to UTF-8)
+- Boolean values (convert Y/N, 1/0, True/False to standard boolean)
+
+**Validation Rules**
+
+- Required fields checking
+- Data type verification
+- Range/format validation
+- Business rule validation
+
+**Error Handling**
+
+- Tag records with transformation errors
+- Keep original values for audit
+- Alert on systematic conversion issues
+- Maintain transformation logs
+
 
 :::
 
@@ -92,7 +253,38 @@ This solution provides centralized management, version control, audit trails, an
 ::: {.callout-note collapse="true"}
 # Answer
 
+We standardize all date/time handling through a consistent process:
 
+**Date/Time Standardization**
+
+- Convert all timestamps to UTC during ingestion
+- Store original timezone information in metadata
+- Use ISO 8601 format (YYYY-MM-DDTHH:mm:ss.sssZ) as our standard
+- Maintain source format for audit purposes
+
+**Common Format Handling**
+
+- Support multiple input formats:
+  - US format (MM/DD/YYYY)
+  - European format (DD/MM/YYYY)
+  - Unix timestamps
+  - Various timezone notations
+  - Date-only formats
+  - Custom ERP formats
+
+**Edge Cases**
+
+- Handle invalid dates
+- Account for daylight savings transitions
+- Process missing timezone information
+- Manage partial dates (month/year only)
+
+**Quality Controls**
+
+- Validate all conversions
+- Flag impossible dates/times
+- Alert on systematic conversion issues
+- Regular audits of timestamp accuracy
 
 :::
 
@@ -101,7 +293,38 @@ This solution provides centralized management, version control, audit trails, an
 ::: {.callout-note collapse="true"}
 # Answer
 
+We implement a two-stage data lineage tracking system:
 
+**Raw Data Stage (Pre-Iceberg)**
+
+- Landing Zone Tracking
+  - Original compressed files/CSVs logged in DynamoDB
+  - Source ERP system
+  - File metadata (size, timestamp, checksum)
+  - Processing status
+  - Batch/job ID
+
+**Transformed Data Stage (In Iceberg)**
+
+- Leverage Iceberg's features for:
+  - Snapshot history
+  - Schema evolution
+  - Time travel capabilities
+  - Transaction logs
+
+**Complete Lineage Chain**
+
+- Link raw and transformed stages through:
+  - Unique batch IDs
+  - Processing timestamps
+  - Source file references
+  - Transformation logs
+
+**Audit Capabilities**
+
+- Raw data: Track original file to transformation
+- Transformed data: Use Iceberg's features
+- End-to-end tracing from source file to final table
 
 :::
 
@@ -112,7 +335,32 @@ This solution provides centralized management, version control, audit trails, an
 ::: {.callout-note collapse="true"}
 # Answer
 
+**Scenarios:**
 
+- An ERP system was down during the regular daily pull
+- Someone enters January sales data in March
+- A business unit delays their data entry (enters last week's data today)
+- An ERP has corrected/adjusted historical data
+
+Our strategy for handling late or backfilled data in daily batches:
+
+**Identification**
+
+- Compare record dates vs current processing date
+- Flag any data older than previous day
+- Identify which historical partitions need updates
+
+**Processing**
+
+- Store data in Iceberg tables by business date, not ingestion date
+- Use MERGE operations to handle updates to historical data
+- Keep log of all backfilled data in DynamoDB for auditing
+
+**Monitoring**
+
+- Alert if we see unusual amounts of historical data
+- Track which ERPs frequently send late data
+- Report on data entry lag times
 
 :::
 
@@ -121,7 +369,35 @@ This solution provides centralized management, version control, audit trails, an
 ::: {.callout-note collapse="true"}
 # Answer
 
+Our schema evolution strategy uses Iceberg's built-in capabilities:
 
+**Schema Changes**
+
+- Add new columns as NULLABLE to maintain compatibility
+- Track all schema changes in version control
+- Document business reason for each change
+- Test impact on downstream processes
+
+**Backward Compatibility**
+
+- Keep previous schema versions accessible
+- Maintain default values for new columns
+- Document field mappings for each version
+- Support queries across schema versions
+
+**Migration Process**
+
+- Roll out schema changes in phases
+- Validate data quality after changes
+- Keep historical data accessible
+- Update documentation and data dictionaries
+
+**Monitoring & Control**
+
+- Track which schema version each ERP uses
+- Alert on unexpected schema changes
+- Regular schema compatibility checks
+- Audit schema change history
 
 :::
 
