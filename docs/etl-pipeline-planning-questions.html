@@ -712,7 +712,39 @@ Answer
 </div>
 <div id="callout-11" class="callout-11-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-
+<p>Our validation strategy leverages AWS Glue and PySpark capabilities:</p>
+<p><strong>Drop Zone Validation (Initial S3 Landing)</strong></p>
+<ul>
+<li>AWS Lambda performs quick checks:
+<ul>
+<li>File presence verification</li>
+<li>Basic file integrity</li>
+<li>Naming convention compliance</li>
+<li>File size validation</li>
+<li>Expected file count per ERP</li>
+</ul></li>
+</ul>
+<p><strong>Pre-Iceberg Validation (Glue Job)</strong></p>
+<ul>
+<li>PySpark validations during transformation:
+<ul>
+<li>Schema conformance</li>
+<li>Data type verification</li>
+<li>Required field checks</li>
+<li>Business rule validation</li>
+<li>Record count verification</li>
+<li>Date range completeness</li>
+</ul></li>
+</ul>
+<p><strong>Error Handling</strong></p>
+<ul>
+<li>CloudWatch logs capture validation failures</li>
+<li>Glue job bookmarks track processed files</li>
+<li>Glue metrics monitor validation stats</li>
+<li>DynamoDB stores validation history</li>
+<li>Failed files moved to error prefix</li>
+<li>Alert notifications for validation failures</li>
+</ul>
 </div>
 </div>
 </div>

@@ -406,6 +406,35 @@ Our schema evolution strategy uses Iceberg's built-in capabilities:
 ::: {.callout-note collapse="true"}
 # Answer
 
+Our validation strategy leverages AWS Glue and PySpark capabilities:
+
+**Drop Zone Validation (Initial S3 Landing)**
+
+- AWS Lambda performs quick checks:
+  - File presence verification
+  - Basic file integrity
+  - Naming convention compliance
+  - File size validation
+  - Expected file count per ERP
+
+**Pre-Iceberg Validation (Glue Job)**
+
+- PySpark validations during transformation:
+  - Schema conformance
+  - Data type verification
+  - Required field checks
+  - Business rule validation
+  - Record count verification
+  - Date range completeness
+
+**Error Handling**
+
+- CloudWatch logs capture validation failures
+- Glue job bookmarks track processed files
+- Glue metrics monitor validation stats
+- DynamoDB stores validation history
+- Failed files moved to error prefix
+- Alert notifications for validation failures
 
 
 :::
