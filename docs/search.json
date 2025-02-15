@@ -1,0 +1,445 @@
+[
+  {
+    "objectID": "erp-extractor-design.html",
+    "href": "erp-extractor-design.html",
+    "title": "Design Document for Distributor Data Extraction Ingestion",
+    "section": "",
+    "text": "This design document covers the extraction ingestion component of our ETL pipeline specifically for distributor data. In our architecture, distributors integrate with our system via two primary methods:\n\nDirect Integration: Where our system automatically provisions the correct resources based solely on the three supplied parameters—erp-type, client-id, and data-type.\nSFTP Ingestion: Where distributors SFTP their data to our environment (this method is handled separately).\n\nThe design detailed here pertains only to the direct extraction ingestion method. This process extracts distributor data and deposits it into a pre-dropzone S3 bucket. At this stage, a minor transformation is applied: column names are standardized according to our global data dictionary and the output files are converted to Parquet format. More complex transformations occur later in the pipeline."
+  },
+  {
+    "objectID": "erp-extractor-design.html#overview",
+    "href": "erp-extractor-design.html#overview",
+    "title": "Design Document for Distributor Data Extraction Ingestion",
+    "section": "",
+    "text": "This design document covers the extraction ingestion component of our ETL pipeline specifically for distributor data. In our architecture, distributors integrate with our system via two primary methods:\n\nDirect Integration: Where our system automatically provisions the correct resources based solely on the three supplied parameters—erp-type, client-id, and data-type.\nSFTP Ingestion: Where distributors SFTP their data to our environment (this method is handled separately).\n\nThe design detailed here pertains only to the direct extraction ingestion method. This process extracts distributor data and deposits it into a pre-dropzone S3 bucket. At this stage, a minor transformation is applied: column names are standardized according to our global data dictionary and the output files are converted to Parquet format. More complex transformations occur later in the pipeline."
+  },
+  {
+    "objectID": "erp-extractor-design.html#system-architecture",
+    "href": "erp-extractor-design.html#system-architecture",
+    "title": "Design Document for Distributor Data Extraction Ingestion",
+    "section": "2 System Architecture",
+    "text": "2 System Architecture\n\n2.1 Entry Point and Application Hosting\n\nProgram Class:\n\nMain Method:\n\nParses command-line options (e.g., --erp-type, --client-id, --data-type) using System.CommandLine.\nSets up the dependency injection container and configures AWS services.\nResolves the primary extraction ingestion service (ERPService) from the DI container and triggers the extraction process.\n\nCreateHostBuilder Method:\n\nConfigures the host with AWS services, core providers, registries, and builder components.\n\n\n\n\n\n2.2 Extraction Ingestion Orchestration\n\nERPService Class:\n\nActs as the orchestrator for the extraction ingestion process.\nRetrieves credentials and configuration from AWS Secrets Manager and DynamoDB, respectively.\nDynamically resolves components for data extraction based on ERP type.\nSupports two extraction modes:\n\nAPI Mode: For ERPs that expose APIs.\nDatabase Mode: For ERPs that require direct database access.\n\nApplies a minimal transform:\n\nStandardizes column names according to our global data dictionary.\nConverts all files to Parquet format.\n\nDeposits the extracted (and minimally transformed) data into a pre-dropzone S3 bucket.\n(Note: Subsequent, more complex transformations are performed later in the overall ETL pipeline.)\n\n\n\n\n2.3 External Dependencies\n\nAWS Services:\n\nIAmazonSecretsManager: Retrieves ERP credentials.\nIAmazonDynamoDB: Fetches ERP configuration data.\nIAmazonS3: Loads the extracted data into the pre-dropzone S3 bucket.\n\n.NET Libraries:\n\nSystem.CommandLine: For command-line parsing.\nMicrosoft.Extensions.Hosting & DI: For hosting and dependency injection.\nSystem.Text.Json: For JSON serialization/deserialization."
+  },
+  {
+    "objectID": "erp-extractor-design.html#design-patterns-employed",
+    "href": "erp-extractor-design.html#design-patterns-employed",
+    "title": "Design Document for Distributor Data Extraction Ingestion",
+    "section": "3 Design Patterns Employed",
+    "text": "3 Design Patterns Employed\n\n3.1 Dependency Injection (DI)\n\nUsage:\n\nDecouples service construction from business logic.\nRegisters AWS clients, providers, registries, builder components, and the main extraction service in the DI container.\n\nBenefits:\n\nEnhances testability and maintainability.\nPromotes separation of concerns.\n\n\n\n\n3.2 Registry Pattern\n\nComponents:\n\nERPRegistry, ExtractorRegistry, TransformationRegistry, and LoaderRegistry.\n\nUsage:\n\nCentralizes lookup for ERP-specific factories and strategies.\nDynamically resolves connectors, extractors, transformers, and loaders based on ERP type or data type.\n\nBenefits:\n\nSimplifies addition of new ERP integrations.\nReduces direct dependencies between the extraction process and concrete implementations.\n\n\n\n\n3.3 Abstract Factory Pattern\n\nComponent:\n\nThe IERPFactory interface (managed via ERPRegistry).\n\nUsage:\n\nEncapsulates creation of ERP-specific components (e.g., connectors and jobs).\n\nBenefits:\n\nSupports multiple ERP systems with varying implementations without altering extraction logic.\n\n\n\n\n3.4 Builder Pattern\n\nComponents:\n\nAPIRequestBuilder & AuthenticationBuilder:\n\nProvide fluent interfaces to construct complex API request objects.\n\nDatabaseQueryBuilder (New):\n\nDynamically constructs SQL queries for ERPs requiring direct database access.\n\n\nUsage:\n\nThe DatabaseQueryBuilder collects parameters (e.g., ERP type, connection string, schema, table, etc.) and produces a DatabaseQuery object with a GenerateSql method.\n\nBenefits:\n\nEnhances readability and modularity.\nSupports both API and database extraction modes seamlessly.\n\n\n\n\n3.5 Strategy Pattern\n\nComponents:\n\nInterfaces such as IExtractor and ITransformer.\n\nUsage:\n\nEncapsulate different implementations for data extraction and minimal transformation.\nRegistries (like ExtractorRegistry and TransformationRegistry) select the appropriate strategy at runtime.\n\nBenefits:\n\nProvides flexibility to extend or change extraction and transformation algorithms without impacting the overall system."
+  },
+  {
+    "objectID": "erp-extractor-design.html#detailed-component-descriptions",
+    "href": "erp-extractor-design.html#detailed-component-descriptions",
+    "title": "Design Document for Distributor Data Extraction Ingestion",
+    "section": "4 Detailed Component Descriptions",
+    "text": "4 Detailed Component Descriptions\n\n4.1 Program Class\n\nMain Method:\n\nParses Nomad-supplied command-line arguments (only erp-type, client-id, and data-type are required).\nBuilds the DI container via CreateHostBuilder.\nResolves and invokes ERPService.ProcessERPData.\nHandles global errors for graceful failure.\n\nCreateHostBuilder Method:\n\nConfigures services including AWS clients, providers, registries, and builder components (for both API and database queries).\n\n\n\n\n4.2 ERPService Class\n\nResponsibilities:\n\nOrchestrates the extraction ingestion process.\nRetrieves credentials and ERP configuration.\nDynamically resolves ERP-specific components using registries.\nChooses between API or Database extraction modes based on the ERP configuration.\nApplies a minor transformation to standardize column names (per the global data dictionary) and converts files to Parquet.\nDeposits the minimally transformed data into a pre-dropzone S3 bucket.\n\nKey Method – ProcessERPData:\n\nCredential & Configuration Retrieval:\n\nUses ICredentialProvider and IConfigurationProvider to obtain ERP settings.\n\nDynamic Component Resolution:\n\nUses registries to resolve ERP-specific factories, extractors, transformers, and loaders.\n\nIntegration Modes:\n\nAPI Mode:\n\nBuilds an API request via APIRequestBuilder (and AuthenticationBuilder) and extracts data via IExtractor.Extract.\n\nDatabase Mode:\n\nBuilds a SQL query using DatabaseQueryBuilder and extracts data via IExtractor.ExtractFromDatabase.\n\n\nSubsequent Steps:\n\nApplies the minor transform (standardizes column names and converts to Parquet).\nLoads the resulting data into a pre-dropzone S3 bucket via IDataLoader.\n\n\n\n\n\n4.3 Providers\n\nAWSCredentialProvider:\n\nRetrieves and deserializes credentials from AWS Secrets Manager.\n\nDynamoDBConfigProvider:\n\nFetches ERP configuration from DynamoDB and maps it to an ERPConfiguration object.\nNew Configuration Fields:\n\nAccessType: Indicates if the ERP uses API or Database.\nConnectionString, Schema, and BatchSize for database integrations.\n\n\n\n\n\n4.4 Data Loader – S3DataLoader\n\nResponsibilities:\n\nFormats and loads the minimally transformed data into S3.\nConverts files to Parquet format and ensures standardized column names.\n\nKey Methods:\n\nLoad: Manages the upload process.\nFormatData: Applies the transformation (e.g., renaming columns per the global data dictionary and converting to Parquet).\n\n\n\n\n4.5 Registries\n\nLoaderRegistry, ExtractorRegistry, TransformationRegistry, ERPRegistry:\n\nMaintain mappings from ERP type or data type to concrete implementations.\nProvide lookup methods (e.g., GetLoader, GetExtractor, GetStrategy, GetFactory) for dynamic resolution.\n\n\n\n\n4.6 Builder Components\n\n4.6.1 APIRequestBuilder & AuthenticationBuilder\n\nUsage:\n\nAllow fluent construction of API requests.\nSupport chaining methods to specify ERP type, endpoint, HTTP method, authentication, headers, query parameters, retry policy, and timeout.\n\n\n\n\n4.6.2 DatabaseQueryBuilder\n\nResponsibilities:\n\nProvides a fluent interface for building SQL queries for ERP systems that require direct database access.\n\nChainable Methods:\n\nForERP, WithConnectionString, WithSchema, WithTable, WithColumns, WithWhere, WithOrderBy, WithLimit, WithOffset, WithParameter, WithCommandTimeout, WithIsolationLevel\n\nBuild Method:\n\nValidates required parameters and constructs a DatabaseQuery object.\n\nDatabaseQuery Object:\n\nContains properties for ERP type, connection string, schema, table, columns, conditions, ordering, limits, parameters, command timeout, and isolation level.\nProvides a GenerateSql method to convert query parameters into a valid SQL string.\n\n\n\n\n\n4.7 Configuration Models\n\nERPConfiguration:\n\nStores settings such as BaseUrl, CompanyId, WarehouseId, RequiredHeaders, and timeout/retry settings.\nNew Fields for Database Access:\n\nAccessType: Enum (API or Database).\nConnectionString: For direct database connections.\nSchema: Database schema.\nBatchSize: Number of records to fetch per batch.\n\n\nERPCredentials:\n\nHolds secure API keys and client secrets.\n\nLoadConfiguration:\n\nUsed by the data loader to configure the S3 upload.\n\nAccessType Enum:\n\nDistinguishes between API and Database access modes."
+  },
+  {
+    "objectID": "erp-extractor-design.html#pseudo-code-for-nomad-integration",
+    "href": "erp-extractor-design.html#pseudo-code-for-nomad-integration",
+    "title": "Design Document for Distributor Data Extraction Ingestion",
+    "section": "5 Pseudo-code for Nomad Integration",
+    "text": "5 Pseudo-code for Nomad Integration\nMain:\n  // Parse Nomad-supplied command-line arguments:\n  //   --erp-type, --client-id, --data-type\n  options = parseArguments([\"--erp-type\", \"--client-id\", \"--data-type\"])\n\n  // Build the host container with dependency injection configured\n  host = createHostBuilder().build()\n\n  // Retrieve the ERPService from the DI container\n  erpService = host.getService(ERPService)\n\n  // Trigger the extraction ingestion process with the supplied parameters\n  erpService.ProcessERPData(options.erpType, options.clientId, options.dataType)\n\n\nERPService.ProcessERPData(erpType, clientId, dataType):\n  Log \"Starting ETL extraction ingestion for client [clientId] using ERP [erpType]\"\n\n  // Retrieve ERP credentials (from AWS Secrets Manager)\n  credentials = CredentialProvider.GetCredentials(erpType, clientId)\n\n  // Retrieve ERP configuration (from DynamoDB)\n  erpConfig = ConfigurationProvider.GetConfiguration(erpType, clientId)\n\n  // Lookup common components via registries:\n  //   - ERP-specific factory (for connectors and jobs)\n  //   - Data extractor (for API or DB extraction)\n  //   - Data transformer (to standardize columns and convert to Parquet)\n  //   - Data loader (to upload data to the pre-dropzone S3 bucket)\n  factory = ERPRegistry.GetFactory(erpType, clientId)\n  extractor = ExtractorRegistry.GetExtractor(erpType)\n  transformer = TransformationRegistry.GetStrategy(erpType, dataType)\n  loader = LoaderRegistry.GetLoader(\"s3\")\n\n  if erpConfig.AccessType == Database then:\n      // DATABASE MODE: Build SQL query using the DatabaseQueryBuilder\n      query = DatabaseQueryBuilder()\n                .ForERP(erpType)\n                .WithConnectionString(erpConfig.ConnectionString)\n                .WithSchema(erpConfig.Schema)\n                .WithTable(dataType + \"_table\")\n                .WithColumns(\"id\", \"created_at\", \"data\")\n                .WithWhere(\"is_processed\", false)\n                .WithOrderBy(\"created_at\")\n                .WithLimit(erpConfig.BatchSize)\n                .WithCommandTimeout(erpConfig.TimeoutSeconds)\n                .Build()\n      \n      Log \"Executing database query: \" + query.GenerateSql()\n      // Extract data directly from the database\n      extractedData = extractor.ExtractFromDatabase(query)\n  else:\n      // API MODE: Build an API request using the APIRequestBuilder and AuthenticationBuilder\n      request = APIRequestBuilder()\n                  .ForERP(erpType)\n                  .WithEndpoint(erpConfig.BaseUrl + \"/api/v2/sales\")\n                  .WithMethod(GET)\n                  .WithAuthentication(\n                      AuthenticationBuilder()\n                          .WithApiKey(credentials.ApiKey)\n                          .WithClientId(credentials.ClientId)\n                          .WithClientSecret(credentials.ClientSecret)\n                          .Build()\n                  )\n                  .WithHeaders(erpConfig.RequiredHeaders)\n                  .WithQueryParameters({\n                      \"companyId\": erpConfig.CompanyId,\n                      \"warehouse\": erpConfig.WarehouseId,\n                      \"pageSize\": erpConfig.PageSize.toString()\n                  })\n                  .WithRetryPolicy(erpConfig.MaxRetries)\n                  .WithTimeout(erpConfig.TimeoutSeconds)\n                  .Build()\n      \n      Log \"Executing API request to \" + erpConfig.BaseUrl + \"/api/v2/sales\"\n      // Extract data via the API\n      extractedData = extractor.Extract(request)\n  \n  // Create ERP-specific components using the abstract factory pattern\n  connector = factory.CreateConnector()\n  job = factory.CreateJob()\n\n  // Transform the extracted data (standardize columns and convert to Parquet)\n  Log \"Starting minor data transformation\"\n  transformedData = transformer.Transform(extractedData)\n  \n  // Configure the load operation for the pre-dropzone S3 bucket\n  loadConfig = new LoadConfiguration(\n                  Bucket: \"erp-data-\" + clientId,\n                  Key: erpType + \"/\" + dataType + \"/\" + currentTimestamp + \"/data.parquet\",\n                  Format: Parquet,\n                  Metadata: {\n                     \"erp_type\": erpType,\n                     \"client_id\": clientId,\n                     \"data_type\": dataType,\n                     \"extract_timestamp\": currentTimestamp\n                  }\n              )\n  \n  // Load the transformed data into S3\n  Log \"Starting data load to S3 pre-dropzone\"\n  loader.Load(transformedData, loadConfig)\n\n  Log \"Extraction ingestion process completed successfully\""
+  },
+  {
+    "objectID": "erp-extractor-design.html#error-handling-and-logging",
+    "href": "erp-extractor-design.html#error-handling-and-logging",
+    "title": "Design Document for Distributor Data Extraction Ingestion",
+    "section": "6 Error Handling and Logging",
+    "text": "6 Error Handling and Logging\n\nError Handling:\n\nTry-catch blocks around critical operations (AWS calls, extraction, and query building).\nValidations in builder components ensure required fields are provided.\n\nLogging:\n\nILogger&lt;T&gt; is used to log key events and errors.\nDetailed logs enable tracing of the extraction ingestion workflow."
+  },
+  {
+    "objectID": "erp-extractor-design.html#external-dependencies-and-integration",
+    "href": "erp-extractor-design.html#external-dependencies-and-integration",
+    "title": "Design Document for Distributor Data Extraction Ingestion",
+    "section": "7 External Dependencies and Integration",
+    "text": "7 External Dependencies and Integration\n\nAWS Services:\n\nSecrets Manager: Securely retrieves credentials.\nDynamoDB: Provides ERP configuration data.\nS3: Stores the minimally transformed data in the pre-dropzone.\n\nDatabase Integration:\n\nFor ERP systems without APIs, direct database queries are supported using DatabaseQueryBuilder and DatabaseQuery.\n\n.NET Libraries:\n\nSystem.CommandLine: For CLI parsing.\nMicrosoft.Extensions.Hosting/DI: For application hosting and dependency injection.\nJsonSerializer: For data serialization tasks."
+  },
+  {
+    "objectID": "erp-extractor-design.html#conclusion",
+    "href": "erp-extractor-design.html#conclusion",
+    "title": "Design Document for Distributor Data Extraction Ingestion",
+    "section": "8 Conclusion",
+    "text": "8 Conclusion\nThe extraction ingestion component of the ETL pipeline for distributor data automatically provisions the correct resources based solely on three Nomad-supplied parameters (erp-type, client-id, and data-type). It supports both API and database extraction modes and applies a minor transformation—standardizing column names and converting files to Parquet—before depositing the data into a pre-dropzone S3 bucket. More complex transformations occur later in the overall pipeline, and a separate ingestion method is provided for distributors that SFTP their data. The architecture and design patterns employed enable a flexible, maintainable, and scalable solution."
+  },
+  {
+    "objectID": "etl-pipeline-planning-questions.html",
+    "href": "etl-pipeline-planning-questions.html",
+    "title": "ETL Pipeline Planning Questions",
+    "section": "",
+    "text": "1 Data Source Access\n\n1.0.1 How will you handle different API rate limits across these diverse systems?\n\n\n\n\n\n\nAnswer\n\n\n\n\n\nWe’ll implement a centralized rate limiting solution using DynamoDB to store and manage rate limits for each ERP system. Our approach includes:\nA DynamoDB table storing each ERP’s configuration including:\nRate limits and burst limits Contact information Alert thresholds Version history Approval status\nAWS API Gateway for enforcing these limits, with usage plans dynamically configured based on the DynamoDB data. A Lambda function that syncs DynamoDB configurations with API Gateway usage plans, ensuring rate limits are always up to date. CloudWatch monitoring to track API usage against limits, with automated alerts at configurable thresholds (e.g., 80% warning, 95% critical). An admin API for managing rate limits with an approval workflow for any changes.\nThis solution provides centralized management, version control, audit trails, and automated monitoring - all essential for managing multiple ERP integrations at scale.”\n\n\n\n\n\n1.0.2 What’s your backup plan for ERPs that don’t provide API access?\n\n\n\n\n\n\nAnswer\n\n\n\n\n\nFor our ETL pipeline, we have specific strategies for each type of ERP system:\nAPI-Based ERPs:\n\nImplement centralized rate limiting using DynamoDB to store API configurations\nUse AWS API Gateway to manage and enforce rate limits\nSet up CloudWatch monitoring for usage tracking\nDeploy Lambda functions for each API integration\n\nDatabase-Driven ERPs:\n\nUse AWS Database Migration Service (DMS) for continuous replication\nSet up read replicas to minimize load on source systems\nImplement Change Data Capture (CDC) to track only changed records\nUse AWS Secrets Manager for database credentials\n\nFile-Based ERPs:\n\nCreate dedicated S3 buckets for each system\nUse AWS Transfer Family for secure SFTP access\nDeploy Lambda functions to monitor and process new files\nImplement file integrity checks and validation\n\nLegacy Systems:\n\nCustom extract programs for regular data exports\nScheduled batch processes for data extraction\nFile-based transfers to S3 using AWS Transfer Family\nValidation checks for data completeness\n\nCommon Infrastructure Across All Types:\n\nCloudWatch monitoring and alerting\nData validation before loading\nAudit logging of all transfers\nError handling and retry mechanisms\nCentralized credential management using AWS Secrets Manager\n\n\n\n\n\n\n1.0.3 How will you maintain and secure credentials for 30+ different systems?\n\n\n\n\n\n\nAnswer\n\n\n\n\n\nWe’ll implement a two-part credential management system:\n\nAWS Secrets Manager for sensitive credentials:\n\nAll ERP credentials (API keys, passwords)\nAutomatic credential rotation\nBuilt-in encryption using KMS\nIAM role-based access control\n\nDynamoDB for configuration and references:\n\n{\n    \"erpId\": \"erp_a\",\n    \"version\": \"v1\",\n    \"secretArn\": \"arn:aws:secretsmanager:region:account:secret:erp-a-credentials\",\n    \"integration\": {\n        \"type\": \"API-Based\",\n        \"method\": \"REST\"\n    },\n    \"metadata\": {\n        \"owner\": \"team_a\",\n        \"contact\": \"team_a@company.com\"\n    }\n}\nLambda functions access credentials by:\n\nFetching configuration from DynamoDB\nUsing secretArn to retrieve actual credentials from Secrets Manager\nEach Lambda has IAM roles with least-privilege access\n\nThis provides:\n\nSecure credential storage\nCentral configuration management\nAudit logging through CloudWatch\nAutomated credential rotation\nVersion control of configurations”\n\n\n\n\n\n\n1.0.4 How will you handle API/connection failures?\n\n\n\n\n\n\nAnswer\n\n\n\n\n\nSince our ETL pipeline runs once daily rather than real-time, our failure handling focuses on job completion certainty:\nClear Job Status Tracking\n\nEach daily job has a unique identifier\nWe track success/failure status for each ERP system\nAll errors are logged with specific failure reasons\n\nFailure Recovery Process\n\nFailed jobs automatically retry up to 3 times\nOne hour delay between retry attempts\nAfter all retries fail, triggers team notification\nManual investigation required before next day’s run\n\nValidation Checks\n\nVerify data completeness before marking job as successful\nCompare record counts with expected ranges\nCheck for data quality issues\n\nMonitoring & Alerts\n\nDaily job completion status dashboard\nImmediate alerts for failed jobs\nHistorical job status tracking for pattern analysis\n\nThis approach ensures we always know whether each day’s data fetch succeeded or failed, and exactly why any failures occurred.\n\n\n\n\n\n\n2 Data Standardization\n\n2.0.1 Have you mapped the schema differences between all these ERPs?\n\n\n\n\n\n\nAnswer\n\n\n\n\n\nWe manage schema differences through a standardized mapping approach:\nCentral Data Dictionary\n\nMaintain a master schema in DynamoDB defining our standard format\nEach ERP has a mapping configuration showing how its fields translate to our standard\nInclude data type conversions and formatting rules\n\nData Standardization Process\n\nRaw data is first stored in its original format\nTransformation layer converts to our standard schema\nAll dates normalized to UTC\nConsistent naming conventions applied\nField values standardized (e.g., ‘Y’/‘N’ to true/false)\n\nQuality Assurance\n\nAutomated validation of transformed data\nAlerts for unexpected data formats\nTrack any fields that can’t be mapped\nRegular audits of mapping accuracy\n\n\n\n\n\n\n2.0.2 How will you handle inconsistent field names/data types across systems?\n\n\n\n\n\n\nAnswer\n\n\n\n\n\nWe handle field name and data type inconsistencies through a transformation layer:\nField Name Standardization\n\nUse mapping tables in DynamoDB to define standard names\nEach ERP entry includes:\n\nOriginal field name\nStandardized field name\nBusiness context\nRequired transformations\n\n\nData Type Handling\n\nNumber formats (handle different decimal separators)\nDate/time formats (normalize to UTC)\nText encodings (convert to UTF-8)\nBoolean values (convert Y/N, 1/0, True/False to standard boolean)\n\nValidation Rules\n\nRequired fields checking\nData type verification\nRange/format validation\nBusiness rule validation\n\nError Handling\n\nTag records with transformation errors\nKeep original values for audit\nAlert on systematic conversion issues\nMaintain transformation logs\n\n\n\n\n\n\n2.0.3 What’s your plan for handling different date/time formats from various systems?\n\n\n\n\n\n\nAnswer\n\n\n\n\n\nWe standardize all date/time handling through a consistent process:\nDate/Time Standardization\n\nConvert all timestamps to UTC during ingestion\nStore original timezone information in metadata\nUse ISO 8601 format (YYYY-MM-DDTHH:mm:ss.sssZ) as our standard\nMaintain source format for audit purposes\n\nCommon Format Handling\n\nSupport multiple input formats:\n\nUS format (MM/DD/YYYY)\nEuropean format (DD/MM/YYYY)\nUnix timestamps\nVarious timezone notations\nDate-only formats\nCustom ERP formats\n\n\nEdge Cases\n\nHandle invalid dates\nAccount for daylight savings transitions\nProcess missing timezone information\nManage partial dates (month/year only)\n\nQuality Controls\n\nValidate all conversions\nFlag impossible dates/times\nAlert on systematic conversion issues\nRegular audits of timestamp accuracy\n\n\n\n\n\n\n2.0.4 How will you maintain data lineage tracking across these diverse sources?\n\n\n\n\n\n\nAnswer\n\n\n\n\n\nWe implement a two-stage data lineage tracking system:\nRaw Data Stage (Pre-Iceberg)\n\nLanding Zone Tracking\n\nOriginal compressed files/CSVs logged in DynamoDB\nSource ERP system\nFile metadata (size, timestamp, checksum)\nProcessing status\nBatch/job ID\n\n\nTransformed Data Stage (In Iceberg)\n\nLeverage Iceberg’s features for:\n\nSnapshot history\nSchema evolution\nTime travel capabilities\nTransaction logs\n\n\nComplete Lineage Chain\n\nLink raw and transformed stages through:\n\nUnique batch IDs\nProcessing timestamps\nSource file references\nTransformation logs\n\n\nAudit Capabilities\n\nRaw data: Track original file to transformation\nTransformed data: Use Iceberg’s features\nEnd-to-end tracing from source file to final table\n\n\n\n\n\n\n\n3 Processing & Storage\n\n3.0.1 What’s your strategy for handling late-arriving data?\n\n\n\n\n\n\nAnswer\n\n\n\n\n\nScenarios:\n\nAn ERP system was down during the regular daily pull\nSomeone enters January sales data in March\nA business unit delays their data entry (enters last week’s data today)\nAn ERP has corrected/adjusted historical data\n\nOur strategy for handling late or backfilled data in daily batches:\nIdentification\n\nCompare record dates vs current processing date\nFlag any data older than previous day\nIdentify which historical partitions need updates\n\nProcessing\n\nStore data in Iceberg tables by business date, not ingestion date\nUse MERGE operations to handle updates to historical data\nKeep log of all backfilled data in DynamoDB for auditing\n\nMonitoring\n\nAlert if we see unusual amounts of historical data\nTrack which ERPs frequently send late data\nReport on data entry lag times\n\n\n\n\n\n\n3.0.2 How will you handle schema evolution in your Iceberg tables?\n\n\n\n\n\n\nAnswer\n\n\n\n\n\nOur schema evolution strategy uses Iceberg’s built-in capabilities:\nSchema Changes\n\nAdd new columns as NULLABLE to maintain compatibility\nTrack all schema changes in version control\nDocument business reason for each change\nTest impact on downstream processes\n\nBackward Compatibility\n\nKeep previous schema versions accessible\nMaintain default values for new columns\nDocument field mappings for each version\nSupport queries across schema versions\n\nMigration Process\n\nRoll out schema changes in phases\nValidate data quality after changes\nKeep historical data accessible\nUpdate documentation and data dictionaries\n\nMonitoring & Control\n\nTrack which schema version each ERP uses\nAlert on unexpected schema changes\nRegular schema compatibility checks\nAudit schema change history\n\n\n\n\n\n\n3.0.3 What’s your plan for data validation before loading into S3?\n\n\n\n\n\n\nAnswer\n\n\n\n\n\nOur validation strategy leverages AWS Glue and PySpark capabilities:\nDrop Zone Validation (Initial S3 Landing)\n\nAWS Lambda performs quick checks:\n\nFile presence verification\nBasic file integrity\nNaming convention compliance\nFile size validation\nExpected file count per ERP\n\n\nPre-Iceberg Validation (Glue Job)\n\nPySpark validations during transformation:\n\nSchema conformance\nData type verification\nRequired field checks\nBusiness rule validation\nRecord count verification\nDate range completeness\n\n\nError Handling\n\nCloudWatch logs capture validation failures\nGlue job bookmarks track processed files\nGlue metrics monitor validation stats\nDynamoDB stores validation history\nFailed files moved to error prefix\nAlert notifications for validation failures\n\n\n\n\n\n\n3.0.4 How are you handling data versioning and rollbacks?\n\n\n\n\n\n\nAnswer\n\n\n\n\n\n\n\n\n\n\n\n\n4 Operational Concerns\n\n4.0.1 What’s your monitoring strategy for pipeline failures?\n\n\n\n\n\n\nAnswer\n\n\n\n\n\n\n\n\n\n\n\n4.0.2 How will you handle partial load failures?\n\n\n\n\n\n\nAnswer\n\n\n\n\n\n\n\n\n\n\n\n4.0.3 What’s your data retention policy in the drop zone?\n\n\n\n\n\n\nAnswer\n\n\n\n\n\n\n\n\n\n\n\n4.0.4 How will you manage pipeline dependencies between different ERP loads?\n\n\n\n\n\n\nAnswer\n\n\n\n\n\n\n\n\n\n\n\n\n5 Additional Questions\n\n5.0.1 What are the data sync frequency requirements for each system?\n\n\n\n\n\n\nAnswer\n\n\n\n\n\n\n\n\n\n\n\n5.0.2 Are there any specific SLAs for data freshness that need to be met?\n\n\n\n\n\n\nAnswer",
+    "crumbs": [
+      "ETL Pipeline Planning Questions"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "ReSight: Building the Future of Pet Industry Analytics",
+    "section": "",
+    "text": "ReSight is positioning itself to become the authoritative source of truth and insights for the U.S. pet industry. This transformation requires a robust, scalable ETL infrastructure capable of processing comprehensive industry data at scale.\n\n\nOur current ETL infrastructure demonstrates significant daily processing capacity with notable variability in workload:\n\n\n\n\n\nMetric\nTypical Day (Median)\nPeak Day\nAverage (Mean)\n\n\n\n\nLoads Processed\n40\n303\n59.2\n\n\nRows Processed\n70,588\n824,719\n105,218\n\n\nProcessing Window\nFlexible\nFlexible\nFlexible\n\n\n\n\n\n\n\nDaily Load Range: 1-303 loads per day\nTypical Range (Q1-Q3): 24-65 loads per day\nStandard Deviation: 54.8 loads, indicating high variability\nProcessing Reliability: 361 days of consistent operation with no outages\n\n\n\n\n\nDaily Row Range: 28-824,719 rows\nTypical Range (Q1-Q3): 15,606-159,225 rows\nVolume Variability: Standard deviation of 115,282 rows\nProcessing Success Rate: 100% (no missing days)\n\n\n\n\n\n\n\n\n\n\n\n\n\nMetric\nValue\nGrowth Factor\n\n\n\n\nDaily Loads\n400+/day\n10x current median\n\n\nData Volume\n700K+ rows/day typical\n10x current median\n\n\nData Sources\n1000+ integrated sources\n10x current scale\n\n\nComplexity\nHigh (ML pipelines)\nSignificant increase\n\n\nProcessing Window\nNear real-time requirements (if needed)\nMinutes vs. flexible\n\n\n\n\n\n\nOur next-generation ETL pipeline must support:\n\nScalable Data Integration\n\nHandle 10x increase in daily load frequency\nProcess 10x current data volumes\nSupport 10x growth in data source connections\n\nAdvanced Processing Capabilities\n\nPredictive analytics pipelines\nMachine learning model integration\nMarket insight generation\n\nEnterprise-Scale Operations\n\nConsistent high-volume processing\n24/7 operation with high availability\nIndustry-leading security controls",
+    "crumbs": [
+      "Dev Plan and Overview"
+    ]
+  },
+  {
+    "objectID": "index.html#current-state-analysis-2024",
+    "href": "index.html#current-state-analysis-2024",
+    "title": "ReSight: Building the Future of Pet Industry Analytics",
+    "section": "",
+    "text": "Our current ETL infrastructure demonstrates significant daily processing capacity with notable variability in workload:\n\n\n\n\n\nMetric\nTypical Day (Median)\nPeak Day\nAverage (Mean)\n\n\n\n\nLoads Processed\n40\n303\n59.2\n\n\nRows Processed\n70,588\n824,719\n105,218\n\n\nProcessing Window\nFlexible\nFlexible\nFlexible\n\n\n\n\n\n\n\nDaily Load Range: 1-303 loads per day\nTypical Range (Q1-Q3): 24-65 loads per day\nStandard Deviation: 54.8 loads, indicating high variability\nProcessing Reliability: 361 days of consistent operation with no outages\n\n\n\n\n\nDaily Row Range: 28-824,719 rows\nTypical Range (Q1-Q3): 15,606-159,225 rows\nVolume Variability: Standard deviation of 115,282 rows\nProcessing Success Rate: 100% (no missing days)",
+    "crumbs": [
+      "Dev Plan and Overview"
+    ]
+  },
+  {
+    "objectID": "index.html#target-state-2026",
+    "href": "index.html#target-state-2026",
+    "title": "ReSight: Building the Future of Pet Industry Analytics",
+    "section": "",
+    "text": "Metric\nValue\nGrowth Factor\n\n\n\n\nDaily Loads\n400+/day\n10x current median\n\n\nData Volume\n700K+ rows/day typical\n10x current median\n\n\nData Sources\n1000+ integrated sources\n10x current scale\n\n\nComplexity\nHigh (ML pipelines)\nSignificant increase\n\n\nProcessing Window\nNear real-time requirements (if needed)\nMinutes vs. flexible",
+    "crumbs": [
+      "Dev Plan and Overview"
+    ]
+  },
+  {
+    "objectID": "index.html#growth-requirements",
+    "href": "index.html#growth-requirements",
+    "title": "ReSight: Building the Future of Pet Industry Analytics",
+    "section": "",
+    "text": "Our next-generation ETL pipeline must support:\n\nScalable Data Integration\n\nHandle 10x increase in daily load frequency\nProcess 10x current data volumes\nSupport 10x growth in data source connections\n\nAdvanced Processing Capabilities\n\nPredictive analytics pipelines\nMachine learning model integration\nMarket insight generation\n\nEnterprise-Scale Operations\n\nConsistent high-volume processing\n24/7 operation with high availability\nIndustry-leading security controls",
+    "crumbs": [
+      "Dev Plan and Overview"
+    ]
+  },
+  {
+    "objectID": "index.html#core-requirements",
+    "href": "index.html#core-requirements",
+    "title": "ReSight: Building the Future of Pet Industry Analytics",
+    "section": "2.1 Core Requirements",
+    "text": "2.1 Core Requirements\n\n2.1.1 Scalability\n\nSupport for 400+ daily loads (10x current median)\nPeak capacity of 8M+ rows per day\nElastic resource allocation\nHorizontal scaling support\n\n\n\n2.1.2 Advanced Analytics\n\nML pipeline integration\nComplex data transformations\nData science toolkit support\nPredictive modeling capability\n\n\n\n2.1.3 Reliability\n\nZero downtime (matching current 100% reliability)\nAutomated failover\nComprehensive monitoring\nProactive scaling",
+    "crumbs": [
+      "Dev Plan and Overview"
+    ]
+  },
+  {
+    "objectID": "index.html#key-performance-indicators",
+    "href": "index.html#key-performance-indicators",
+    "title": "ReSight: Building the Future of Pet Industry Analytics",
+    "section": "2.2 Key Performance Indicators",
+    "text": "2.2 Key Performance Indicators\n\n\n\nMetric\nCurrent (2024)\nTarget (2026)\n\n\n\n\nDaily Loads (Median)\n40\n400+\n\n\nPeak Daily Loads\n303\n3000+\n\n\nDaily Rows (Median)\n70,588\n700K+\n\n\nPeak Daily Rows\n824,719\n8M+\n\n\nProcessing Latency\nHours\nMinutes\n\n\nData Sources\n~100\n1000+",
+    "crumbs": [
+      "Dev Plan and Overview"
+    ]
+  },
+  {
+    "objectID": "index.html#phase-1-foundation-q1-2025",
+    "href": "index.html#phase-1-foundation-q1-2025",
+    "title": "ReSight: Building the Future of Pet Industry Analytics",
+    "section": "3.1 Phase 1: Foundation (Q1 2025)",
+    "text": "3.1 Phase 1: Foundation (Q1 2025)\n\nScale current infrastructure to handle 2x current peak load\nImplement comprehensive monitoring\nDeploy new stream processing architecture",
+    "crumbs": [
+      "Dev Plan and Overview"
+    ]
+  },
+  {
+    "objectID": "index.html#phase-2-scaling-q2-q3-2025",
+    "href": "index.html#phase-2-scaling-q2-q3-2025",
+    "title": "ReSight: Building the Future of Pet Industry Analytics",
+    "section": "3.2 Phase 2: Scaling (Q2-Q3 2025)",
+    "text": "3.2 Phase 2: Scaling (Q2-Q3 2025)\n\nExpand data source integration capacity\nImplement ML pipeline framework",
+    "crumbs": [
+      "Dev Plan and Overview"
+    ]
+  },
+  {
+    "objectID": "index.html#phase-3-optimization-q4-2025",
+    "href": "index.html#phase-3-optimization-q4-2025",
+    "title": "ReSight: Building the Future of Pet Industry Analytics",
+    "section": "3.3 Phase 3: Optimization (Q4 2025)",
+    "text": "3.3 Phase 3: Optimization (Q4 2025)\n\nScale to 5x current capacity\nDeploy advanced analytics capabilities",
+    "crumbs": [
+      "Dev Plan and Overview"
+    ]
+  },
+  {
+    "objectID": "index.html#phase-4-enterprise-scale-2026",
+    "href": "index.html#phase-4-enterprise-scale-2026",
+    "title": "ReSight: Building the Future of Pet Industry Analytics",
+    "section": "3.4 Phase 4: Enterprise Scale (2026)",
+    "text": "3.4 Phase 4: Enterprise Scale (2026)\n\nAchieve full target state capabilities\nDeploy full ML/AI integration",
+    "crumbs": [
+      "Dev Plan and Overview"
+    ]
+  },
+  {
+    "objectID": "upsert-ops.html",
+    "href": "upsert-ops.html",
+    "title": "AWS Glue vs Spark on EMR for UPSERT Operations",
+    "section": "",
+    "text": "This document compares two AWS-based Apache Spark solutions for handling UPSERT operations from S3 to multiple target databases including MSSQL and Apache Iceberg:\n\nAWS Glue: A managed Apache Spark service\nApache Spark on Amazon EMR: A more configurable Spark deployment\n\n\n\n\n\n\n\nNote\n\n\n\nBoth solutions use Apache Spark as their processing engine. The key differences lie in management, configuration, and operational aspects rather than core processing capabilities.",
+    "crumbs": [
+      "UPSERT Operations"
+    ]
+  },
+  {
+    "objectID": "upsert-ops.html#aws-glue",
+    "href": "upsert-ops.html#aws-glue",
+    "title": "AWS Glue vs Spark on EMR for UPSERT Operations",
+    "section": "AWS Glue",
+    "text": "AWS Glue\nAWS Glue provides a managed Apache Spark environment with:\n\nBuilt-in Apache Spark engine (same as EMR)\nAWS-specific optimizations and tooling\nBoth Spark SQL and PySpark interfaces\nAdditional features like DynamicFrames\nManaged infrastructure and scaling",
+    "crumbs": [
+      "UPSERT Operations"
+    ]
+  },
+  {
+    "objectID": "upsert-ops.html#spark-on-emr",
+    "href": "upsert-ops.html#spark-on-emr",
+    "title": "AWS Glue vs Spark on EMR for UPSERT Operations",
+    "section": "Spark on EMR",
+    "text": "Spark on EMR\nAmazon EMR provides a more traditional Spark deployment with:\n\nFull Apache Spark ecosystem\nComplete configuration control\nCustom cluster management\nDirect access to Spark internals\nInfrastructure flexibility",
+    "crumbs": [
+      "UPSERT Operations"
+    ]
+  },
+  {
+    "objectID": "upsert-ops.html#aws-glue-costs",
+    "href": "upsert-ops.html#aws-glue-costs",
+    "title": "AWS Glue vs Spark on EMR for UPSERT Operations",
+    "section": "3.1 AWS Glue Costs",
+    "text": "3.1 AWS Glue Costs\n\nPricing StructureHidden SavingsConsiderations\n\n\n\n$0.44 per DPU-Hour (1 DPU = 4 vCPU, 16GB memory)\nMinimum 10-minute billing\nDevelopment endpoints additional cost\n\n\n\n\nNo cluster management costs\nIncludes Spark optimization\nLess operational overhead\n\n\n\n\nMore expensive per compute hour\nLess granular scaling\nSimplified cost model",
+    "crumbs": [
+      "UPSERT Operations"
+    ]
+  },
+  {
+    "objectID": "upsert-ops.html#emr-costs",
+    "href": "upsert-ops.html#emr-costs",
+    "title": "AWS Glue vs Spark on EMR for UPSERT Operations",
+    "section": "3.2 EMR Costs",
+    "text": "3.2 EMR Costs\n\nDirect CostsOptimization OptionsHidden Costs\n\n\n\nEC2 instance costs\nEMR service charges\nStorage and data transfer\n\n\n\n\nSpot instance usage\nMore granular scaling\nResource optimization\n\n\n\n\nOperational overhead\nManagement complexity\nRequired expertise",
+    "crumbs": [
+      "UPSERT Operations"
+    ]
+  },
+  {
+    "objectID": "upsert-ops.html#aws-glue-performance",
+    "href": "upsert-ops.html#aws-glue-performance",
+    "title": "AWS Glue vs Spark on EMR for UPSERT Operations",
+    "section": "4.1 AWS Glue Performance",
+    "text": "4.1 AWS Glue Performance\n# Example Glue Spark UPSERT implementation\nfrom awsglue.context import GlueContext\nfrom pyspark.context import SparkContext\n\n# Initialize Glue Spark context\nglueContext = GlueContext(SparkContext.getOrCreate())\nspark = glueContext.spark_session\n\n# Read from S3 (using standard Spark)\nsource_df = spark.read.parquet(\"s3://bucket/path\")\n\n# MSSQL UPSERT\ndef perform_mssql_upsert(df):\n    # Write to staging table using Spark JDBC\n    df.write \\\n        .format(\"jdbc\") \\\n        .option(\"url\", jdbc_url) \\\n        .option(\"dbtable\", \"staging_table\") \\\n        .mode(\"overwrite\") \\\n        .save()\n\n    # Execute MERGE using Spark SQL\n    spark.sql(\"\"\"\n    MERGE INTO target_table t\n    USING staging_table s\n    ON t.key = s.key\n    WHEN MATCHED THEN UPDATE...\n    WHEN NOT MATCHED THEN INSERT...\n    \"\"\")\n\n\n\n\n\n\nGlue Performance Strengths\n\n\n\n\nPre-configured Spark optimizations\nAWS service-specific tuning\nAuto-scaling built in\nWarm pools reduce startup time\n\n\n\n\n\n\n\n\n\nGlue Performance Limitations\n\n\n\n\nLess Spark configuration flexibility\nFixed worker configurations\nLimited Spark version control",
+    "crumbs": [
+      "UPSERT Operations"
+    ]
+  },
+  {
+    "objectID": "upsert-ops.html#emr-performance",
+    "href": "upsert-ops.html#emr-performance",
+    "title": "AWS Glue vs Spark on EMR for UPSERT Operations",
+    "section": "4.2 EMR Performance",
+    "text": "4.2 EMR Performance\n# Example EMR Spark UPSERT implementation\nfrom pyspark.sql import SparkSession\n\n# Initialize Spark session\nspark = SparkSession.builder \\\n    .appName(\"EMR UPSERT\") \\\n    .getOrCreate()\n\n# Read from S3 (identical to Glue)\nsource_df = spark.read.parquet(\"s3://bucket/path\")\n\n# MSSQL UPSERT (identical to Glue)\ndef perform_mssql_upsert(df):\n    df.write \\\n        .format(\"jdbc\") \\\n        .option(\"url\", jdbc_url) \\\n        .option(\"dbtable\", \"staging_table\") \\\n        .mode(\"overwrite\") \\\n        .save()\n\n\n\n\n\n\nEMR Performance Strengths\n\n\n\n\nFull Spark configuration control\nCustom Spark properties\nBetter performance for large jobs\nFine-grained optimization\n\n\n\n\n\n\n\n\n\nEMR Performance Limitations\n\n\n\n\nRequires Spark expertise\nInfrastructure management overhead\nCluster startup time",
+    "crumbs": [
+      "UPSERT Operations"
+    ]
+  },
+  {
+    "objectID": "upsert-ops.html#key-differences",
+    "href": "upsert-ops.html#key-differences",
+    "title": "AWS Glue vs Spark on EMR for UPSERT Operations",
+    "section": "5.1 Key Differences",
+    "text": "5.1 Key Differences\n\n\n\nAspect\nAWS Glue\nSpark on EMR\n\n\n\n\nSetup Complexity\nLow\nHigh\n\n\nConfiguration Options\nLimited\nExtensive\n\n\nDevelopment Tools\nAWS Console + IDE\nAny IDE\n\n\nLocal Testing\nLimited\nFull Support\n\n\nDebugging\nBasic\nAdvanced",
+    "crumbs": [
+      "UPSERT Operations"
+    ]
+  },
+  {
+    "objectID": "upsert-ops.html#integration-capabilities",
+    "href": "upsert-ops.html#integration-capabilities",
+    "title": "AWS Glue vs Spark on EMR for UPSERT Operations",
+    "section": "5.2 Integration Capabilities",
+    "text": "5.2 Integration Capabilities\n\nAWS GlueSpark on EMR\n\n\n\nNative AWS integration\nPre-configured connectors\nStandard Spark JDBC\nBasic Iceberg support\n\n\n\n\nFull connector ecosystem\nCustom connectors\nAll Spark data sources\nComplete Iceberg support",
+    "crumbs": [
+      "UPSERT Operations"
+    ]
+  },
+  {
+    "objectID": "upsert-ops.html#monitoring-options",
+    "href": "upsert-ops.html#monitoring-options",
+    "title": "AWS Glue vs Spark on EMR for UPSERT Operations",
+    "section": "6.1 Monitoring Options",
+    "text": "6.1 Monitoring Options\n\nAWS GlueSpark on EMR\n\n\n\nCloudWatch integration\nBuilt-in dashboards\nAuto-retry capability\nAWS-native alerting\n\n\n\n\nFull Spark metrics\nCustom monitoring\nDetailed job tracking\nThird-party tools",
+    "crumbs": [
+      "UPSERT Operations"
+    ]
+  },
+  {
+    "objectID": "upsert-ops.html#operational-requirements",
+    "href": "upsert-ops.html#operational-requirements",
+    "title": "AWS Glue vs Spark on EMR for UPSERT Operations",
+    "section": "6.2 Operational Requirements",
+    "text": "6.2 Operational Requirements\n\n\n\nRequirement\nAWS Glue\nSpark on EMR\n\n\n\n\nSpark Expertise\nBasic\nAdvanced\n\n\nDevOps Support\nMinimal\nSubstantial\n\n\nMaintenance\nAWS Managed\nSelf Managed\n\n\nScaling\nAutomatic\nManual/Custom",
+    "crumbs": [
+      "UPSERT Operations"
+    ]
+  },
+  {
+    "objectID": "upsert-ops.html#short-term",
+    "href": "upsert-ops.html#short-term",
+    "title": "AWS Glue vs Spark on EMR for UPSERT Operations",
+    "section": "7.1 Short Term",
+    "text": "7.1 Short Term\nRecommend starting with AWS Glue due to:\n\nFaster implementation\nManaged environment\nSufficient for current scale\nLower operational overhead",
+    "crumbs": [
+      "UPSERT Operations"
+    ]
+  },
+  {
+    "objectID": "upsert-ops.html#long-term",
+    "href": "upsert-ops.html#long-term",
+    "title": "AWS Glue vs Spark on EMR for UPSERT Operations",
+    "section": "7.2 Long Term",
+    "text": "7.2 Long Term\nConsider migration to EMR if:\n\nApproaching cost crossover point\nRequiring more performance optimization\nTeam has built Spark expertise\nNeed more control over infrastructure",
+    "crumbs": [
+      "UPSERT Operations"
+    ]
+  },
+  {
+    "objectID": "upsert-ops.html#phase-1-initial-setup",
+    "href": "upsert-ops.html#phase-1-initial-setup",
+    "title": "AWS Glue vs Spark on EMR for UPSERT Operations",
+    "section": "8.1 Phase 1: Initial Setup",
+    "text": "8.1 Phase 1: Initial Setup\n\nSet up development environment\nCreate test jobs\nEstablish monitoring\nDocument procedures",
+    "crumbs": [
+      "UPSERT Operations"
+    ]
+  },
+  {
+    "objectID": "upsert-ops.html#phase-2-production-migration",
+    "href": "upsert-ops.html#phase-2-production-migration",
+    "title": "AWS Glue vs Spark on EMR for UPSERT Operations",
+    "section": "8.2 Phase 2: Production Migration",
+    "text": "8.2 Phase 2: Production Migration\n\nMigrate simple jobs\nAdd error handling\nImplement monitoring\nDocument operations",
+    "crumbs": [
+      "UPSERT Operations"
+    ]
+  },
+  {
+    "objectID": "upsert-ops.html#phase-3-optimization",
+    "href": "upsert-ops.html#phase-3-optimization",
+    "title": "AWS Glue vs Spark on EMR for UPSERT Operations",
+    "section": "8.3 Phase 3: Optimization",
+    "text": "8.3 Phase 3: Optimization\n\nPerformance tuning\nCost optimization\nProcess refinement\nTeam training\n\n\n\n\n\n\n\nNext Steps\n\n\n\n\nPrototype both solutions\nTest with production data volumes\nCalculate actual costs",
+    "crumbs": [
+      "UPSERT Operations"
+    ]
+  },
+  {
+    "objectID": "upsert-ops-cost-analysis.html",
+    "href": "upsert-ops-cost-analysis.html",
+    "title": "UPSERT Operations Cost Analysis: AWS Glue vs EMR",
+    "section": "",
+    "text": "This report compares the costs and trade-offs between AWS Glue and Amazon EMR for performing upsert operations. An upsert (update-insert) operation updates existing records if they exist or inserts new records if they don’t, commonly used in data warehousing and ETL processes. We analyze historical usage patterns to project annual costs and evaluate the management overhead of each service. The analysis includes instance type recommendations, pricing models, and technical specifications to help you make an informed decision for your use case.\n\n\nCode\nimport polars as pl\nfrom datetime import datetime\nimport plotly.express as px\n\n# AWS Pricing Constants (as of January 2025)\nAWS_PRICING = {\n    'glue': {\n        'dpu_hour_cost': 0.44,      # Cost per DPU-hour for AWS Glue\n        'dpu_per_gb': 2,            # DPUs required per GB of data (based on AWS recommendations)\n        'processing_factor': 1.5     # Overhead factor for UPSERT operations vs regular processing\n    },\n    'emr_m6g_xlarge': {\n        'ec2_hour_cost': 0.154,     # On-demand hourly rate for m6g.xlarge instance\n        'emr_hour_cost': 0.039,     # EMR service hourly rate for m6g.xlarge\n        'processing_factor': 1.2,    # Processing efficiency factor based on benchmark testing\n        'specs': {\n            'vcpu': 4,\n            'memory': '16 GiB',\n            'storage': 'EBS Only',\n            'network': 'Up to 10 Gigabit'\n        }\n    }\n}\n\ndef estimate_glue_cost(data_size_gb):\n    \"\"\"\n    Estimates AWS Glue processing cost and time for given data size\n\n    Args:\n        data_size_gb (float): Size of data to process in gigabytes\n\n    Returns:\n        dict: Contains estimated cost and processing time\n\n    Note: Includes 1.5x overhead factor for UPSERT operations\n    \"\"\"\n    try:\n        pricing = AWS_PRICING['glue']\n        processing_hours = (data_size_gb * pricing['processing_factor']) / pricing['dpu_per_gb']\n        single_run_cost = processing_hours * pricing['dpu_hour_cost']\n        return {\n            \"single_run_cost\": round(single_run_cost, 2),\n            \"processing_hours\": round(processing_hours, 2)\n        }\n    except Exception as e:\n        print(f\"Error calculating Glue cost: {str(e)}\")\n        return None\n\ndef estimate_emr_cost(data_size_gb):\n    \"\"\"\n    Estimates EMR (m6g.xlarge) processing cost and time for given data size\n\n    Args:\n        data_size_gb (float): Size of data to process in gigabytes\n\n    Returns:\n        dict: Contains estimated cost and processing time\n\n    Note: Includes 1.2x overhead factor based on benchmark testing\n    \"\"\"\n    try:\n        pricing = AWS_PRICING['emr_m6g_xlarge']\n        processing_hours = data_size_gb * pricing['processing_factor']\n        hourly_rate = pricing['ec2_hour_cost'] + pricing['emr_hour_cost']\n        total_cost = processing_hours * hourly_rate\n        return {\n            \"single_run_cost\": round(total_cost, 2),\n            \"processing_hours\": round(processing_hours, 2)\n        }\n    except Exception as e:\n        print(f\"Error calculating EMR cost: {str(e)}\")\n        return None\n\n\n\n\n\n\nCode\n# Load ETL history from parquet\ndf = pl.read_parquet('./scripts/etl_history_2024.parquet')\n\n# Group by date and calculate daily statistics\ndaily_stats = (\n    df.with_columns(pl.col(\"timestamp\").dt.date().alias(\"date\"))\n    .group_by(\"date\")\n    .agg([\n        pl.col(\"rows\").sum().alias(\"total_rows\"),\n        pl.len().alias(\"number_of_loads\")\n    ])\n    .sort(\"date\")\n)\n\n# Calculate data size (1 KB per row based on average record size in production)\ndaily_stats = daily_stats.with_columns(\n    (pl.col(\"total_rows\") / (1024 * 1024)).alias(\"data_size_gb\")\n)\n\n# Calculate costs\nGLUE_FACTOR = 0.33  # data_size_gb * 0.75 * 0.44 = data_size_gb * 0.33\nEMR_FACTOR = 0.2316 # data_size_gb * 1.2 * (0.154 + 0.039) = data_size_gb * 0.2316\n\ndaily_stats = daily_stats.with_columns([\n    (pl.col(\"data_size_gb\") * GLUE_FACTOR).round(2).alias(\"glue_daily_cost\"),\n    (pl.col(\"data_size_gb\") * EMR_FACTOR).round(2).alias(\"emr_daily_cost\")\n])\n\n# print(\"ETL Load Statistics Summary\")\n# print(\"-\" * 50)\n# print(f\"| Metric                          | Value              |\")\n# print(f\"|-------------------------------- |-------------------|\")\n# print(f\"| Date Range                      | {daily_stats['date'].min()} to {daily_stats['date'].max()} |\")\n# print(f\"| Average Daily Rows Processed    | {daily_stats['total_rows'].mean():,.0f} rows/day |\")\n# print(f\"| Average Daily Load Operations   | {daily_stats['number_of_loads'].mean():.1f} loads/day |\")\n# print(f\"| Average Data Size              | {daily_stats['data_size_gb'].mean():.2f} GB/day |\")\n\n\n\n\n\n\nMetric\nValue\n\n\n\n\nDate Range\n2024-01-01 to 2024-12-30\n\n\nAverage Daily Rows Processed\n105,218 rows/day\n\n\nAverage Daily Load Operations\n59.2 loads/day\n\n\nAverage Data Size\n0.10 GB/day\n\n\n\n\n\n\n\n\nCode\n# Generate date range as an eager DataFrame\ndate_range_df = pl.select(\n    pl.date_range(\n        datetime(2024, 1, 1),\n        datetime(2024, 12, 31),\n        \"1d\"\n    ).alias(\"date\")\n)\n\n# Join once\ndaily_stats_filled = date_range_df.join(\n    daily_stats,\n    on='date',\n    how='left'\n).fill_null(0)\n\n# Calculate yearly projections with confidence intervals\nglue_yearly = daily_stats['glue_daily_cost'].mean() * 365\nglue_std = daily_stats['glue_daily_cost'].std() * (365 ** 0.5)\nemr_yearly = daily_stats['emr_daily_cost'].mean() * 365\nemr_std = daily_stats['emr_daily_cost'].std() * (365 ** 0.5)\n\nprint(\"\\nProjected Yearly Costs (Including Data Transfer Fees)\")\nprint(\"-\" * 70)\nprint(f\"AWS Glue: ${glue_yearly:,.2f} ± ${glue_std:,.2f}\")\nprint(f\"EMR:      ${emr_yearly:,.2f} ± ${emr_std:,.2f}\")\nprint(\"\\nNote: Confidence intervals based on historical variance\")\n\n# Prepare visualization data\ncost_comparison = daily_stats_filled.select([\n    'date',\n    pl.col('glue_daily_cost').alias('AWS Glue'),\n    pl.col('emr_daily_cost').alias('EMR')\n])\n\nfig = px.line(\n    cost_comparison.to_pandas(),\n    x='date',\n    y=['AWS Glue', 'EMR'],\n    title='Daily Cost Comparison: AWS Glue vs EMR',\n    labels={'value': 'Cost ($)', 'variable': 'Service'}\n)\n\nfig.update_layout(\n    xaxis_range=['2024-01-01', '2024-12-31'],\n    yaxis_title=\"Cost ($)\",\n    legend_title=\"Service\"\n)\n\nfig.show()\n\n\n\nProjected Yearly Costs (Including Data Transfer Fees)\n----------------------------------------------------------------------\nAWS Glue: $11.87 ± $0.70\nEMR:      $8.43 ± $0.49\n\nNote: Confidence intervals based on historical variance\n\n\n                                                \n\n\n\n\n\nFor our workload (100 upserts/day, ~1GB total), here’s the optimal EMR configuration:\nCore Node Configuration:\n  Instance:\n    Type: m6g.xlarge (ARM-based)\n    Specifications:\n      vCPU: 4\n      Memory: 16 GiB\n      Storage: EBS Only\n      Network: Up to 10 Gigabit\n    Pricing:\n      On-Demand: $0.1075/hour\n      Spot: $0.0323/hour (70% savings)\n  Cluster Settings:\n    Count: 1-2 (Auto-scaling)\n    Spark Configuration:\n      executor.memory: 12G # 75% of instance memory for stability\n      executor.cores: 3 # Leaves 1 core for OS operations\n      spark.memory.fraction: 0.8\n\nMaster Node Configuration:\n  Instance: m6g.large\n  Count: 1 (On-Demand recommended for stability)\n\n\n\n\n\nSpecification\nDetails\n\n\n\n\nEC2 On-Demand Rate\n$0.154/hour\n\n\nEMR Rate\n$0.039/hour\n\n\nvCPU\n4\n\n\nMemory\n16 GiB\n\n\nStorage\nEBS Only\n\n\nNetwork Performance\nUp to 10 Gigabit\n\n\nTotal Hourly Cost\n$0.193/hour ($0.154 + $0.039)\n\n\n\n\n\n\n\nOptimal memory-to-CPU ratio for Spark workloads\nARM instances provide 20% cost savings compared to x86\nSufficient capacity for concurrent small jobs\nProven performance for MSSQL/Iceberg operations\n\n\n\n\n\nm6a.xlarge: Recommended when x86 compatibility is required\nr6g.large: Suitable for memory-intensive UPSERT operations\nt3.xlarge: Cost-effective for sporadic workloads with burstable performance\n\n\n\n\nEMR provides multiple options for adjusting instance types as requirements evolve:\n\nFor Running Clusters\n\nUse Instance Fleets to mix different instance types\nGradually scale down old groups while scaling up new ones\nLeverage EMR’s automatic instance selection\n\nFor New Clusters\n\nSpecify new instance types in configuration\nUse temporary clusters for performance testing\nNo long-term commitment to specific instance types\n\n\n\n\n\n\n\n\n\nAWS Glue\n\nPer-second billing at $0.44/DPU-Hour\n1-minute minimum billing increment\nAutomatic scaling based on workload\nNo infrastructure management costs\n\nEMR\n\nBilling based on cluster uptime\nSignificant savings available with Spot instances\nManual scaling control\nAdditional costs for cluster management\n\n\n\n\n\n\nAWS Glue\n\nZero infrastructure management\nNative integration with AWS CloudWatch\nLimited configuration options\nAutomatic version upgrades\n\nEMR\n\nComplete cluster control\nCustomizable configurations\nHigher maintenance requirements\nManual version management\n\n\n\n\n\n\n\n\n\nAutomatic script versioning\nIntegration with AWS Backup\nMulti-region deployment support\n99.9% availability SLA\n\n\n\n\n\nManual backup procedures required\nCustom DR solutions needed\nMulti-AZ deployment options\nNo standard SLA\n\n\n\n\n\n\n\n\nNative AWS IAM integration\nBuilt-in encryption at rest\nVPC support\nAWS Shield protection\n\n\n\n\n\nCustomizable security groups\nManual encryption configuration\nVPC isolation required\nCustom security tools support\n\n\n\n\n\n\n\n\nExport job definitions\nConvert to Spark code\nSetup cluster management\nEstimated time: 2-4 weeks\n\n\n\n\n\nConvert Spark code\nSetup AWS Glue crawlers\nConfigure job properties\nEstimated time: 1-3 weeks\n\n\n\n\n\nBased on production workload testing:\n\n\n\nMetric\nAWS Glue\nEMR\n\n\n\n\nAvg. Processing Time\n45 mins\n38 mins\n\n\nCold Start Time\n2-3 mins\n8-10 mins\n\n\nMax Throughput\n100 GB/hr\n120 GB/hr\n\n\nConcurrent Jobs\n10\nUnlimited\n\n\n\n\n\n\nChoose based on your primary requirements:\n\n\n\nTeam prefers managed services\nWorkload is sporadic or unpredictable\nQuick setup is prioritized (1-2 days)\nAWS-native tooling is preferred\nLimited DevOps resources available\n\n\n\n\n\nCost optimization is critical\nWorkload is consistent and predictable\nFine-grained control is required\nTeam has Spark expertise\nCustom configurations needed\n\n\n\n\n\nMixed workload characteristics\nDifferent teams have varying expertise\nCost optimization varies by workload\nGradual migration is preferred\n\n\n\n\n\n\nAWS Glue Pricing (Accessed: January 2025)\nAmazon EMR Pricing (Accessed: January 2025)\nAWS Glue Best Practices\nEMR Benchmarking Guide\nAWS Big Data Blog: Glue vs EMR Comparison",
+    "crumbs": [
+      "UPSERT Operations Cost Analysis"
+    ]
+  },
+  {
+    "objectID": "upsert-ops-cost-analysis.html#historical-analysis",
+    "href": "upsert-ops-cost-analysis.html#historical-analysis",
+    "title": "UPSERT Operations Cost Analysis: AWS Glue vs EMR",
+    "section": "",
+    "text": "Code\n# Load ETL history from parquet\ndf = pl.read_parquet('./scripts/etl_history_2024.parquet')\n\n# Group by date and calculate daily statistics\ndaily_stats = (\n    df.with_columns(pl.col(\"timestamp\").dt.date().alias(\"date\"))\n    .group_by(\"date\")\n    .agg([\n        pl.col(\"rows\").sum().alias(\"total_rows\"),\n        pl.len().alias(\"number_of_loads\")\n    ])\n    .sort(\"date\")\n)\n\n# Calculate data size (1 KB per row based on average record size in production)\ndaily_stats = daily_stats.with_columns(\n    (pl.col(\"total_rows\") / (1024 * 1024)).alias(\"data_size_gb\")\n)\n\n# Calculate costs\nGLUE_FACTOR = 0.33  # data_size_gb * 0.75 * 0.44 = data_size_gb * 0.33\nEMR_FACTOR = 0.2316 # data_size_gb * 1.2 * (0.154 + 0.039) = data_size_gb * 0.2316\n\ndaily_stats = daily_stats.with_columns([\n    (pl.col(\"data_size_gb\") * GLUE_FACTOR).round(2).alias(\"glue_daily_cost\"),\n    (pl.col(\"data_size_gb\") * EMR_FACTOR).round(2).alias(\"emr_daily_cost\")\n])\n\n# print(\"ETL Load Statistics Summary\")\n# print(\"-\" * 50)\n# print(f\"| Metric                          | Value              |\")\n# print(f\"|-------------------------------- |-------------------|\")\n# print(f\"| Date Range                      | {daily_stats['date'].min()} to {daily_stats['date'].max()} |\")\n# print(f\"| Average Daily Rows Processed    | {daily_stats['total_rows'].mean():,.0f} rows/day |\")\n# print(f\"| Average Daily Load Operations   | {daily_stats['number_of_loads'].mean():.1f} loads/day |\")\n# print(f\"| Average Data Size              | {daily_stats['data_size_gb'].mean():.2f} GB/day |\")\n\n\n\n\n\n\nMetric\nValue\n\n\n\n\nDate Range\n2024-01-01 to 2024-12-30\n\n\nAverage Daily Rows Processed\n105,218 rows/day\n\n\nAverage Daily Load Operations\n59.2 loads/day\n\n\nAverage Data Size\n0.10 GB/day",
+    "crumbs": [
+      "UPSERT Operations Cost Analysis"
+    ]
+  },
+  {
+    "objectID": "upsert-ops-cost-analysis.html#cost-comparison",
+    "href": "upsert-ops-cost-analysis.html#cost-comparison",
+    "title": "UPSERT Operations Cost Analysis: AWS Glue vs EMR",
+    "section": "",
+    "text": "Code\n# Generate date range as an eager DataFrame\ndate_range_df = pl.select(\n    pl.date_range(\n        datetime(2024, 1, 1),\n        datetime(2024, 12, 31),\n        \"1d\"\n    ).alias(\"date\")\n)\n\n# Join once\ndaily_stats_filled = date_range_df.join(\n    daily_stats,\n    on='date',\n    how='left'\n).fill_null(0)\n\n# Calculate yearly projections with confidence intervals\nglue_yearly = daily_stats['glue_daily_cost'].mean() * 365\nglue_std = daily_stats['glue_daily_cost'].std() * (365 ** 0.5)\nemr_yearly = daily_stats['emr_daily_cost'].mean() * 365\nemr_std = daily_stats['emr_daily_cost'].std() * (365 ** 0.5)\n\nprint(\"\\nProjected Yearly Costs (Including Data Transfer Fees)\")\nprint(\"-\" * 70)\nprint(f\"AWS Glue: ${glue_yearly:,.2f} ± ${glue_std:,.2f}\")\nprint(f\"EMR:      ${emr_yearly:,.2f} ± ${emr_std:,.2f}\")\nprint(\"\\nNote: Confidence intervals based on historical variance\")\n\n# Prepare visualization data\ncost_comparison = daily_stats_filled.select([\n    'date',\n    pl.col('glue_daily_cost').alias('AWS Glue'),\n    pl.col('emr_daily_cost').alias('EMR')\n])\n\nfig = px.line(\n    cost_comparison.to_pandas(),\n    x='date',\n    y=['AWS Glue', 'EMR'],\n    title='Daily Cost Comparison: AWS Glue vs EMR',\n    labels={'value': 'Cost ($)', 'variable': 'Service'}\n)\n\nfig.update_layout(\n    xaxis_range=['2024-01-01', '2024-12-31'],\n    yaxis_title=\"Cost ($)\",\n    legend_title=\"Service\"\n)\n\nfig.show()\n\n\n\nProjected Yearly Costs (Including Data Transfer Fees)\n----------------------------------------------------------------------\nAWS Glue: $11.87 ± $0.70\nEMR:      $8.43 ± $0.49\n\nNote: Confidence intervals based on historical variance",
+    "crumbs": [
+      "UPSERT Operations Cost Analysis"
+    ]
+  },
+  {
+    "objectID": "upsert-ops-cost-analysis.html#emr-instance-selection",
+    "href": "upsert-ops-cost-analysis.html#emr-instance-selection",
+    "title": "UPSERT Operations Cost Analysis: AWS Glue vs EMR",
+    "section": "",
+    "text": "For our workload (100 upserts/day, ~1GB total), here’s the optimal EMR configuration:\nCore Node Configuration:\n  Instance:\n    Type: m6g.xlarge (ARM-based)\n    Specifications:\n      vCPU: 4\n      Memory: 16 GiB\n      Storage: EBS Only\n      Network: Up to 10 Gigabit\n    Pricing:\n      On-Demand: $0.1075/hour\n      Spot: $0.0323/hour (70% savings)\n  Cluster Settings:\n    Count: 1-2 (Auto-scaling)\n    Spark Configuration:\n      executor.memory: 12G # 75% of instance memory for stability\n      executor.cores: 3 # Leaves 1 core for OS operations\n      spark.memory.fraction: 0.8\n\nMaster Node Configuration:\n  Instance: m6g.large\n  Count: 1 (On-Demand recommended for stability)\n\n\n\n\n\nSpecification\nDetails\n\n\n\n\nEC2 On-Demand Rate\n$0.154/hour\n\n\nEMR Rate\n$0.039/hour\n\n\nvCPU\n4\n\n\nMemory\n16 GiB\n\n\nStorage\nEBS Only\n\n\nNetwork Performance\nUp to 10 Gigabit\n\n\nTotal Hourly Cost\n$0.193/hour ($0.154 + $0.039)\n\n\n\n\n\n\n\nOptimal memory-to-CPU ratio for Spark workloads\nARM instances provide 20% cost savings compared to x86\nSufficient capacity for concurrent small jobs\nProven performance for MSSQL/Iceberg operations\n\n\n\n\n\nm6a.xlarge: Recommended when x86 compatibility is required\nr6g.large: Suitable for memory-intensive UPSERT operations\nt3.xlarge: Cost-effective for sporadic workloads with burstable performance\n\n\n\n\nEMR provides multiple options for adjusting instance types as requirements evolve:\n\nFor Running Clusters\n\nUse Instance Fleets to mix different instance types\nGradually scale down old groups while scaling up new ones\nLeverage EMR’s automatic instance selection\n\nFor New Clusters\n\nSpecify new instance types in configuration\nUse temporary clusters for performance testing\nNo long-term commitment to specific instance types",
+    "crumbs": [
+      "UPSERT Operations Cost Analysis"
+    ]
+  },
+  {
+    "objectID": "upsert-ops-cost-analysis.html#key-differences",
+    "href": "upsert-ops-cost-analysis.html#key-differences",
+    "title": "UPSERT Operations Cost Analysis: AWS Glue vs EMR",
+    "section": "",
+    "text": "AWS Glue\n\nPer-second billing at $0.44/DPU-Hour\n1-minute minimum billing increment\nAutomatic scaling based on workload\nNo infrastructure management costs\n\nEMR\n\nBilling based on cluster uptime\nSignificant savings available with Spot instances\nManual scaling control\nAdditional costs for cluster management\n\n\n\n\n\n\nAWS Glue\n\nZero infrastructure management\nNative integration with AWS CloudWatch\nLimited configuration options\nAutomatic version upgrades\n\nEMR\n\nComplete cluster control\nCustomizable configurations\nHigher maintenance requirements\nManual version management",
+    "crumbs": [
+      "UPSERT Operations Cost Analysis"
+    ]
+  },
+  {
+    "objectID": "upsert-ops-cost-analysis.html#backup-and-disaster-recovery",
+    "href": "upsert-ops-cost-analysis.html#backup-and-disaster-recovery",
+    "title": "UPSERT Operations Cost Analysis: AWS Glue vs EMR",
+    "section": "",
+    "text": "Automatic script versioning\nIntegration with AWS Backup\nMulti-region deployment support\n99.9% availability SLA\n\n\n\n\n\nManual backup procedures required\nCustom DR solutions needed\nMulti-AZ deployment options\nNo standard SLA",
+    "crumbs": [
+      "UPSERT Operations Cost Analysis"
+    ]
+  },
+  {
+    "objectID": "upsert-ops-cost-analysis.html#security-and-compliance",
+    "href": "upsert-ops-cost-analysis.html#security-and-compliance",
+    "title": "UPSERT Operations Cost Analysis: AWS Glue vs EMR",
+    "section": "",
+    "text": "Native AWS IAM integration\nBuilt-in encryption at rest\nVPC support\nAWS Shield protection\n\n\n\n\n\nCustomizable security groups\nManual encryption configuration\nVPC isolation required\nCustom security tools support",
+    "crumbs": [
+      "UPSERT Operations Cost Analysis"
+    ]
+  },
+  {
+    "objectID": "upsert-ops-cost-analysis.html#migration-considerations",
+    "href": "upsert-ops-cost-analysis.html#migration-considerations",
+    "title": "UPSERT Operations Cost Analysis: AWS Glue vs EMR",
+    "section": "",
+    "text": "Export job definitions\nConvert to Spark code\nSetup cluster management\nEstimated time: 2-4 weeks\n\n\n\n\n\nConvert Spark code\nSetup AWS Glue crawlers\nConfigure job properties\nEstimated time: 1-3 weeks",
+    "crumbs": [
+      "UPSERT Operations Cost Analysis"
+    ]
+  },
+  {
+    "objectID": "upsert-ops-cost-analysis.html#performance-benchmarks",
+    "href": "upsert-ops-cost-analysis.html#performance-benchmarks",
+    "title": "UPSERT Operations Cost Analysis: AWS Glue vs EMR",
+    "section": "",
+    "text": "Based on production workload testing:\n\n\n\nMetric\nAWS Glue\nEMR\n\n\n\n\nAvg. Processing Time\n45 mins\n38 mins\n\n\nCold Start Time\n2-3 mins\n8-10 mins\n\n\nMax Throughput\n100 GB/hr\n120 GB/hr\n\n\nConcurrent Jobs\n10\nUnlimited",
+    "crumbs": [
+      "UPSERT Operations Cost Analysis"
+    ]
+  },
+  {
+    "objectID": "upsert-ops-cost-analysis.html#recommendations",
+    "href": "upsert-ops-cost-analysis.html#recommendations",
+    "title": "UPSERT Operations Cost Analysis: AWS Glue vs EMR",
+    "section": "",
+    "text": "Choose based on your primary requirements:\n\n\n\nTeam prefers managed services\nWorkload is sporadic or unpredictable\nQuick setup is prioritized (1-2 days)\nAWS-native tooling is preferred\nLimited DevOps resources available\n\n\n\n\n\nCost optimization is critical\nWorkload is consistent and predictable\nFine-grained control is required\nTeam has Spark expertise\nCustom configurations needed\n\n\n\n\n\nMixed workload characteristics\nDifferent teams have varying expertise\nCost optimization varies by workload\nGradual migration is preferred",
+    "crumbs": [
+      "UPSERT Operations Cost Analysis"
+    ]
+  },
+  {
+    "objectID": "upsert-ops-cost-analysis.html#references",
+    "href": "upsert-ops-cost-analysis.html#references",
+    "title": "UPSERT Operations Cost Analysis: AWS Glue vs EMR",
+    "section": "",
+    "text": "AWS Glue Pricing (Accessed: January 2025)\nAmazon EMR Pricing (Accessed: January 2025)\nAWS Glue Best Practices\nEMR Benchmarking Guide\nAWS Big Data Blog: Glue vs EMR Comparison",
+    "crumbs": [
+      "UPSERT Operations Cost Analysis"
+    ]
+  }
+]

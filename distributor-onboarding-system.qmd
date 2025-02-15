@@ -14,7 +14,7 @@ format:
     colorlinks: true
 jupyter: python3
 ---
-
+<!-- 
 # Overview
 
 This document outlines the implementation of a **self-service distributor onboarding system** that simplifies the process of integrating various **ERP systems** with our data pipeline. The system consists of:
@@ -65,23 +65,13 @@ This approach ensures **scalability, security, and ease of use** for non-technic
 | **Legacy Systems** | AS/400, Custom In-House Systems | DARTS, Samco Software |
 
 ### **Integration Workflow**
-```{mermaid}
-graph TD;
-    A[Distributor Logs into Portal] --> B[Selects ERP & Enters Credentials];
-    B --> C[Backend Validates ERP Connection];
-    C --> D[MiNiFi Configuration is Auto-Generated];
-    D --> E[Distributor Downloads & Installs MiNiFi];
-    E --> F[MiNiFi Extracts Data from ERP];
-    F --> G[MiNiFi Sends Data to NiFi];
-    G --> H[NiFi Routes Data to AWS S3];
-    H --> I[Data Available for Analytics & Reporting];
-```
+ -->
 
 
-## Expected Benefits
+<!-- ## Expected Benefits
 
 - **Simplified onboarding** – Non-technical distributors can self-register and integrate their ERP systems.  
 - **Automated ERP data extraction** – Reduces manual intervention.  
 - **Secure & scalable solution** – MiNiFi ensures local data security and retries failed transfers.  
-- **Cloud-ready architecture** – AWS S3 and NiFi provide a robust and extensible pipeline.  
+- **Cloud-ready architecture** – AWS S3 and NiFi provide a robust and extensible pipeline.   -->
 
