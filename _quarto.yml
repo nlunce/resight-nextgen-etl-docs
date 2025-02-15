@@ -22,6 +22,8 @@ website:
         href: upsert-ops.qmd
       - text: "UPSERT Operations Cost Analysis"
         href: upsert-ops-cost-analysis.qmd
+      - text: "Design Document for Distributor Data Extraction Ingestion"
+        href: erp-extractor-design.qmd
 
 
 
