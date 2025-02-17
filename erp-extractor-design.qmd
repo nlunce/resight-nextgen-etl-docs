@@ -36,6 +36,7 @@ The design detailed here pertains only to the **direct extraction ingestion** me
     - Resolves the primary extraction ingestion service (`ERPService`) from the DI container and triggers the extraction process.
   - **CreateHostBuilder Method:**  
     - Configures the host with AWS services, core providers, registries, and builder components.
+    - Configures `IHttpClientFactory` with resilience policies for API-based integrations.
 
 ### Extraction Ingestion Orchestration
 
@@ -43,6 +44,7 @@ The design detailed here pertains only to the **direct extraction ingestion** me
   - Acts as the orchestrator for the extraction ingestion process.
   - Retrieves credentials and configuration from AWS Secrets Manager and DynamoDB, respectively.
   - Dynamically resolves components for data extraction based on ERP type.
+  - Uses [**IHttpClientFactory**](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests#benefits-of-using-ihttpclientfactory) for managing HTTP connections in API mode.
   - Supports two extraction modes:
     - **API Mode:** For ERPs that expose APIs.
     - **Database Mode:** For ERPs that require direct database access.
@@ -62,6 +64,7 @@ The design detailed here pertains only to the **direct extraction ingestion** me
   - **System.CommandLine:** For command-line parsing.
   - **Microsoft.Extensions.Hosting & DI:** For hosting and dependency injection.
   - **System.Text.Json:** For JSON serialization/deserialization.
+  - **IHttpClientFactory:** For managing HttpClient instances in API extraction mode.
 
 ## Design Patterns Employed
 
@@ -69,6 +72,7 @@ The design detailed here pertains only to the **direct extraction ingestion** me
 - **Usage:**  
   - Decouples service construction from business logic.
   - Registers AWS clients, providers, registries, builder components, and the main extraction service in the DI container.
+  - Configures `IHttpClientFactory` and related services.
 - **Benefits:**  
   - Enhances testability and maintainability.
   - Promotes separation of concerns.
@@ -86,6 +90,7 @@ The design detailed here pertains only to the **direct extraction ingestion** me
 ### [Abstract Factory Pattern](https://refactoring.guru/design-patterns/abstract-factory)
 - **Component:**  
   - The `IERPFactory` interface (managed via `ERPRegistry`).
+  - `IHttpClientFactory` for HTTP client management.
 - **Usage:**  
   - Encapsulates creation of ERP-specific components (e.g., connectors and jobs).
 - **Benefits:**  
@@ -99,6 +104,7 @@ The design detailed here pertains only to the **direct extraction ingestion** me
     - Dynamically constructs SQL queries for ERPs requiring direct database access.
 - **Usage:**  
   - The `DatabaseQueryBuilder` collects parameters (e.g., ERP type, connection string, schema, table, etc.) and produces a `DatabaseQuery` object with a `GenerateSql` method.
+  - The `APIRequestBuilder` works with `IHttpClientFactory` to construct properly configured HTTP requests.
 - **Benefits:**  
   - Enhances readability and modularity.
   - Supports both API and database extraction modes seamlessly.
@@ -212,110 +218,136 @@ The design detailed here pertains only to the **direct extraction ingestion** me
 ## Pseudo-code for Nomad Integration
 
 ```python
+/// <summary>
+/// Entry point for the ERP data extraction and ingestion process.
+/// Processes command-line arguments from Nomad and orchestrates the ETL workflow.
+/// </summary>
 Main:
-  // Parse Nomad-supplied command-line arguments:
-  //   --erp-type, --client-id, --data-type
-  options = parseArguments(["--erp-type", "--client-id", "--data-type"])
+    // Parse Nomad-supplied command-line arguments:
+    //   --erp-type, --client-id, --data-type
+    options = parseArguments(["--erp-type", "--client-id", "--data-type"])
 
-  // Build the host container with dependency injection configured
-  host = createHostBuilder().build()
+    // Build the host container with dependency injection configured
+    host = createHostBuilder().build()
 
-  // Retrieve the ERPService from the DI container
-  erpService = host.getService(ERPService)
+    // Retrieve the ERPService from the DI container
+    erpService = host.getService(ERPService)
 
-  // Trigger the extraction ingestion process with the supplied parameters
-  erpService.ProcessERPData(options.erpType, options.clientId, options.dataType)
+    // Trigger the extraction ingestion process with the supplied parameters
+    erpService.ProcessERPData(options.erpType, options.clientId, options.dataType)
 
-
+/// <summary>
+/// Processes ERP data extraction and performs initial transformation.
+/// </summary>
+/// <param name="erpType">The type of ERP system to extract from</param>
+/// <param name="clientId">The client identifier</param>
+/// <param name="dataType">The type of data to extract</param>
+/// <remarks>
+/// This method handles both API and Database extraction modes. For API mode,
+/// it constructs appropriate API requests with authentication. For Database mode,
+/// it builds and executes SQL queries. In both cases, the extracted data is:
+/// 1. Minimally transformed (column standardization)
+/// 2. Converted to Parquet format
+/// 3. Uploaded to a pre-dropzone S3 bucket
+/// </remarks>
 ERPService.ProcessERPData(erpType, clientId, dataType):
-  Log "Starting ETL extraction ingestion for client [clientId] using ERP [erpType]"
+    Log "Starting ETL extraction ingestion for client [clientId] using ERP [erpType]"
 
-  // Retrieve ERP credentials (from AWS Secrets Manager)
-  credentials = CredentialProvider.GetCredentials(erpType, clientId)
+    /// <summary>Retrieve credentials from AWS Secrets Manager</summary>
+    credentials = CredentialProvider.GetCredentials(erpType, clientId)
 
-  // Retrieve ERP configuration (from DynamoDB)
-  erpConfig = ConfigurationProvider.GetConfiguration(erpType, clientId)
+    /// <summary>Retrieve configuration from DynamoDB</summary>
+    erpConfig = ConfigurationProvider.GetConfiguration(erpType, clientId)
 
-  // Lookup common components via registries:
-  //   - ERP-specific factory (for connectors and jobs)
-  //   - Data extractor (for API or DB extraction)
-  //   - Data transformer (to standardize columns and convert to Parquet)
-  //   - Data uploader (to upload data to the pre-dropzone S3 bucket)
-  factory = ERPRegistry.GetFactory(erpType, clientId)
-  extractor = ExtractorRegistry.GetExtractor(erpType)
-  transformer = TransformationRegistry.GetStrategy(erpType, dataType)
-  uploader = UploaderRegistry.GetUploader("s3")
+    /// <summary>
+    /// Lookup common components via registries:
+    /// - ERP-specific factory (for connectors and jobs)
+    /// - Data extractor (for API or DB extraction)
+    /// - Data transformer (to standardize columns and convert to Parquet)
+    /// - Data uploader (to upload data to the pre-dropzone S3 bucket)
+    /// </summary>
+    factory = ERPRegistry.GetFactory(erpType, clientId)
+    extractor = ExtractorRegistry.GetExtractor(erpType)
+    transformer = TransformationRegistry.GetStrategy(erpType, dataType)
+    uploader = UploaderRegistry.GetUploader("s3")
 
-  if erpConfig.AccessType == Database then:
-      // DATABASE MODE: Build SQL query using the DatabaseQueryBuilder
-      query = DatabaseQueryBuilder()
-                .ForERP(erpType)
-                .WithConnectionString(erpConfig.ConnectionString)
-                .WithSchema(erpConfig.Schema)
-                .WithTable(dataType + "_table")
-                .WithColumns("id", "created_at", "data")
-                .WithWhere("is_processed", false)
-                .WithOrderBy("created_at")
-                .WithLimit(erpConfig.BatchSize)
-                .WithCommandTimeout(erpConfig.TimeoutSeconds)
-                .Build()
-      
-      Log "Executing database query: " + query.GenerateSql()
-      // Extract data directly from the database
-      extractedData = extractor.ExtractFromDatabase(query)
-  else:
-      // API MODE: Build an API request using the APIRequestBuilder and AuthenticationBuilder
-      request = APIRequestBuilder()
+    /// <summary>
+    /// Handle database extraction mode
+    /// Builds and executes SQL queries for direct database access
+    /// </summary>
+    if erpConfig.AccessType == Database then:
+        query = DatabaseQueryBuilder()
                   .ForERP(erpType)
-                  .WithEndpoint(erpConfig.BaseUrl + "/api/v2/sales")
-                  .WithMethod(GET)
-                  .WithAuthentication(
-                      AuthenticationBuilder()
-                          .WithApiKey(credentials.ApiKey)
-                          .WithClientId(credentials.ClientId)
-                          .WithClientSecret(credentials.ClientSecret)
-                          .Build()
-                  )
-                  .WithHeaders(erpConfig.RequiredHeaders)
-                  .WithQueryParameters({
-                      "companyId": erpConfig.CompanyId,
-                      "warehouse": erpConfig.WarehouseId,
-                      "pageSize": erpConfig.PageSize.toString()
-                  })
-                  .WithRetryPolicy(erpConfig.MaxRetries)
-                  .WithTimeout(erpConfig.TimeoutSeconds)
+                  .WithConnectionString(erpConfig.ConnectionString)
+                  .WithSchema(erpConfig.Schema)
+                  .WithTable(dataType + "_table")
+                  .WithColumns("id", "created_at", "data")
+                  .WithWhere("is_processed", false)
+                  .WithOrderBy("created_at")
+                  .WithLimit(erpConfig.BatchSize)
+                  .WithCommandTimeout(erpConfig.TimeoutSeconds)
                   .Build()
-      
-      Log "Executing API request to " + erpConfig.BaseUrl + "/api/v2/sales"
-      // Extract data via the API
-      extractedData = extractor.Extract(request)
-  
-  // Create ERP-specific components using the abstract factory pattern
-  connector = factory.CreateConnector()
-  job = factory.CreateJob()
+        
+        Log "Executing database query: " + query.GenerateSql()
+        extractedData = extractor.ExtractFromDatabase(query)
 
-  // Transform the extracted data (standardize columns and convert to Parquet)
-  Log "Starting minor data transformation"
-  transformedData = transformer.Transform(extractedData)
-  
-  // Configure the upload operation for the pre-dropzone S3 bucket
-  uploadConfig = new UploadConfiguration(
-                  Bucket: "erp-data-" + clientId,
-                  Key: erpType + "/" + dataType + "/" + currentTimestamp + "/data.parquet",
-                  Format: Parquet,
-                  Metadata: {
-                     "erp_type": erpType,
-                     "client_id": clientId,
-                     "data_type": dataType,
-                     "extract_timestamp": currentTimestamp
-                  }
-              )
-  
-  // Upload the transformed data into S3
-  Log "Starting data upload to S3 pre-dropzone"
-  uploader.Upload(transformedData, uploadConfig)
+    /// <summary>
+    /// Handle API extraction mode
+    /// Constructs and executes authenticated API requests
+    /// </summary>
+    else:
+        request = APIRequestBuilder()
+                    .ForERP(erpType)
+                    .WithEndpoint(erpConfig.BaseUrl + "/api/v2/sales")
+                    .WithMethod(GET)
+                    .WithAuthentication(
+                        AuthenticationBuilder()
+                            .WithApiKey(credentials.ApiKey)
+                            .WithClientId(credentials.ClientId)
+                            .WithClientSecret(credentials.ClientSecret)
+                            .Build()
+                    )
+                    .WithHeaders(erpConfig.RequiredHeaders)
+                    .WithQueryParameters({
+                        "companyId": erpConfig.CompanyId,
+                        "warehouse": erpConfig.WarehouseId,
+                        "pageSize": erpConfig.PageSize.toString()
+                    })
+                    .WithRetryPolicy(erpConfig.MaxRetries)
+                    .WithTimeout(erpConfig.TimeoutSeconds)
+                    .Build()
+        
+        Log "Executing API request to " + erpConfig.BaseUrl + "/api/v2/sales"
+        extractedData = extractor.Extract(request)
+    
+    /// <summary>Create ERP-specific components using the abstract factory pattern</summary>
+    connector = factory.CreateConnector()
+    job = factory.CreateJob()
 
-  Log "Extraction ingestion process completed successfully"
+    /// <summary>Transform the extracted data (standardize columns and convert to Parquet)</summary>
+    Log "Starting minor data transformation"
+    transformedData = transformer.Transform(extractedData)
+    
+    /// <summary>
+    /// Configure and execute the S3 upload operation
+    /// Data is stored in a pre-dropzone bucket with standardized path structure
+    /// </summary>
+    uploadConfig = new UploadConfiguration(
+                    Bucket: "erp-data-" + clientId,
+                    Key: erpType + "/" + dataType + "/" + currentTimestamp + "/data.parquet",
+                    Format: Parquet,
+                    Metadata: {
+                       "erp_type": erpType,
+                       "client_id": clientId,
+                       "data_type": dataType,
+                       "extract_timestamp": currentTimestamp
+                    }
+                )
+    
+    Log "Starting data upload to S3 pre-dropzone"
+    uploader.Upload(transformedData, uploadConfig)
+
+    Log "Extraction ingestion process completed successfully"
 ```
 
 ## Error Handling and Logging
@@ -326,6 +358,7 @@ ERPService.ProcessERPData(erpType, clientId, dataType):
   
 - **Logging:**
   - `ILogger<T>` is used to log key events and errors.
+  - HTTP request/response logging through `IHttpClientFactory`.
   - Detailed logs enable tracing of the extraction ingestion workflow.
 
 ## External Dependencies and Integration
@@ -337,6 +370,11 @@ ERPService.ProcessERPData(erpType, clientId, dataType):
   
 - **Database Integration:**
   - For ERP systems without APIs, direct database queries are supported using `DatabaseQueryBuilder` and `DatabaseQuery`.
+
+- **HTTP Integration:**
+  - Managed through `IHttpClientFactory` for API-based ERPs.
+  - Implements resilience patterns via Polly policies.
+  - Centralizes HTTP client configuration and lifecycle management.
   
 - **.NET Libraries:**
   - **System.CommandLine:** For CLI parsing.
