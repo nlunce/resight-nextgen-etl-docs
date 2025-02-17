@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.40">
+<meta name="generator" content="quarto-1.5.57">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -71,12 +71,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-8ea72dc5fed832574809a9c94082fbbb.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-33006b8e78fc72882bd7e51eace35532.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-4cc3d5fc47974437f3b1ccac7930ab22.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -212,7 +212,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#program-class" id="toc-program-class" class="nav-link" data-scroll-target="#program-class"><span class="header-section-number">4.1</span> Program Class</a></li>
   <li><a href="#erpservice-class" id="toc-erpservice-class" class="nav-link" data-scroll-target="#erpservice-class"><span class="header-section-number">4.2</span> ERPService Class</a></li>
   <li><a href="#providers" id="toc-providers" class="nav-link" data-scroll-target="#providers"><span class="header-section-number">4.3</span> Providers</a></li>
-  <li><a href="#data-loader-s3dataloader" id="toc-data-loader-s3dataloader" class="nav-link" data-scroll-target="#data-loader-s3dataloader"><span class="header-section-number">4.4</span> Data Loader – S3DataLoader</a></li>
+  <li><a href="#data-uploader-s3datauploader" id="toc-data-uploader-s3datauploader" class="nav-link" data-scroll-target="#data-uploader-s3datauploader"><span class="header-section-number">4.4</span> Data Uploader – S3DataUploader</a></li>
   <li><a href="#registries" id="toc-registries" class="nav-link" data-scroll-target="#registries"><span class="header-section-number">4.5</span> Registries</a></li>
   <li><a href="#builder-components" id="toc-builder-components" class="nav-link" data-scroll-target="#builder-components"><span class="header-section-number">4.6</span> Builder Components</a></li>
   <li><a href="#configuration-models" id="toc-configuration-models" class="nav-link" data-scroll-target="#configuration-models"><span class="header-section-number">4.7</span> Configuration Models</a></li>
@@ -260,12 +260,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="overview" class="level2" data-number="1">
 <h2 data-number="1" class="anchored" data-anchor-id="overview"><span class="header-section-number">1</span> Overview</h2>
-<p>This design document covers the extraction ingestion component of our ETL pipeline specifically for distributor data. In our architecture, distributors integrate with our system via two primary methods:</p>
+<p>This design document covers the extraction ingestion component of our ETL pipeline. In our architecture, distributors integrate with our system via two primary methods:</p>
 <ul>
-<li><strong>Direct Integration:</strong> Where our system automatically provisions the correct resources based solely on the three supplied parameters—<strong>erp-type</strong>, <strong>client-id</strong>, and <strong>data-type</strong>.</li>
+<li><strong>Direct Extraction Ingestion:</strong> Where our system automatically provisions the correct resources based solely on the three supplied parameters: <code>--erp-type</code>, <code>--client-id</code>, and <code>--data-type</code>.</li>
 <li><strong>SFTP Ingestion:</strong> Where distributors SFTP their data to our environment (this method is handled separately).</li>
 </ul>
-<p>The design detailed here pertains only to the direct extraction ingestion method. This process extracts distributor data and deposits it into a pre-dropzone S3 bucket. At this stage, a minor transformation is applied: column names are standardized according to our global data dictionary and the output files are converted to Parquet format. More complex transformations occur later in the pipeline.</p>
+<p>The design detailed here pertains only to the <strong>direct extraction ingestion</strong> method. This process extracts distributor data and deposits it into a pre-dropzone S3 bucket. At this stage, a minor transformation is applied: column names are standardized according to our global data dictionary and the output files are converted to Parquet format. More complex transformations occur later in the pipeline.</p>
 </section>
 <section id="system-architecture" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="system-architecture"><span class="header-section-number">2</span> System Architecture</h2>
@@ -317,7 +317,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul>
 <li><strong>IAmazonSecretsManager:</strong> Retrieves ERP credentials.</li>
 <li><strong>IAmazonDynamoDB:</strong> Fetches ERP configuration data.</li>
-<li><strong>IAmazonS3:</strong> Loads the extracted data into the pre-dropzone S3 bucket.</li>
+<li><strong>IAmazonS3:</strong> Uploads the extracted data into the pre-dropzone S3 bucket.</li>
 </ul></li>
 <li><strong>.NET Libraries:</strong>
 <ul>
@@ -331,7 +331,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="design-patterns-employed" class="level2" data-number="3">
 <h2 data-number="3" class="anchored" data-anchor-id="design-patterns-employed"><span class="header-section-number">3</span> Design Patterns Employed</h2>
 <section id="dependency-injection-di" class="level3" data-number="3.1">
-<h3 data-number="3.1" class="anchored" data-anchor-id="dependency-injection-di"><span class="header-section-number">3.1</span> Dependency Injection (DI)</h3>
+<h3 data-number="3.1" class="anchored" data-anchor-id="dependency-injection-di"><span class="header-section-number">3.1</span> <a href="https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection">Dependency Injection (DI)</a></h3>
 <ul>
 <li><strong>Usage:</strong>
 <ul>
@@ -346,16 +346,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 </section>
 <section id="registry-pattern" class="level3" data-number="3.2">
-<h3 data-number="3.2" class="anchored" data-anchor-id="registry-pattern"><span class="header-section-number">3.2</span> Registry Pattern</h3>
+<h3 data-number="3.2" class="anchored" data-anchor-id="registry-pattern"><span class="header-section-number">3.2</span> <a href="https://www.geeksforgeeks.org/registry-pattern/">Registry Pattern</a></h3>
 <ul>
 <li><strong>Components:</strong>
 <ul>
-<li><code>ERPRegistry</code>, <code>ExtractorRegistry</code>, <code>TransformationRegistry</code>, and <code>LoaderRegistry</code>.</li>
+<li><code>ERPRegistry</code>, <code>ExtractorRegistry</code>, <code>TransformationRegistry</code>, and <code>UploaderRegistry</code>.</li>
 </ul></li>
 <li><strong>Usage:</strong>
 <ul>
 <li>Centralizes lookup for ERP-specific factories and strategies.</li>
-<li>Dynamically resolves connectors, extractors, transformers, and loaders based on ERP type or data type.</li>
+<li>Dynamically resolves connectors, extractors, transformers, and uploaders based on ERP type or data type.</li>
 </ul></li>
 <li><strong>Benefits:</strong>
 <ul>
@@ -365,7 +365,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 </section>
 <section id="abstract-factory-pattern" class="level3" data-number="3.3">
-<h3 data-number="3.3" class="anchored" data-anchor-id="abstract-factory-pattern"><span class="header-section-number">3.3</span> Abstract Factory Pattern</h3>
+<h3 data-number="3.3" class="anchored" data-anchor-id="abstract-factory-pattern"><span class="header-section-number">3.3</span> <a href="https://refactoring.guru/design-patterns/abstract-factory">Abstract Factory Pattern</a></h3>
 <ul>
 <li><strong>Component:</strong>
 <ul>
@@ -382,7 +382,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 </section>
 <section id="builder-pattern" class="level3" data-number="3.4">
-<h3 data-number="3.4" class="anchored" data-anchor-id="builder-pattern"><span class="header-section-number">3.4</span> Builder Pattern</h3>
+<h3 data-number="3.4" class="anchored" data-anchor-id="builder-pattern"><span class="header-section-number">3.4</span> <a href="https://refactoring.guru/design-patterns/builder">Builder Pattern</a></h3>
 <ul>
 <li><strong>Components:</strong>
 <ul>
@@ -407,7 +407,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 </section>
 <section id="strategy-pattern" class="level3" data-number="3.5">
-<h3 data-number="3.5" class="anchored" data-anchor-id="strategy-pattern"><span class="header-section-number">3.5</span> Strategy Pattern</h3>
+<h3 data-number="3.5" class="anchored" data-anchor-id="strategy-pattern"><span class="header-section-number">3.5</span> <a href="https://refactoring.guru/design-patterns/strategy">Strategy Pattern</a></h3>
 <ul>
 <li><strong>Components:</strong>
 <ul>
@@ -463,7 +463,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul></li>
 <li><strong>Dynamic Component Resolution:</strong>
 <ul>
-<li>Uses registries to resolve ERP-specific factories, extractors, transformers, and loaders.</li>
+<li>Uses registries to resolve ERP-specific factories, extractors, transformers, and uploaders.</li>
 </ul></li>
 <li><strong>Integration Modes:</strong>
 <ul>
@@ -479,7 +479,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><strong>Subsequent Steps:</strong>
 <ul>
 <li>Applies the minor transform (standardizes column names and converts to Parquet).</li>
-<li>Loads the resulting data into a pre-dropzone S3 bucket via <code>IDataLoader</code>.</li>
+<li>Uploads the resulting data into a pre-dropzone S3 bucket via <code>IDataUploader</code>.</li>
 </ul></li>
 </ul></li>
 </ul>
@@ -502,17 +502,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul></li>
 </ul>
 </section>
-<section id="data-loader-s3dataloader" class="level3" data-number="4.4">
-<h3 data-number="4.4" class="anchored" data-anchor-id="data-loader-s3dataloader"><span class="header-section-number">4.4</span> Data Loader – S3DataLoader</h3>
+<section id="data-uploader-s3datauploader" class="level3" data-number="4.4">
+<h3 data-number="4.4" class="anchored" data-anchor-id="data-uploader-s3datauploader"><span class="header-section-number">4.4</span> Data Uploader – S3DataUploader</h3>
 <ul>
 <li><strong>Responsibilities:</strong>
 <ul>
-<li>Formats and loads the minimally transformed data into S3.</li>
+<li>Formats and uploads the minimally transformed data into S3.</li>
 <li>Converts files to Parquet format and ensures standardized column names.</li>
 </ul></li>
 <li><strong>Key Methods:</strong>
 <ul>
-<li><code>Load</code>: Manages the upload process.</li>
+<li><code>Upload</code>: Manages the upload process.</li>
 <li><code>FormatData</code>: Applies the transformation (e.g., renaming columns per the global data dictionary and converting to Parquet).</li>
 </ul></li>
 </ul>
@@ -520,10 +520,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="registries" class="level3" data-number="4.5">
 <h3 data-number="4.5" class="anchored" data-anchor-id="registries"><span class="header-section-number">4.5</span> Registries</h3>
 <ul>
-<li><strong>LoaderRegistry, ExtractorRegistry, TransformationRegistry, ERPRegistry:</strong>
+<li><strong>UploaderRegistry, ExtractorRegistry, TransformationRegistry, ERPRegistry:</strong>
 <ul>
 <li>Maintain mappings from ERP type or data type to concrete implementations.</li>
-<li>Provide lookup methods (e.g., <code>GetLoader</code>, <code>GetExtractor</code>, <code>GetStrategy</code>, <code>GetFactory</code>) for dynamic resolution.</li>
+<li>Provide lookup methods (e.g., <code>GetUploader</code>, <code>GetExtractor</code>, <code>GetStrategy</code>, <code>GetFactory</code>) for dynamic resolution.</li>
 </ul></li>
 </ul>
 </section>
@@ -580,9 +580,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul>
 <li>Holds secure API keys and client secrets.</li>
 </ul></li>
-<li><strong>LoadConfiguration:</strong>
+<li><strong>UploadConfiguration:</strong>
 <ul>
-<li>Used by the data loader to configure the S3 upload.</li>
+<li>Used by the data uploader to configure the S3 upload.</li>
 </ul></li>
 <li><strong>AccessType Enum:</strong>
 <ul>
@@ -621,11 +621,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="op">//</span>   <span class="op">-</span> ERP<span class="op">-</span>specific factory (<span class="cf">for</span> connectors <span class="kw">and</span> jobs)</span>
 <span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="op">//</span>   <span class="op">-</span> Data extractor (<span class="cf">for</span> API <span class="kw">or</span> DB extraction)</span>
 <span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="op">//</span>   <span class="op">-</span> Data transformer (to standardize columns <span class="kw">and</span> convert to Parquet)</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="op">//</span>   <span class="op">-</span> Data loader (to upload data to the pre<span class="op">-</span>dropzone S3 bucket)</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="op">//</span>   <span class="op">-</span> Data uploader (to upload data to the pre<span class="op">-</span>dropzone S3 bucket)</span>
 <span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  factory <span class="op">=</span> ERPRegistry.GetFactory(erpType, clientId)</span>
 <span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  extractor <span class="op">=</span> ExtractorRegistry.GetExtractor(erpType)</span>
 <span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  transformer <span class="op">=</span> TransformationRegistry.GetStrategy(erpType, dataType)</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  loader <span class="op">=</span> LoaderRegistry.GetLoader(<span class="st">"s3"</span>)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  uploader <span class="op">=</span> UploaderRegistry.GetUploader(<span class="st">"s3"</span>)</span>
 <span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> erpConfig.AccessType <span class="op">==</span> Database then:</span>
 <span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>      <span class="op">//</span> DATABASE MODE: Build SQL query using the DatabaseQueryBuilder</span>
@@ -679,8 +679,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>  Log <span class="st">"Starting minor data transformation"</span></span>
 <span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>  transformedData <span class="op">=</span> transformer.Transform(extractedData)</span>
 <span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>  <span class="op">//</span> Configure the load operation <span class="cf">for</span> the pre<span class="op">-</span>dropzone S3 bucket</span>
-<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>  loadConfig <span class="op">=</span> new LoadConfiguration(</span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>  <span class="op">//</span> Configure the upload operation <span class="cf">for</span> the pre<span class="op">-</span>dropzone S3 bucket</span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>  uploadConfig <span class="op">=</span> new UploadConfiguration(</span>
 <span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>                  Bucket: <span class="st">"erp-data-"</span> <span class="op">+</span> clientId,</span>
 <span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>                  Key: erpType <span class="op">+</span> <span class="st">"/"</span> <span class="op">+</span> dataType <span class="op">+</span> <span class="st">"/"</span> <span class="op">+</span> currentTimestamp <span class="op">+</span> <span class="st">"/data.parquet"</span>,</span>
 <span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>                  Format: Parquet,</span>
@@ -692,9 +692,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>                  }</span>
 <span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a>              )</span>
 <span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>  <span class="op">//</span> Load the transformed data into S3</span>
-<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>  Log <span class="st">"Starting data load to S3 pre-dropzone"</span></span>
-<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a>  loader.Load(transformedData, loadConfig)</span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>  <span class="op">//</span> Upload the transformed data into S3</span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>  Log <span class="st">"Starting data upload to S3 pre-dropzone"</span></span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a>  uploader.Upload(transformedData, uploadConfig)</span>
 <span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>  Log <span class="st">"Extraction ingestion process completed successfully"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
@@ -968,6 +968,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
   clipboard.on('success', onCopySuccess);
   if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
     const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
       text: getTextToCopy,
       container: window.document.getElementById('quarto-embedded-source-code-modal')
@@ -1078,6 +1080,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
+      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {

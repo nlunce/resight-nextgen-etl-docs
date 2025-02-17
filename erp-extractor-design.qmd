@@ -18,12 +18,12 @@ jupyter: python3
 
 ## Overview
 
-This design document covers the extraction ingestion component of our ETL pipeline specifically for distributor data. In our architecture, distributors integrate with our system via two primary methods:
+This design document covers the extraction ingestion component of our ETL pipeline. In our architecture, distributors integrate with our system via two primary methods:
 
-- **Direct Integration:** Where our system automatically provisions the correct resources based solely on the three supplied parameters—**erp-type**, **client-id**, and **data-type**.
+- **Direct Extraction Ingestion:** Where our system automatically provisions the correct resources based solely on the three supplied parameters: `--erp-type`, `--client-id`, and `--data-type`.
 - **SFTP Ingestion:** Where distributors SFTP their data to our environment (this method is handled separately).
 
-The design detailed here pertains only to the direct extraction ingestion method. This process extracts distributor data and deposits it into a pre-dropzone S3 bucket. At this stage, a minor transformation is applied: column names are standardized according to our global data dictionary and the output files are converted to Parquet format. More complex transformations occur later in the pipeline.
+The design detailed here pertains only to the **direct extraction ingestion** method. This process extracts distributor data and deposits it into a pre-dropzone S3 bucket. At this stage, a minor transformation is applied: column names are standardized according to our global data dictionary and the output files are converted to Parquet format. More complex transformations occur later in the pipeline.
 
 ## System Architecture
 
@@ -57,7 +57,7 @@ The design detailed here pertains only to the direct extraction ingestion method
 - **AWS Services:**
   - **IAmazonSecretsManager:** Retrieves ERP credentials.
   - **IAmazonDynamoDB:** Fetches ERP configuration data.
-  - **IAmazonS3:** Loads the extracted data into the pre-dropzone S3 bucket.
+  - **IAmazonS3:** Uploads the extracted data into the pre-dropzone S3 bucket.
 - **.NET Libraries:**
   - **System.CommandLine:** For command-line parsing.
   - **Microsoft.Extensions.Hosting & DI:** For hosting and dependency injection.
@@ -65,7 +65,7 @@ The design detailed here pertains only to the direct extraction ingestion method
 
 ## Design Patterns Employed
 
-### Dependency Injection (DI)
+### [Dependency Injection (DI)](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection)
 - **Usage:**  
   - Decouples service construction from business logic.
   - Registers AWS clients, providers, registries, builder components, and the main extraction service in the DI container.
@@ -73,17 +73,17 @@ The design detailed here pertains only to the direct extraction ingestion method
   - Enhances testability and maintainability.
   - Promotes separation of concerns.
 
-### Registry Pattern
+### [Registry Pattern](https://www.geeksforgeeks.org/registry-pattern/)
 - **Components:**  
-  - `ERPRegistry`, `ExtractorRegistry`, `TransformationRegistry`, and `LoaderRegistry`.
+  - `ERPRegistry`, `ExtractorRegistry`, `TransformationRegistry`, and `UploaderRegistry`.
 - **Usage:**  
   - Centralizes lookup for ERP-specific factories and strategies.
-  - Dynamically resolves connectors, extractors, transformers, and loaders based on ERP type or data type.
+  - Dynamically resolves connectors, extractors, transformers, and uploaders based on ERP type or data type.
 - **Benefits:**  
   - Simplifies addition of new ERP integrations.
   - Reduces direct dependencies between the extraction process and concrete implementations.
 
-### Abstract Factory Pattern
+### [Abstract Factory Pattern](https://refactoring.guru/design-patterns/abstract-factory)
 - **Component:**  
   - The `IERPFactory` interface (managed via `ERPRegistry`).
 - **Usage:**  
@@ -91,7 +91,7 @@ The design detailed here pertains only to the direct extraction ingestion method
 - **Benefits:**  
   - Supports multiple ERP systems with varying implementations without altering extraction logic.
 
-### Builder Pattern
+### [Builder Pattern](https://refactoring.guru/design-patterns/builder)
 - **Components:**  
   - **APIRequestBuilder & AuthenticationBuilder:**  
     - Provide fluent interfaces to construct complex API request objects.
@@ -103,7 +103,7 @@ The design detailed here pertains only to the direct extraction ingestion method
   - Enhances readability and modularity.
   - Supports both API and database extraction modes seamlessly.
 
-### Strategy Pattern
+### [Strategy Pattern](https://refactoring.guru/design-patterns/strategy)
 - **Components:**  
   - Interfaces such as `IExtractor` and `ITransformer`.
 - **Usage:**  
@@ -139,7 +139,7 @@ The design detailed here pertains only to the direct extraction ingestion method
   - **Credential & Configuration Retrieval:**  
     - Uses `ICredentialProvider` and `IConfigurationProvider` to obtain ERP settings.
   - **Dynamic Component Resolution:**  
-    - Uses registries to resolve ERP-specific factories, extractors, transformers, and loaders.
+    - Uses registries to resolve ERP-specific factories, extractors, transformers, and uploaders.
   - **Integration Modes:**
     - **API Mode:**  
       - Builds an API request via `APIRequestBuilder` (and `AuthenticationBuilder`) and extracts data via `IExtractor.Extract`.
@@ -147,7 +147,7 @@ The design detailed here pertains only to the direct extraction ingestion method
       - Builds a SQL query using `DatabaseQueryBuilder` and extracts data via `IExtractor.ExtractFromDatabase`.
   - **Subsequent Steps:**
     - Applies the minor transform (standardizes column names and converts to Parquet).
-    - Loads the resulting data into a pre-dropzone S3 bucket via `IDataLoader`.
+    - Uploads the resulting data into a pre-dropzone S3 bucket via `IDataUploader`.
 
 ### Providers
 
@@ -160,20 +160,20 @@ The design detailed here pertains only to the direct extraction ingestion method
     - `AccessType`: Indicates if the ERP uses API or Database.
     - `ConnectionString`, `Schema`, and `BatchSize` for database integrations.
 
-### Data Loader – S3DataLoader
+### Data Uploader – S3DataUploader
 
 - **Responsibilities:**
-  - Formats and loads the minimally transformed data into S3.
+  - Formats and uploads the minimally transformed data into S3.
   - Converts files to Parquet format and ensures standardized column names.
 - **Key Methods:**
-  - `Load`: Manages the upload process.
+  - `Upload`: Manages the upload process.
   - `FormatData`: Applies the transformation (e.g., renaming columns per the global data dictionary and converting to Parquet).
 
 ### Registries
 
-- **LoaderRegistry, ExtractorRegistry, TransformationRegistry, ERPRegistry:**  
+- **UploaderRegistry, ExtractorRegistry, TransformationRegistry, ERPRegistry:**  
   - Maintain mappings from ERP type or data type to concrete implementations.
-  - Provide lookup methods (e.g., `GetLoader`, `GetExtractor`, `GetStrategy`, `GetFactory`) for dynamic resolution.
+  - Provide lookup methods (e.g., `GetUploader`, `GetExtractor`, `GetStrategy`, `GetFactory`) for dynamic resolution.
 
 ### Builder Components
 
@@ -204,8 +204,8 @@ The design detailed here pertains only to the direct extraction ingestion method
     - `BatchSize`: Number of records to fetch per batch.
 - **ERPCredentials:**  
   - Holds secure API keys and client secrets.
-- **LoadConfiguration:**  
-  - Used by the data loader to configure the S3 upload.
+- **UploadConfiguration:**  
+  - Used by the data uploader to configure the S3 upload.
 - **AccessType Enum:**  
   - Distinguishes between `API` and `Database` access modes.
 
@@ -240,11 +240,11 @@ ERPService.ProcessERPData(erpType, clientId, dataType):
   //   - ERP-specific factory (for connectors and jobs)
   //   - Data extractor (for API or DB extraction)
   //   - Data transformer (to standardize columns and convert to Parquet)
-  //   - Data loader (to upload data to the pre-dropzone S3 bucket)
+  //   - Data uploader (to upload data to the pre-dropzone S3 bucket)
   factory = ERPRegistry.GetFactory(erpType, clientId)
   extractor = ExtractorRegistry.GetExtractor(erpType)
   transformer = TransformationRegistry.GetStrategy(erpType, dataType)
-  loader = LoaderRegistry.GetLoader("s3")
+  uploader = UploaderRegistry.GetUploader("s3")
 
   if erpConfig.AccessType == Database then:
       // DATABASE MODE: Build SQL query using the DatabaseQueryBuilder
@@ -298,8 +298,8 @@ ERPService.ProcessERPData(erpType, clientId, dataType):
   Log "Starting minor data transformation"
   transformedData = transformer.Transform(extractedData)
   
-  // Configure the load operation for the pre-dropzone S3 bucket
-  loadConfig = new LoadConfiguration(
+  // Configure the upload operation for the pre-dropzone S3 bucket
+  uploadConfig = new UploadConfiguration(
                   Bucket: "erp-data-" + clientId,
                   Key: erpType + "/" + dataType + "/" + currentTimestamp + "/data.parquet",
                   Format: Parquet,
@@ -311,9 +311,9 @@ ERPService.ProcessERPData(erpType, clientId, dataType):
                   }
               )
   
-  // Load the transformed data into S3
-  Log "Starting data load to S3 pre-dropzone"
-  loader.Load(transformedData, loadConfig)
+  // Upload the transformed data into S3
+  Log "Starting data upload to S3 pre-dropzone"
+  uploader.Upload(transformedData, uploadConfig)
 
   Log "Extraction ingestion process completed successfully"
 ```

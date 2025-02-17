@@ -1,0 +1,109 @@
+# Pet Product Classification System Documentation
+
+## Overview
+This project implements an automated product classification system that uses embedding-based similarity search and Large Language Models (LLMs) to categorize product descriptions. The system combines RAG (Retrieval Augmented Generation) techniques with both local Llama3.1 and gpt4 language models to provide structured classification outputs.
+
+### Basic Flow for POC
+1. Pull distributor description from csv file (csv file was create by querying from md.Sales joined with md.Items)
+2. Find similar master descriptions (from csv created from md.Items) then pull those with needed categories (species, type, lifestage, etc.)
+3. Create a prompt for LLM using distributor description and master descriptions with needed categories
+   - Looks prompt looks something like:
+     - We want you to classify a new pet product into these categories: (species, type, lifestage, etc.). Here is a new description: {new_description} and here are some previous classifications to use as reference: {list of master descriptions with categories}. Here are some common abbreviation to keep in mind {list of abbreviations}.
+4. Process LLM response
+5. Write results to a csv file
+
+### Core Classes
+1. **Config Management** (`Config`)
+   - Centralizes all configuration settings including model parameters, file paths, and required categories
+   - Handles both local (ollama) and cloud (OpenAI) model configurations
+
+2. **Data Processing Pipeline**
+   - **Text Preprocessing** (`PreprocessText`)
+     - Cleans and standardizes input text
+     - Generates embeddings for product descriptions
+   
+   - **Embedding Search** (`EmbeddingSearcher`)
+     - Uses FAISS for efficient similarity search for find similar master descriptions
+     - Maintains an index of product description embeddings
+     - Retrieves similar products for RAG
+
+   - **Formatting** (`Formatter`)
+     - Handles data formatting for model inputs
+     - Processes model outputs
+     - Records results
+
+3. **Core Processing** (`Process`)
+   - Orchestrates the entire classification workflow
+   - Manages model interactions
+   - Handles both batch and single-item processing
+
+4. **Output Structure** (`StructuredOutput`)
+   - Defines the schema for classification outputs
+   - Includes fields like Type, Formula, Species, etc.
+   - Uses Pydantic for data validation
+
+### Key Features
+- Supports both GPT and Llama models 
+- RAG-based classification using similar product examples
+- Efficient vector similarity search using FAISS
+- Batch processing capabilities
+- Structured output validation
+- Performance monitoring and logging
+- Error handling with Result type pattern
+
+## Workflow
+
+1. **Input Processing**
+   - Clean and standardize product descriptions
+   - Generate embeddings using SentenceTransformer
+
+2. **Similar Product Retrieval**
+   - Search for similar master products using FAISS
+   - Retrieve top-k similar products as examples
+
+3. **Classification**
+   - Format prompt with new description and similar examples
+   - Send to selected LLM (Llama or GPT)
+   - Parse and validate structured response
+
+4. **Output Processing**
+   - Record results and performance metrics
+   - Store in specified output format
+
+## Setup Requirements
+
+1. **Dependencies**
+   - OpenAI API (for GPT models)
+   - SentenceTransformer
+   - FAISS
+   - Pandas
+   - Pydantic
+   - Requests (for Llama API)
+
+2. **Configuration**
+   - Model selection (Llama or GPT)
+   - API keys and endpoints
+   - Embedding model parameters
+   - File paths for data and outputs
+
+## Usage Examples
+
+### Single Item Classification
+```python
+# Initialize processor
+process = LLMProcess(config)
+
+# num_examples defines how many master description examples we give the LLMs as reference data
+# Classify single description
+result = process.classify_description(new_description, num_examples=5)
+```
+
+### Batch Processing
+```python
+# new_description_df -> Pandas dataframe with many new descriptions
+# description_col -> the column in dataframe where descriptions are 
+description_col = 'ItemDescription'
+
+# Process multiple descriptions
+results = process.classify_batch(new_descriptions_df, description_col, num_examples=50)
+```
