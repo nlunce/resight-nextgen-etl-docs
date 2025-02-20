@@ -319,10 +319,6 @@ ERPService.ProcessERPData(erpType, clientId, dataType):
         
         Log "Executing API request to " + erpConfig.BaseUrl + "/api/v2/sales"
         extractedData = extractor.Extract(request)
-    
-    /// <summary>Create ERP-specific components using the abstract factory pattern</summary>
-    connector = factory.CreateConnector()
-    job = factory.CreateJob()
 
     /// <summary>Transform the extracted data (standardize columns and convert to Parquet)</summary>
     Log "Starting minor data transformation"
