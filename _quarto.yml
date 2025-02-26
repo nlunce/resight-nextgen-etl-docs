@@ -24,6 +24,10 @@ website:
         href: upsert-ops-cost-analysis.qmd
       - text: "Design Document for Distributor Data Extraction Ingestion"
         href: erp-extractor-design.qmd
+      - text: "Enhanced Design Document for Distributor Data Extraction Ingestion"
+        href: enhanced-erp-extractor-design.qmd
+      - text: "DPP Project Tasking Outline"
+        href: dpp-tasking-outline.qmd
 
 
 

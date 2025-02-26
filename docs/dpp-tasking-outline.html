@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Nathan Lunceford">
+<meta name="dcterms.date" content="2025-02-25">
+
+<title>DPP Project Tasking Outline – ReSight - Next Gen ETL</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./dpp-tasking-outline.html">DPP Project Tasking Outline</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ReSight - Next Gen ETL</a> 
+        <div class="sidebar-tools-main">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Dev Plan and Overview</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./etl-pipeline-planning-questions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">ETL Pipeline Planning Questions</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./distributor-onboarding-system.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Distributor Onboarding System</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./upsert-ops.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">UPSERT Operations</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./upsert-ops-cost-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">UPSERT Operations Cost Analysis</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./erp-extractor-design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Design Document for Distributor Data Extraction Ingestion</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./enhanced-erp-extractor-design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Enhanced Design Document for Distributor Data Extraction Ingestion</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dpp-tasking-outline.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">DPP Project Tasking Outline</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#project-overview" id="toc-project-overview" class="nav-link active" data-scroll-target="#project-overview">Project Overview</a></li>
+  <li><a href="#phase-1-foundation-and-core-infrastructure-weeks-1-2" id="toc-phase-1-foundation-and-core-infrastructure-weeks-1-2" class="nav-link" data-scroll-target="#phase-1-foundation-and-core-infrastructure-weeks-1-2">Phase 1: Foundation and Core Infrastructure (Weeks 1-2)</a>
+  <ul class="collapse">
+  <li><a href="#task-1.1-set-up-project-structure-and-development-environment" id="toc-task-1.1-set-up-project-structure-and-development-environment" class="nav-link" data-scroll-target="#task-1.1-set-up-project-structure-and-development-environment">Task 1.1: Set Up Project Structure and Development Environment</a></li>
+  <li><a href="#task-1.2-implement-basic-dependency-injection-framework" id="toc-task-1.2-implement-basic-dependency-injection-framework" class="nav-link" data-scroll-target="#task-1.2-implement-basic-dependency-injection-framework">Task 1.2: Implement Basic Dependency Injection Framework</a></li>
+  <li><a href="#task-1.3-implement-hashicorp-vault-integration" id="toc-task-1.3-implement-hashicorp-vault-integration" class="nav-link" data-scroll-target="#task-1.3-implement-hashicorp-vault-integration">Task 1.3: Implement HashiCorp Vault Integration</a></li>
+  <li><a href="#task-1.4-implement-ferretdb-integration" id="toc-task-1.4-implement-ferretdb-integration" class="nav-link" data-scroll-target="#task-1.4-implement-ferretdb-integration">Task 1.4: Implement FerretDB Integration</a></li>
+  <li><a href="#task-1.5-implement-aws-s3-integration" id="toc-task-1.5-implement-aws-s3-integration" class="nav-link" data-scroll-target="#task-1.5-implement-aws-s3-integration">Task 1.5: Implement AWS S3 Integration</a></li>
+  <li><a href="#task-1.6-implement-core-models-and-interfaces" id="toc-task-1.6-implement-core-models-and-interfaces" class="nav-link" data-scroll-target="#task-1.6-implement-core-models-and-interfaces">Task 1.6: Implement Core Models and Interfaces</a></li>
+  </ul></li>
+  <li><a href="#phase-2-core-functionality-implementation-weeks-3-4" id="toc-phase-2-core-functionality-implementation-weeks-3-4" class="nav-link" data-scroll-target="#phase-2-core-functionality-implementation-weeks-3-4">Phase 2: Core Functionality Implementation (Weeks 3-4)</a>
+  <ul class="collapse">
+  <li><a href="#task-2.1-implement-registry-pattern-components" id="toc-task-2.1-implement-registry-pattern-components" class="nav-link" data-scroll-target="#task-2.1-implement-registry-pattern-components">Task 2.1: Implement Registry Pattern Components</a></li>
+  <li><a href="#task-2.2-implement-api-mode-extraction-components" id="toc-task-2.2-implement-api-mode-extraction-components" class="nav-link" data-scroll-target="#task-2.2-implement-api-mode-extraction-components">Task 2.2: Implement API Mode Extraction Components</a></li>
+  <li><a href="#task-2.3-implement-database-mode-extraction-components" id="toc-task-2.3-implement-database-mode-extraction-components" class="nav-link" data-scroll-target="#task-2.3-implement-database-mode-extraction-components">Task 2.3: Implement Database Mode Extraction Components</a></li>
+  <li><a href="#task-2.4-implement-basic-transformation-logic" id="toc-task-2.4-implement-basic-transformation-logic" class="nav-link" data-scroll-target="#task-2.4-implement-basic-transformation-logic">Task 2.4: Implement Basic Transformation Logic</a></li>
+  <li><a href="#task-2.5-implement-erpservice-core-logic" id="toc-task-2.5-implement-erpservice-core-logic" class="nav-link" data-scroll-target="#task-2.5-implement-erpservice-core-logic">Task 2.5: Implement ERPService Core Logic</a></li>
+  <li><a href="#task-2.6-implement-command-line-interface" id="toc-task-2.6-implement-command-line-interface" class="nav-link" data-scroll-target="#task-2.6-implement-command-line-interface">Task 2.6: Implement Command-Line Interface</a></li>
+  </ul></li>
+  <li><a href="#phase-3-resilience-and-error-handling-weeks-5-6" id="toc-phase-3-resilience-and-error-handling-weeks-5-6" class="nav-link" data-scroll-target="#phase-3-resilience-and-error-handling-weeks-5-6">Phase 3: Resilience and Error Handling (Weeks 5-6)</a>
+  <ul class="collapse">
+  <li><a href="#task-3.1-implement-circuit-breaker-pattern" id="toc-task-3.1-implement-circuit-breaker-pattern" class="nav-link" data-scroll-target="#task-3.1-implement-circuit-breaker-pattern">Task 3.1: Implement Circuit Breaker Pattern</a></li>
+  <li><a href="#task-3.2-implement-bulkhead-pattern" id="toc-task-3.2-implement-bulkhead-pattern" class="nav-link" data-scroll-target="#task-3.2-implement-bulkhead-pattern">Task 3.2: Implement Bulkhead Pattern</a></li>
+  <li><a href="#task-3.3-implement-retry-strategies-with-exponential-backoff" id="toc-task-3.3-implement-retry-strategies-with-exponential-backoff" class="nav-link" data-scroll-target="#task-3.3-implement-retry-strategies-with-exponential-backoff">Task 3.3: Implement Retry Strategies with Exponential Backoff</a></li>
+  <li><a href="#task-3.4-implement-self-healing-procedures" id="toc-task-3.4-implement-self-healing-procedures" class="nav-link" data-scroll-target="#task-3.4-implement-self-healing-procedures">Task 3.4: Implement Self-Healing Procedures</a></li>
+  <li><a href="#task-3.5-enhance-error-handling-and-logging" id="toc-task-3.5-enhance-error-handling-and-logging" class="nav-link" data-scroll-target="#task-3.5-enhance-error-handling-and-logging">Task 3.5: Enhance Error Handling and Logging</a></li>
+  <li><a href="#task-3.6-implement-health-checks" id="toc-task-3.6-implement-health-checks" class="nav-link" data-scroll-target="#task-3.6-implement-health-checks">Task 3.6: Implement Health Checks</a></li>
+  </ul></li>
+  <li><a href="#phase-4-security-enhancements-weeks-7-8" id="toc-phase-4-security-enhancements-weeks-7-8" class="nav-link" data-scroll-target="#phase-4-security-enhancements-weeks-7-8">Phase 4: Security Enhancements (Weeks 7-8)</a>
+  <ul class="collapse">
+  <li><a href="#task-4.1-implement-credential-caching" id="toc-task-4.1-implement-credential-caching" class="nav-link" data-scroll-target="#task-4.1-implement-credential-caching">Task 4.1: Implement Credential Caching</a></li>
+  <li><a href="#task-4.2-implement-least-privilege-access" id="toc-task-4.2-implement-least-privilege-access" class="nav-link" data-scroll-target="#task-4.2-implement-least-privilege-access">Task 4.2: Implement Least Privilege Access</a></li>
+  <li><a href="#task-4.3-implement-field-level-encryption" id="toc-task-4.3-implement-field-level-encryption" class="nav-link" data-scroll-target="#task-4.3-implement-field-level-encryption">Task 4.3: Implement Field-Level Encryption</a></li>
+  <li><a href="#task-4.4-implement-data-masking" id="toc-task-4.4-implement-data-masking" class="nav-link" data-scroll-target="#task-4.4-implement-data-masking">Task 4.4: Implement Data Masking</a></li>
+  <li><a href="#task-4.5-implement-mutual-tls" id="toc-task-4.5-implement-mutual-tls" class="nav-link" data-scroll-target="#task-4.5-implement-mutual-tls">Task 4.5: Implement Mutual TLS</a></li>
+  <li><a href="#task-4.6-implement-audit-logging" id="toc-task-4.6-implement-audit-logging" class="nav-link" data-scroll-target="#task-4.6-implement-audit-logging">Task 4.6: Implement Audit Logging</a></li>
+  </ul></li>
+  <li><a href="#phase-5-data-quality-and-governance-weeks-9-10" id="toc-phase-5-data-quality-and-governance-weeks-9-10" class="nav-link" data-scroll-target="#phase-5-data-quality-and-governance-weeks-9-10">Phase 5: Data Quality and Governance (Weeks 9-10)</a>
+  <ul class="collapse">
+  <li><a href="#task-5.1-implement-data-contract-validator" id="toc-task-5.1-implement-data-contract-validator" class="nav-link" data-scroll-target="#task-5.1-implement-data-contract-validator">Task 5.1: Implement Data Contract Validator</a></li>
+  <li><a href="#task-5.2-implement-data-lineage-tracking" id="toc-task-5.2-implement-data-lineage-tracking" class="nav-link" data-scroll-target="#task-5.2-implement-data-lineage-tracking">Task 5.2: Implement Data Lineage Tracking</a></li>
+  <li><a href="#task-5.3-implement-data-catalog-integration" id="toc-task-5.3-implement-data-catalog-integration" class="nav-link" data-scroll-target="#task-5.3-implement-data-catalog-integration">Task 5.3: Implement Data Catalog Integration</a></li>
+  <li><a href="#task-5.4-implement-schema-evolution-support" id="toc-task-5.4-implement-schema-evolution-support" class="nav-link" data-scroll-target="#task-5.4-implement-schema-evolution-support">Task 5.4: Implement Schema Evolution Support</a></li>
+  <li><a href="#task-5.5-implement-data-quality-metrics-collection" id="toc-task-5.5-implement-data-quality-metrics-collection" class="nav-link" data-scroll-target="#task-5.5-implement-data-quality-metrics-collection">Task 5.5: Implement Data Quality Metrics Collection</a></li>
+  <li><a href="#task-5.6-implement-data-quality-reporting" id="toc-task-5.6-implement-data-quality-reporting" class="nav-link" data-scroll-target="#task-5.6-implement-data-quality-reporting">Task 5.6: Implement Data Quality Reporting</a></li>
+  </ul></li>
+  <li><a href="#phase-6-performance-optimization-weeks-11-12" id="toc-phase-6-performance-optimization-weeks-11-12" class="nav-link" data-scroll-target="#phase-6-performance-optimization-weeks-11-12">Phase 6: Performance Optimization (Weeks 11-12)</a>
+  <ul class="collapse">
+  <li><a href="#task-6.1-implement-incremental-extraction" id="toc-task-6.1-implement-incremental-extraction" class="nav-link" data-scroll-target="#task-6.1-implement-incremental-extraction">Task 6.1: Implement Incremental Extraction</a></li>
+  <li><a href="#task-6.2-implement-batch-processing" id="toc-task-6.2-implement-batch-processing" class="nav-link" data-scroll-target="#task-6.2-implement-batch-processing">Task 6.2: Implement Batch Processing</a></li>
+  <li><a href="#task-6.3-implement-data-compression" id="toc-task-6.3-implement-data-compression" class="nav-link" data-scroll-target="#task-6.3-implement-data-compression">Task 6.3: Implement Data Compression</a></li>
+  <li><a href="#task-6.4-implement-metrics-collection" id="toc-task-6.4-implement-metrics-collection" class="nav-link" data-scroll-target="#task-6.4-implement-metrics-collection">Task 6.4: Implement Metrics Collection</a></li>
+  <li><a href="#task-6.5-implement-performance-benchmarking" id="toc-task-6.5-implement-performance-benchmarking" class="nav-link" data-scroll-target="#task-6.5-implement-performance-benchmarking">Task 6.5: Implement Performance Benchmarking</a></li>
+  <li><a href="#task-6.6-optimize-resource-usage" id="toc-task-6.6-optimize-resource-usage" class="nav-link" data-scroll-target="#task-6.6-optimize-resource-usage">Task 6.6: Optimize Resource Usage</a></li>
+  </ul></li>
+  <li><a href="#phase-7-operational-excellence-weeks-13-14" id="toc-phase-7-operational-excellence-weeks-13-14" class="nav-link" data-scroll-target="#phase-7-operational-excellence-weeks-13-14">Phase 7: Operational Excellence (Weeks 13-14)</a>
+  <ul class="collapse">
+  <li><a href="#task-7.1-implement-feature-flag-management" id="toc-task-7.1-implement-feature-flag-management" class="nav-link" data-scroll-target="#task-7.1-implement-feature-flag-management">Task 7.1: Implement Feature Flag Management</a></li>
+  <li><a href="#task-7.2-implement-distributed-tracing" id="toc-task-7.2-implement-distributed-tracing" class="nav-link" data-scroll-target="#task-7.2-implement-distributed-tracing">Task 7.2: Implement Distributed Tracing</a></li>
+  <li><a href="#task-7.3-implement-openapi-documentation" id="toc-task-7.3-implement-openapi-documentation" class="nav-link" data-scroll-target="#task-7.3-implement-openapi-documentation">Task 7.3: Implement OpenAPI Documentation</a></li>
+  <li><a href="#task-7.4-create-operational-runbooks" id="toc-task-7.4-create-operational-runbooks" class="nav-link" data-scroll-target="#task-7.4-create-operational-runbooks">Task 7.4: Create Operational Runbooks</a></li>
+  <li><a href="#task-7.5-implement-gitops-configuration" id="toc-task-7.5-implement-gitops-configuration" class="nav-link" data-scroll-target="#task-7.5-implement-gitops-configuration">Task 7.5: Implement GitOps Configuration</a></li>
+  <li><a href="#task-7.6-implement-blue-green-deployment-support" id="toc-task-7.6-implement-blue-green-deployment-support" class="nav-link" data-scroll-target="#task-7.6-implement-blue-green-deployment-support">Task 7.6: Implement Blue-Green Deployment Support</a></li>
+  </ul></li>
+  <li><a href="#phase-8-integration-and-testing-weeks-15-16" id="toc-phase-8-integration-and-testing-weeks-15-16" class="nav-link" data-scroll-target="#phase-8-integration-and-testing-weeks-15-16">Phase 8: Integration and Testing (Weeks 15-16)</a>
+  <ul class="collapse">
+  <li><a href="#task-8.1-implement-integration-test-harness" id="toc-task-8.1-implement-integration-test-harness" class="nav-link" data-scroll-target="#task-8.1-implement-integration-test-harness">Task 8.1: Implement Integration Test Harness</a></li>
+  <li><a href="#task-8.2-implement-end-to-end-tests" id="toc-task-8.2-implement-end-to-end-tests" class="nav-link" data-scroll-target="#task-8.2-implement-end-to-end-tests">Task 8.2: Implement End-to-End Tests</a></li>
+  <li><a href="#task-8.3-implement-performance-tests" id="toc-task-8.3-implement-performance-tests" class="nav-link" data-scroll-target="#task-8.3-implement-performance-tests">Task 8.3: Implement Performance Tests</a></li>
+  <li><a href="#task-8.4-implement-security-tests" id="toc-task-8.4-implement-security-tests" class="nav-link" data-scroll-target="#task-8.4-implement-security-tests">Task 8.4: Implement Security Tests</a></li>
+  <li><a href="#task-8.5-implement-fault-injection-tests" id="toc-task-8.5-implement-fault-injection-tests" class="nav-link" data-scroll-target="#task-8.5-implement-fault-injection-tests">Task 8.5: Implement Fault Injection Tests</a></li>
+  <li><a href="#task-8.6-conduct-system-integration-testing" id="toc-task-8.6-conduct-system-integration-testing" class="nav-link" data-scroll-target="#task-8.6-conduct-system-integration-testing">Task 8.6: Conduct System Integration Testing</a></li>
+  </ul></li>
+  <li><a href="#phase-9-finalization-and-deployment-weeks-17-18" id="toc-phase-9-finalization-and-deployment-weeks-17-18" class="nav-link" data-scroll-target="#phase-9-finalization-and-deployment-weeks-17-18">Phase 9: Finalization and Deployment (Weeks 17-18)</a>
+  <ul class="collapse">
+  <li><a href="#task-9.1-finalize-documentation" id="toc-task-9.1-finalize-documentation" class="nav-link" data-scroll-target="#task-9.1-finalize-documentation">Task 9.1: Finalize Documentation</a></li>
+  <li><a href="#task-9.2-conduct-code-review-and-cleanup" id="toc-task-9.2-conduct-code-review-and-cleanup" class="nav-link" data-scroll-target="#task-9.2-conduct-code-review-and-cleanup">Task 9.2: Conduct Code Review and Cleanup</a></li>
+  <li><a href="#task-9.3-prepare-release-artifacts" id="toc-task-9.3-prepare-release-artifacts" class="nav-link" data-scroll-target="#task-9.3-prepare-release-artifacts">Task 9.3: Prepare Release Artifacts</a></li>
+  <li><a href="#task-9.4-set-up-monitoring-and-alerting" id="toc-task-9.4-set-up-monitoring-and-alerting" class="nav-link" data-scroll-target="#task-9.4-set-up-monitoring-and-alerting">Task 9.4: Set Up Monitoring and Alerting</a></li>
+  <li><a href="#task-9.5-conduct-deployment-rehearsal" id="toc-task-9.5-conduct-deployment-rehearsal" class="nav-link" data-scroll-target="#task-9.5-conduct-deployment-rehearsal">Task 9.5: Conduct Deployment Rehearsal</a></li>
+  <li><a href="#task-9.6-execute-production-deployment" id="toc-task-9.6-execute-production-deployment" class="nav-link" data-scroll-target="#task-9.6-execute-production-deployment">Task 9.6: Execute Production Deployment</a></li>
+  </ul></li>
+  <li><a href="#project-timeline-summary" id="toc-project-timeline-summary" class="nav-link" data-scroll-target="#project-timeline-summary">Project Timeline Summary</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="dpp-tasking-outline.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">DPP Project Tasking Outline</h1>
+<p class="subtitle lead">Structured Implementation Task List</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Nathan Lunceford </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">February 25, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="project-overview" class="level2">
+<h2 class="anchored" data-anchor-id="project-overview">Project Overview</h2>
+<p>This document outlines the implementation tasks for the enhanced Distributor Data Extraction Ingestion project. Each task is designed to be completed within 1-3 days and includes clear objectives, completion criteria, and time estimates.</p>
+</section>
+<section id="phase-1-foundation-and-core-infrastructure-weeks-1-2" class="level2">
+<h2 class="anchored" data-anchor-id="phase-1-foundation-and-core-infrastructure-weeks-1-2">Phase 1: Foundation and Core Infrastructure (Weeks 1-2)</h2>
+<section id="task-1.1-set-up-project-structure-and-development-environment" class="level3">
+<h3 class="anchored" data-anchor-id="task-1.1-set-up-project-structure-and-development-environment">Task 1.1: Set Up Project Structure and Development Environment</h3>
+<p><strong>Objective:</strong> Create the initial project structure and configure the development environment.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>Repository initialized with proper structure and README</li>
+<li>Solution structure created with defined projects and namespaces</li>
+<li>Docker Compose configuration for local development with HashiCorp Vault, FerretDB, and minio (S3 alternative)</li>
+<li>CI/CD pipeline templates defined</li>
+</ul>
+<p><strong>Estimated Time:</strong> 2 days</p>
+</section>
+<section id="task-1.2-implement-basic-dependency-injection-framework" class="level3">
+<h3 class="anchored" data-anchor-id="task-1.2-implement-basic-dependency-injection-framework">Task 1.2: Implement Basic Dependency Injection Framework</h3>
+<p><strong>Objective:</strong> Set up the DI container and register core services.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>Program.cs and CreateHostBuilder implemented</li>
+<li>Core service interfaces defined</li>
+<li>Basic DI container configuration with service registration</li>
+</ul>
+<p><strong>Estimated Time:</strong> 1 day</p>
+</section>
+<section id="task-1.3-implement-hashicorp-vault-integration" class="level3">
+<h3 class="anchored" data-anchor-id="task-1.3-implement-hashicorp-vault-integration">Task 1.3: Implement HashiCorp Vault Integration</h3>
+<p><strong>Objective:</strong> Create the Vault service for credential management.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>VaultService class implemented with basic operations</li>
+<li>Authentication methods supported (AppRole, Token)</li>
+<li>Unit tests for Vault interaction</li>
+<li>Configuration model for Vault settings</li>
+</ul>
+<p><strong>Estimated Time:</strong> 2 days</p>
+</section>
+<section id="task-1.4-implement-ferretdb-integration" class="level3">
+<h3 class="anchored" data-anchor-id="task-1.4-implement-ferretdb-integration">Task 1.4: Implement FerretDB Integration</h3>
+<p><strong>Objective:</strong> Create the FerretDB service for configuration management.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>FerretDBService class implemented with MongoDB driver</li>
+<li>Basic CRUD operations for configuration management</li>
+<li>Unit tests for FerretDB interaction</li>
+<li>Configuration model for FerretDB settings</li>
+</ul>
+<p><strong>Estimated Time:</strong> 2 days</p>
+</section>
+<section id="task-1.5-implement-aws-s3-integration" class="level3">
+<h3 class="anchored" data-anchor-id="task-1.5-implement-aws-s3-integration">Task 1.5: Implement AWS S3 Integration</h3>
+<p><strong>Objective:</strong> Set up the S3 client for data upload.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>S3DataUploader class implemented</li>
+<li>Upload functionality with metadata support</li>
+<li>Unit tests for S3 interaction</li>
+<li>Configuration model for S3 settings</li>
+</ul>
+<p><strong>Estimated Time:</strong> 1 day</p>
+</section>
+<section id="task-1.6-implement-core-models-and-interfaces" class="level3">
+<h3 class="anchored" data-anchor-id="task-1.6-implement-core-models-and-interfaces">Task 1.6: Implement Core Models and Interfaces</h3>
+<p><strong>Objective:</strong> Define the core domain models and interfaces for the system.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>ERPConfiguration model implemented</li>
+<li>ERPCredentials model implemented</li>
+<li>UploadConfiguration model implemented</li>
+<li>Core interfaces (IExtractor, ITransformer, IUploader) defined</li>
+</ul>
+<p><strong>Estimated Time:</strong> 1 day</p>
+</section>
+</section>
+<section id="phase-2-core-functionality-implementation-weeks-3-4" class="level2">
+<h2 class="anchored" data-anchor-id="phase-2-core-functionality-implementation-weeks-3-4">Phase 2: Core Functionality Implementation (Weeks 3-4)</h2>
+<section id="task-2.1-implement-registry-pattern-components" class="level3">
+<h3 class="anchored" data-anchor-id="task-2.1-implement-registry-pattern-components">Task 2.1: Implement Registry Pattern Components</h3>
+<p><strong>Objective:</strong> Create the registry classes for dynamic component resolution.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>ERPRegistry implemented</li>
+<li>ExtractorRegistry implemented</li>
+<li>TransformationRegistry implemented</li>
+<li>UploaderRegistry implemented</li>
+<li>Unit tests for registry functionality</li>
+</ul>
+<p><strong>Estimated Time:</strong> 2 days</p>
+</section>
+<section id="task-2.2-implement-api-mode-extraction-components" class="level3">
+<h3 class="anchored" data-anchor-id="task-2.2-implement-api-mode-extraction-components">Task 2.2: Implement API Mode Extraction Components</h3>
+<p><strong>Objective:</strong> Create the components for API-based extraction.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>APIRequestBuilder implemented with fluent interface</li>
+<li>AuthenticationBuilder implemented</li>
+<li>API-based extractor implementation</li>
+<li>Unit tests for API extraction</li>
+</ul>
+<p><strong>Estimated Time:</strong> 3 days</p>
+</section>
+<section id="task-2.3-implement-database-mode-extraction-components" class="level3">
+<h3 class="anchored" data-anchor-id="task-2.3-implement-database-mode-extraction-components">Task 2.3: Implement Database Mode Extraction Components</h3>
+<p><strong>Objective:</strong> Create the components for database-based extraction.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>DatabaseQueryBuilder implemented with fluent interface</li>
+<li>DatabaseQuery class with SQL generation</li>
+<li>Database-based extractor implementation</li>
+<li>Unit tests for database extraction</li>
+</ul>
+<p><strong>Estimated Time:</strong> 3 days</p>
+</section>
+<section id="task-2.4-implement-basic-transformation-logic" class="level3">
+<h3 class="anchored" data-anchor-id="task-2.4-implement-basic-transformation-logic">Task 2.4: Implement Basic Transformation Logic</h3>
+<p><strong>Objective:</strong> Create the transformation components for column standardization.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>Basic transformer implementation</li>
+<li>Column mapping functionality</li>
+<li>Parquet conversion logic</li>
+<li>Unit tests for transformation</li>
+</ul>
+<p><strong>Estimated Time:</strong> 2 days</p>
+</section>
+<section id="task-2.5-implement-erpservice-core-logic" class="level3">
+<h3 class="anchored" data-anchor-id="task-2.5-implement-erpservice-core-logic">Task 2.5: Implement ERPService Core Logic</h3>
+<p><strong>Objective:</strong> Create the main orchestration logic for the extraction ingestion process.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>ProcessERPData method implemented with basic flow</li>
+<li>Integration with registries and components</li>
+<li>Support for both API and Database modes</li>
+<li>Error handling for basic scenarios</li>
+</ul>
+<p><strong>Estimated Time:</strong> 3 days</p>
+</section>
+<section id="task-2.6-implement-command-line-interface" class="level3">
+<h3 class="anchored" data-anchor-id="task-2.6-implement-command-line-interface">Task 2.6: Implement Command-Line Interface</h3>
+<p><strong>Objective:</strong> Create the command-line interface for the application.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>System.CommandLine integration</li>
+<li>Command-line argument parsing</li>
+<li>Help documentation</li>
+<li>Exit code handling</li>
+</ul>
+<p><strong>Estimated Time:</strong> 1 day</p>
+</section>
+</section>
+<section id="phase-3-resilience-and-error-handling-weeks-5-6" class="level2">
+<h2 class="anchored" data-anchor-id="phase-3-resilience-and-error-handling-weeks-5-6">Phase 3: Resilience and Error Handling (Weeks 5-6)</h2>
+<section id="task-3.1-implement-circuit-breaker-pattern" class="level3">
+<h3 class="anchored" data-anchor-id="task-3.1-implement-circuit-breaker-pattern">Task 3.1: Implement Circuit Breaker Pattern</h3>
+<p><strong>Objective:</strong> Add circuit breaker protection for external dependencies.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>Circuit breaker implementation for Vault</li>
+<li>Circuit breaker implementation for FerretDB</li>
+<li>Circuit breaker implementation for S3</li>
+<li>Circuit breaker implementation for API calls</li>
+<li>Unit tests for circuit breaker functionality</li>
+</ul>
+<p><strong>Estimated Time:</strong> 2 days</p>
+</section>
+<section id="task-3.2-implement-bulkhead-pattern" class="level3">
+<h3 class="anchored" data-anchor-id="task-3.2-implement-bulkhead-pattern">Task 3.2: Implement Bulkhead Pattern</h3>
+<p><strong>Objective:</strong> Add resource isolation using bulkheads.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>Connection pool isolation for different ERP types</li>
+<li>Resource allocation for critical vs.&nbsp;non-critical operations</li>
+<li>Bulkhead configuration model</li>
+<li>Unit tests for bulkhead functionality</li>
+</ul>
+<p><strong>Estimated Time:</strong> 2 days</p>
+</section>
+<section id="task-3.3-implement-retry-strategies-with-exponential-backoff" class="level3">
+<h3 class="anchored" data-anchor-id="task-3.3-implement-retry-strategies-with-exponential-backoff">Task 3.3: Implement Retry Strategies with Exponential Backoff</h3>
+<p><strong>Objective:</strong> Enhance retry logic with exponential backoff and jitter.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>RetryPolicyBuilder implemented</li>
+<li>Exponential backoff strategy with jitter</li>
+<li>Integration with HTTP client factory</li>
+<li>Unit tests for retry policies</li>
+</ul>
+<p><strong>Estimated Time:</strong> 1 day</p>
+</section>
+<section id="task-3.4-implement-self-healing-procedures" class="level3">
+<h3 class="anchored" data-anchor-id="task-3.4-implement-self-healing-procedures">Task 3.4: Implement Self-Healing Procedures</h3>
+<p><strong>Objective:</strong> Add automatic recovery procedures for common failure scenarios.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>Token renewal for expired credentials</li>
+<li>Connection pool refresh for stale connections</li>
+<li>Automatic cleanup for temporary resources</li>
+<li>Unit tests for self-healing functionality</li>
+</ul>
+<p><strong>Estimated Time:</strong> 3 days</p>
+</section>
+<section id="task-3.5-enhance-error-handling-and-logging" class="level3">
+<h3 class="anchored" data-anchor-id="task-3.5-enhance-error-handling-and-logging">Task 3.5: Enhance Error Handling and Logging</h3>
+<p><strong>Objective:</strong> Improve error handling with classification and structured logging.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>Error classification (transient vs.&nbsp;persistent)</li>
+<li>Structured logging with correlation IDs</li>
+<li>Context-enriched log entries</li>
+<li>Integration with Serilog</li>
+</ul>
+<p><strong>Estimated Time:</strong> 2 days</p>
+</section>
+<section id="task-3.6-implement-health-checks" class="level3">
+<h3 class="anchored" data-anchor-id="task-3.6-implement-health-checks">Task 3.6: Implement Health Checks</h3>
+<p><strong>Objective:</strong> Create health check endpoints for system monitoring.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>Health check implementation for Vault</li>
+<li>Health check implementation for FerretDB</li>
+<li>Health check implementation for S3</li>
+<li>Health check API endpoint</li>
+<li>Integration with monitoring system</li>
+</ul>
+<p><strong>Estimated Time:</strong> 1 day</p>
+</section>
+</section>
+<section id="phase-4-security-enhancements-weeks-7-8" class="level2">
+<h2 class="anchored" data-anchor-id="phase-4-security-enhancements-weeks-7-8">Phase 4: Security Enhancements (Weeks 7-8)</h2>
+<section id="task-4.1-implement-credential-caching" class="level3">
+<h3 class="anchored" data-anchor-id="task-4.1-implement-credential-caching">Task 4.1: Implement Credential Caching</h3>
+<p><strong>Objective:</strong> Add caching to credential retrieval for improved performance.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>CachedCredentialProviderDecorator implemented</li>
+<li>TTL-based cache invalidation</li>
+<li>Thread-safe caching mechanism</li>
+<li>Unit tests for caching functionality</li>
+</ul>
+<p><strong>Estimated Time:</strong> 1 day</p>
+</section>
+<section id="task-4.2-implement-least-privilege-access" class="level3">
+<h3 class="anchored" data-anchor-id="task-4.2-implement-least-privilege-access">Task 4.2: Implement Least Privilege Access</h3>
+<p><strong>Objective:</strong> Enhance security with dynamic, operation-specific credentials.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>LeastPrivilegeCredentialProvider implemented</li>
+<li>Operation-specific credential generation</li>
+<li>Credential scoping based on context</li>
+<li>Integration with Vault dynamic secrets</li>
+</ul>
+<p><strong>Estimated Time:</strong> 2 days</p>
+</section>
+<section id="task-4.3-implement-field-level-encryption" class="level3">
+<h3 class="anchored" data-anchor-id="task-4.3-implement-field-level-encryption">Task 4.3: Implement Field-Level Encryption</h3>
+<p><strong>Objective:</strong> Add encryption for sensitive fields.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>EncryptionService implemented</li>
+<li>Field-level encryption/decryption</li>
+<li>Key management integration</li>
+<li>Unit tests for encryption functionality</li>
+</ul>
+<p><strong>Estimated Time:</strong> 3 days</p>
+</section>
+<section id="task-4.4-implement-data-masking" class="level3">
+<h3 class="anchored" data-anchor-id="task-4.4-implement-data-masking">Task 4.4: Implement Data Masking</h3>
+<p><strong>Objective:</strong> Create data masking functionality for non-production environments.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>DataMaskingService implemented</li>
+<li>Various masking techniques (hashing, tokenization)</li>
+<li>Configuration model for masking rules</li>
+<li>Unit tests for masking functionality</li>
+</ul>
+<p><strong>Estimated Time:</strong> 2 days</p>
+</section>
+<section id="task-4.5-implement-mutual-tls" class="level3">
+<h3 class="anchored" data-anchor-id="task-4.5-implement-mutual-tls">Task 4.5: Implement Mutual TLS</h3>
+<p><strong>Objective:</strong> Enhance secure communication with mutual TLS.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>mTLS configuration for HTTP clients</li>
+<li>Certificate management integration</li>
+<li>mTLS support in API request builder</li>
+<li>Unit tests for mTLS functionality</li>
+</ul>
+<p><strong>Estimated Time:</strong> 2 days</p>
+</section>
+<section id="task-4.6-implement-audit-logging" class="level3">
+<h3 class="anchored" data-anchor-id="task-4.6-implement-audit-logging">Task 4.6: Implement Audit Logging</h3>
+<p><strong>Objective:</strong> Add comprehensive audit logging for security compliance.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>AuditLogger implemented</li>
+<li>Integration with Vault audit backend</li>
+<li>Operational audit events defined</li>
+<li>Compliance reporting capabilities</li>
+</ul>
+<p><strong>Estimated Time:</strong> 1 day</p>
+</section>
+</section>
+<section id="phase-5-data-quality-and-governance-weeks-9-10" class="level2">
+<h2 class="anchored" data-anchor-id="phase-5-data-quality-and-governance-weeks-9-10">Phase 5: Data Quality and Governance (Weeks 9-10)</h2>
+<section id="task-5.1-implement-data-contract-validator" class="level3">
+<h3 class="anchored" data-anchor-id="task-5.1-implement-data-contract-validator">Task 5.1: Implement Data Contract Validator</h3>
+<p><strong>Objective:</strong> Create validation logic for data contracts.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>DataContractValidator implemented</li>
+<li>Schema validation functionality</li>
+<li>Value validation against business rules</li>
+<li>Validation result model with severity levels</li>
+<li>Unit tests for validation functionality</li>
+</ul>
+<p><strong>Estimated Time:</strong> 3 days</p>
+</section>
+<section id="task-5.2-implement-data-lineage-tracking" class="level3">
+<h3 class="anchored" data-anchor-id="task-5.2-implement-data-lineage-tracking">Task 5.2: Implement Data Lineage Tracking</h3>
+<p><strong>Objective:</strong> Add data lineage capabilities for audit and compliance.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>DataLineageService implemented</li>
+<li>Lineage record creation and management</li>
+<li>Transformation tracking</li>
+<li>Integration with metadata services</li>
+<li>Unit tests for lineage functionality</li>
+</ul>
+<p><strong>Estimated Time:</strong> 2 days</p>
+</section>
+<section id="task-5.3-implement-data-catalog-integration" class="level3">
+<h3 class="anchored" data-anchor-id="task-5.3-implement-data-catalog-integration">Task 5.3: Implement Data Catalog Integration</h3>
+<p><strong>Objective:</strong> Create integration with data catalog for metadata management.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>CatalogService implemented</li>
+<li>Dataset metadata management</li>
+<li>Schema versioning support</li>
+<li>Unit tests for catalog functionality</li>
+</ul>
+<p><strong>Estimated Time:</strong> 2 days</p>
+</section>
+<section id="task-5.4-implement-schema-evolution-support" class="level3">
+<h3 class="anchored" data-anchor-id="task-5.4-implement-schema-evolution-support">Task 5.4: Implement Schema Evolution Support</h3>
+<p><strong>Objective:</strong> Add capabilities for handling schema changes.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>SchemaVersionManager implemented</li>
+<li>Backward compatibility handling</li>
+<li>Schema migration support</li>
+<li>Unit tests for schema evolution</li>
+</ul>
+<p><strong>Estimated Time:</strong> 3 days</p>
+</section>
+<section id="task-5.5-implement-data-quality-metrics-collection" class="level3">
+<h3 class="anchored" data-anchor-id="task-5.5-implement-data-quality-metrics-collection">Task 5.5: Implement Data Quality Metrics Collection</h3>
+<p><strong>Objective:</strong> Add collection of data quality metrics.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>DataQualityMetricsCollector implemented</li>
+<li>Quality dimension measurements</li>
+<li>Integration with metrics service</li>
+<li>Unit tests for metrics collection</li>
+</ul>
+<p><strong>Estimated Time:</strong> 2 days</p>
+</section>
+<section id="task-5.6-implement-data-quality-reporting" class="level3">
+<h3 class="anchored" data-anchor-id="task-5.6-implement-data-quality-reporting">Task 5.6: Implement Data Quality Reporting</h3>
+<p><strong>Objective:</strong> Create reporting capabilities for data quality.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>DataQualityReportGenerator implemented</li>
+<li>Quality issue summarization</li>
+<li>Trend analysis for quality metrics</li>
+<li>Integration with notification system</li>
+</ul>
+<p><strong>Estimated Time:</strong> 2 days</p>
+</section>
+</section>
+<section id="phase-6-performance-optimization-weeks-11-12" class="level2">
+<h2 class="anchored" data-anchor-id="phase-6-performance-optimization-weeks-11-12">Phase 6: Performance Optimization (Weeks 11-12)</h2>
+<section id="task-6.1-implement-incremental-extraction" class="level3">
+<h3 class="anchored" data-anchor-id="task-6.1-implement-incremental-extraction">Task 6.1: Implement Incremental Extraction</h3>
+<p><strong>Objective:</strong> Add support for incremental data extraction.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>ExtractConfigBuilder implemented</li>
+<li>Change Data Capture (CDC) support</li>
+<li>Watermark management</li>
+<li>Unit tests for incremental extraction</li>
+</ul>
+<p><strong>Estimated Time:</strong> 3 days</p>
+</section>
+<section id="task-6.2-implement-batch-processing" class="level3">
+<h3 class="anchored" data-anchor-id="task-6.2-implement-batch-processing">Task 6.2: Implement Batch Processing</h3>
+<p><strong>Objective:</strong> Enhance performance with batch processing capabilities.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>BatchProcessor implemented</li>
+<li>Memory-efficient processing</li>
+<li>Progress tracking</li>
+<li>Unit tests for batch processing</li>
+</ul>
+<p><strong>Estimated Time:</strong> 2 days</p>
+</section>
+<section id="task-6.3-implement-data-compression" class="level3">
+<h3 class="anchored" data-anchor-id="task-6.3-implement-data-compression">Task 6.3: Implement Data Compression</h3>
+<p><strong>Objective:</strong> Add compression support for improved efficiency.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>CompressionService implemented</li>
+<li>Multiple compression algorithm support</li>
+<li>Compression level configuration</li>
+<li>Unit tests for compression functionality</li>
+</ul>
+<p><strong>Estimated Time:</strong> 1 day</p>
+</section>
+<section id="task-6.4-implement-metrics-collection" class="level3">
+<h3 class="anchored" data-anchor-id="task-6.4-implement-metrics-collection">Task 6.4: Implement Metrics Collection</h3>
+<p><strong>Objective:</strong> Add comprehensive metrics collection for performance monitoring.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>MetricsService implemented</li>
+<li>Integration with Prometheus</li>
+<li>Custom dimensions and labels</li>
+<li>Unit tests for metrics functionality</li>
+</ul>
+<p><strong>Estimated Time:</strong> 2 days</p>
+</section>
+<section id="task-6.5-implement-performance-benchmarking" class="level3">
+<h3 class="anchored" data-anchor-id="task-6.5-implement-performance-benchmarking">Task 6.5: Implement Performance Benchmarking</h3>
+<p><strong>Objective:</strong> Create benchmarking capabilities for performance testing.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>BenchmarkRunner implemented</li>
+<li>Standard performance scenarios</li>
+<li>Result comparison and reporting</li>
+<li>Integration with CI/CD pipeline</li>
+</ul>
+<p><strong>Estimated Time:</strong> 2 days</p>
+</section>
+<section id="task-6.6-optimize-resource-usage" class="level3">
+<h3 class="anchored" data-anchor-id="task-6.6-optimize-resource-usage">Task 6.6: Optimize Resource Usage</h3>
+<p><strong>Objective:</strong> Tune system for optimal resource utilization.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>Memory usage optimization</li>
+<li>Thread pool configuration</li>
+<li>Connection pool tuning</li>
+<li>Performance test results showing improvement</li>
+</ul>
+<p><strong>Estimated Time:</strong> 3 days</p>
+</section>
+</section>
+<section id="phase-7-operational-excellence-weeks-13-14" class="level2">
+<h2 class="anchored" data-anchor-id="phase-7-operational-excellence-weeks-13-14">Phase 7: Operational Excellence (Weeks 13-14)</h2>
+<section id="task-7.1-implement-feature-flag-management" class="level3">
+<h3 class="anchored" data-anchor-id="task-7.1-implement-feature-flag-management">Task 7.1: Implement Feature Flag Management</h3>
+<p><strong>Objective:</strong> Add feature flag capabilities for gradual rollout.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>FeatureFlagService implemented</li>
+<li>Flag configuration management</li>
+<li>Context-based flag evaluation</li>
+<li>Unit tests for feature flags</li>
+</ul>
+<p><strong>Estimated Time:</strong> 2 days</p>
+</section>
+<section id="task-7.2-implement-distributed-tracing" class="level3">
+<h3 class="anchored" data-anchor-id="task-7.2-implement-distributed-tracing">Task 7.2: Implement Distributed Tracing</h3>
+<p><strong>Objective:</strong> Add distributed tracing for end-to-end visibility.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>TracingService implemented</li>
+<li>Integration with OpenTelemetry</li>
+<li>Trace correlation across components</li>
+<li>Trace sampling configuration</li>
+</ul>
+<p><strong>Estimated Time:</strong> 2 days</p>
+</section>
+<section id="task-7.3-implement-openapi-documentation" class="level3">
+<h3 class="anchored" data-anchor-id="task-7.3-implement-openapi-documentation">Task 7.3: Implement OpenAPI Documentation</h3>
+<p><strong>Objective:</strong> Create API documentation for service interfaces.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>OpenAPI configuration</li>
+<li>API endpoint documentation</li>
+<li>Model documentation</li>
+<li>Swagger UI integration</li>
+</ul>
+<p><strong>Estimated Time:</strong> 1 day</p>
+</section>
+<section id="task-7.4-create-operational-runbooks" class="level3">
+<h3 class="anchored" data-anchor-id="task-7.4-create-operational-runbooks">Task 7.4: Create Operational Runbooks</h3>
+<p><strong>Objective:</strong> Develop runbooks for common operational procedures.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>Installation and deployment guide</li>
+<li>Troubleshooting procedures</li>
+<li>Monitoring guidelines</li>
+<li>Disaster recovery procedures</li>
+</ul>
+<p><strong>Estimated Time:</strong> 3 days</p>
+</section>
+<section id="task-7.5-implement-gitops-configuration" class="level3">
+<h3 class="anchored" data-anchor-id="task-7.5-implement-gitops-configuration">Task 7.5: Implement GitOps Configuration</h3>
+<p><strong>Objective:</strong> Set up GitOps-based configuration management.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>Infrastructure as Code templates</li>
+<li>Configuration as Code approach</li>
+<li>Deployment pipeline integration</li>
+<li>Change approval workflow</li>
+</ul>
+<p><strong>Estimated Time:</strong> 2 days</p>
+</section>
+<section id="task-7.6-implement-blue-green-deployment-support" class="level3">
+<h3 class="anchored" data-anchor-id="task-7.6-implement-blue-green-deployment-support">Task 7.6: Implement Blue-Green Deployment Support</h3>
+<p><strong>Objective:</strong> Add support for zero-downtime deployments.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>Deployment strategy implementation</li>
+<li>Version compatibility verification</li>
+<li>Rollback procedures</li>
+<li>Load balancer integration</li>
+</ul>
+<p><strong>Estimated Time:</strong> 3 days</p>
+</section>
+</section>
+<section id="phase-8-integration-and-testing-weeks-15-16" class="level2">
+<h2 class="anchored" data-anchor-id="phase-8-integration-and-testing-weeks-15-16">Phase 8: Integration and Testing (Weeks 15-16)</h2>
+<section id="task-8.1-implement-integration-test-harness" class="level3">
+<h3 class="anchored" data-anchor-id="task-8.1-implement-integration-test-harness">Task 8.1: Implement Integration Test Harness</h3>
+<p><strong>Objective:</strong> Create test infrastructure for comprehensive integration testing.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>Test harness framework</li>
+<li>Mock ERP implementations</li>
+<li>Test data generation</li>
+<li>Test execution automation</li>
+</ul>
+<p><strong>Estimated Time:</strong> 3 days</p>
+</section>
+<section id="task-8.2-implement-end-to-end-tests" class="level3">
+<h3 class="anchored" data-anchor-id="task-8.2-implement-end-to-end-tests">Task 8.2: Implement End-to-End Tests</h3>
+<p><strong>Objective:</strong> Create end-to-end tests for critical workflows.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>E2E test scenarios for API mode</li>
+<li>E2E test scenarios for Database mode</li>
+<li>Test assertions and verification</li>
+<li>Test reporting</li>
+</ul>
+<p><strong>Estimated Time:</strong> 3 days</p>
+</section>
+<section id="task-8.3-implement-performance-tests" class="level3">
+<h3 class="anchored" data-anchor-id="task-8.3-implement-performance-tests">Task 8.3: Implement Performance Tests</h3>
+<p><strong>Objective:</strong> Create performance tests for system evaluation.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>Load test scenarios</li>
+<li>Stress test scenarios</li>
+<li>Performance metrics collection</li>
+<li>Test result analysis</li>
+</ul>
+<p><strong>Estimated Time:</strong> 2 days</p>
+</section>
+<section id="task-8.4-implement-security-tests" class="level3">
+<h3 class="anchored" data-anchor-id="task-8.4-implement-security-tests">Task 8.4: Implement Security Tests</h3>
+<p><strong>Objective:</strong> Create security tests to validate protection measures.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>Authentication and authorization tests</li>
+<li>Encryption verification</li>
+<li>Secure communication tests</li>
+<li>Audit log verification</li>
+</ul>
+<p><strong>Estimated Time:</strong> 2 days</p>
+</section>
+<section id="task-8.5-implement-fault-injection-tests" class="level3">
+<h3 class="anchored" data-anchor-id="task-8.5-implement-fault-injection-tests">Task 8.5: Implement Fault Injection Tests</h3>
+<p><strong>Objective:</strong> Create tests to validate resilience capabilities.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>Dependency failure simulations</li>
+<li>Network degradation tests</li>
+<li>Resource exhaustion tests</li>
+<li>Recovery verification</li>
+</ul>
+<p><strong>Estimated Time:</strong> 2 days</p>
+</section>
+<section id="task-8.6-conduct-system-integration-testing" class="level3">
+<h3 class="anchored" data-anchor-id="task-8.6-conduct-system-integration-testing">Task 8.6: Conduct System Integration Testing</h3>
+<p><strong>Objective:</strong> Perform comprehensive integration testing with all components.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>All subsystems tested together</li>
+<li>Edge cases and boundary conditions tested</li>
+<li>Performance under load verified</li>
+<li>Documentation of test results</li>
+</ul>
+<p><strong>Estimated Time:</strong> 3 days</p>
+</section>
+</section>
+<section id="phase-9-finalization-and-deployment-weeks-17-18" class="level2">
+<h2 class="anchored" data-anchor-id="phase-9-finalization-and-deployment-weeks-17-18">Phase 9: Finalization and Deployment (Weeks 17-18)</h2>
+<section id="task-9.1-finalize-documentation" class="level3">
+<h3 class="anchored" data-anchor-id="task-9.1-finalize-documentation">Task 9.1: Finalize Documentation</h3>
+<p><strong>Objective:</strong> Complete all system documentation.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>Architecture documentation finalized</li>
+<li>API documentation completed</li>
+<li>Development guide updated</li>
+<li>Operational procedures documented</li>
+</ul>
+<p><strong>Estimated Time:</strong> 3 days</p>
+</section>
+<section id="task-9.2-conduct-code-review-and-cleanup" class="level3">
+<h3 class="anchored" data-anchor-id="task-9.2-conduct-code-review-and-cleanup">Task 9.2: Conduct Code Review and Cleanup</h3>
+<p><strong>Objective:</strong> Perform comprehensive code review and cleanup.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>Code review completed</li>
+<li>Code quality issues addressed</li>
+<li>Technical debt remediated</li>
+<li>Code documentation updated</li>
+</ul>
+<p><strong>Estimated Time:</strong> 2 days</p>
+</section>
+<section id="task-9.3-prepare-release-artifacts" class="level3">
+<h3 class="anchored" data-anchor-id="task-9.3-prepare-release-artifacts">Task 9.3: Prepare Release Artifacts</h3>
+<p><strong>Objective:</strong> Create release artifacts for deployment.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>Release notes prepared</li>
+<li>Versioned artifacts created</li>
+<li>Deployment packages assembled</li>
+<li>Release verification checklist completed</li>
+</ul>
+<p><strong>Estimated Time:</strong> 1 day</p>
+</section>
+<section id="task-9.4-set-up-monitoring-and-alerting" class="level3">
+<h3 class="anchored" data-anchor-id="task-9.4-set-up-monitoring-and-alerting">Task 9.4: Set Up Monitoring and Alerting</h3>
+<p><strong>Objective:</strong> Configure production monitoring and alerting.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>Metrics dashboards created</li>
+<li>Alert rules configured</li>
+<li>On-call procedures defined</li>
+<li>Monitoring documentation completed</li>
+</ul>
+<p><strong>Estimated Time:</strong> 2 days</p>
+</section>
+<section id="task-9.5-conduct-deployment-rehearsal" class="level3">
+<h3 class="anchored" data-anchor-id="task-9.5-conduct-deployment-rehearsal">Task 9.5: Conduct Deployment Rehearsal</h3>
+<p><strong>Objective:</strong> Perform a rehearsal of the production deployment.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>Staging environment deployment completed</li>
+<li>Verification procedures executed</li>
+<li>Rollback procedures tested</li>
+<li>Deployment timing measured</li>
+</ul>
+<p><strong>Estimated Time:</strong> 1 day</p>
+</section>
+<section id="task-9.6-execute-production-deployment" class="level3">
+<h3 class="anchored" data-anchor-id="task-9.6-execute-production-deployment">Task 9.6: Execute Production Deployment</h3>
+<p><strong>Objective:</strong> Deploy the system to production.</p>
+<p><strong>Completion Criteria:</strong></p>
+<ul>
+<li>Production deployment completed</li>
+<li>Post-deployment verification performed</li>
+<li>Stakeholder sign-off obtained</li>
+<li>Transition to operational support</li>
+</ul>
+<p><strong>Estimated Time:</strong> 1 day</p>
+</section>
+</section>
+<section id="project-timeline-summary" class="level2">
+<h2 class="anchored" data-anchor-id="project-timeline-summary">Project Timeline Summary</h2>
+<ul>
+<li><strong>Phase 1: Foundation and Core Infrastructure</strong> - Weeks 1-2</li>
+<li><strong>Phase 2: Core Functionality Implementation</strong> - Weeks 3-4</li>
+<li><strong>Phase 3: Resilience and Error Handling</strong> - Weeks 5-6</li>
+<li><strong>Phase 4: Security Enhancements</strong> - Weeks 7-8</li>
+<li><strong>Phase 5: Data Quality and Governance</strong> - Weeks 9-10</li>
+<li><strong>Phase 6: Performance Optimization</strong> - Weeks 11-12</li>
+<li><strong>Phase 7: Operational Excellence</strong> - Weeks 13-14</li>
+<li><strong>Phase 8: Integration and Testing</strong> - Weeks 15-16</li>
+<li><strong>Phase 9: Finalization and Deployment</strong> - Weeks 17-18</li>
+</ul>
+<p>Total estimated project duration: <strong>18 weeks</strong></p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

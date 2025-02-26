@@ -1,0 +1,1948 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Nathan Lunceford">
+<meta name="dcterms.date" content="2025-02-25">
+
+<title>Enhanced Design Document for Distributor Data Extraction Ingestion – ReSight - Next Gen ETL</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./enhanced-erp-extractor-design.html">Enhanced Design Document for Distributor Data Extraction Ingestion</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ReSight - Next Gen ETL</a> 
+        <div class="sidebar-tools-main">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Dev Plan and Overview</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./etl-pipeline-planning-questions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">ETL Pipeline Planning Questions</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./distributor-onboarding-system.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Distributor Onboarding System</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./upsert-ops.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">UPSERT Operations</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./upsert-ops-cost-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">UPSERT Operations Cost Analysis</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./erp-extractor-design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Design Document for Distributor Data Extraction Ingestion</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./enhanced-erp-extractor-design.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Enhanced Design Document for Distributor Data Extraction Ingestion</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dpp-tasking-outline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DPP Project Tasking Outline</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">1</span> Overview</a></li>
+  <li><a href="#system-architecture" id="toc-system-architecture" class="nav-link" data-scroll-target="#system-architecture"><span class="header-section-number">2</span> System Architecture</a>
+  <ul class="collapse">
+  <li><a href="#entry-point-and-application-hosting" id="toc-entry-point-and-application-hosting" class="nav-link" data-scroll-target="#entry-point-and-application-hosting"><span class="header-section-number">2.1</span> Entry Point and Application Hosting</a></li>
+  <li><a href="#extraction-ingestion-orchestration" id="toc-extraction-ingestion-orchestration" class="nav-link" data-scroll-target="#extraction-ingestion-orchestration"><span class="header-section-number">2.2</span> Extraction Ingestion Orchestration</a></li>
+  <li><a href="#external-dependencies" id="toc-external-dependencies" class="nav-link" data-scroll-target="#external-dependencies"><span class="header-section-number">2.3</span> External Dependencies</a></li>
+  </ul></li>
+  <li><a href="#design-patterns-and-advanced-resilience-strategies" id="toc-design-patterns-and-advanced-resilience-strategies" class="nav-link" data-scroll-target="#design-patterns-and-advanced-resilience-strategies"><span class="header-section-number">3</span> Design Patterns and Advanced Resilience Strategies</a>
+  <ul class="collapse">
+  <li><a href="#dependency-injection-di" id="toc-dependency-injection-di" class="nav-link" data-scroll-target="#dependency-injection-di"><span class="header-section-number">3.1</span> Dependency Injection (DI)</a></li>
+  <li><a href="#registry-pattern" id="toc-registry-pattern" class="nav-link" data-scroll-target="#registry-pattern"><span class="header-section-number">3.2</span> Registry Pattern</a></li>
+  <li><a href="#abstract-factory-pattern" id="toc-abstract-factory-pattern" class="nav-link" data-scroll-target="#abstract-factory-pattern"><span class="header-section-number">3.3</span> Abstract Factory Pattern</a></li>
+  <li><a href="#builder-pattern" id="toc-builder-pattern" class="nav-link" data-scroll-target="#builder-pattern"><span class="header-section-number">3.4</span> Builder Pattern</a></li>
+  <li><a href="#strategy-pattern" id="toc-strategy-pattern" class="nav-link" data-scroll-target="#strategy-pattern"><span class="header-section-number">3.5</span> Strategy Pattern</a></li>
+  <li><a href="#decorator-pattern" id="toc-decorator-pattern" class="nav-link" data-scroll-target="#decorator-pattern"><span class="header-section-number">3.6</span> Decorator Pattern</a></li>
+  <li><a href="#circuit-breaker-pattern" id="toc-circuit-breaker-pattern" class="nav-link" data-scroll-target="#circuit-breaker-pattern"><span class="header-section-number">3.7</span> Circuit Breaker Pattern</a></li>
+  <li><a href="#bulkhead-pattern" id="toc-bulkhead-pattern" class="nav-link" data-scroll-target="#bulkhead-pattern"><span class="header-section-number">3.8</span> Bulkhead Pattern</a></li>
+  <li><a href="#exponential-backoff-with-jitter" id="toc-exponential-backoff-with-jitter" class="nav-link" data-scroll-target="#exponential-backoff-with-jitter"><span class="header-section-number">3.9</span> Exponential Backoff with Jitter</a></li>
+  </ul></li>
+  <li><a href="#detailed-component-descriptions" id="toc-detailed-component-descriptions" class="nav-link" data-scroll-target="#detailed-component-descriptions"><span class="header-section-number">4</span> Detailed Component Descriptions</a>
+  <ul class="collapse">
+  <li><a href="#program-class" id="toc-program-class" class="nav-link" data-scroll-target="#program-class"><span class="header-section-number">4.1</span> Program Class</a></li>
+  <li><a href="#erpservice-class" id="toc-erpservice-class" class="nav-link" data-scroll-target="#erpservice-class"><span class="header-section-number">4.2</span> ERPService Class</a></li>
+  <li><a href="#providers" id="toc-providers" class="nav-link" data-scroll-target="#providers"><span class="header-section-number">4.3</span> Providers</a></li>
+  <li><a href="#data-uploader-s3datauploader" id="toc-data-uploader-s3datauploader" class="nav-link" data-scroll-target="#data-uploader-s3datauploader"><span class="header-section-number">4.4</span> Data Uploader – S3DataUploader</a></li>
+  <li><a href="#data-quality-and-validation" id="toc-data-quality-and-validation" class="nav-link" data-scroll-target="#data-quality-and-validation"><span class="header-section-number">4.5</span> Data Quality and Validation</a></li>
+  <li><a href="#hashicorp-vault-integration" id="toc-hashicorp-vault-integration" class="nav-link" data-scroll-target="#hashicorp-vault-integration"><span class="header-section-number">4.6</span> HashiCorp Vault Integration</a></li>
+  <li><a href="#ferretdb-integration" id="toc-ferretdb-integration" class="nav-link" data-scroll-target="#ferretdb-integration"><span class="header-section-number">4.7</span> FerretDB Integration</a></li>
+  <li><a href="#feature-flag-management" id="toc-feature-flag-management" class="nav-link" data-scroll-target="#feature-flag-management"><span class="header-section-number">4.8</span> Feature Flag Management</a></li>
+  <li><a href="#metrics-and-observability" id="toc-metrics-and-observability" class="nav-link" data-scroll-target="#metrics-and-observability"><span class="header-section-number">4.9</span> Metrics and Observability</a></li>
+  <li><a href="#data-lineage-and-governance" id="toc-data-lineage-and-governance" class="nav-link" data-scroll-target="#data-lineage-and-governance"><span class="header-section-number">4.10</span> Data Lineage and Governance</a></li>
+  <li><a href="#configuration-models" id="toc-configuration-models" class="nav-link" data-scroll-target="#configuration-models"><span class="header-section-number">4.11</span> Configuration Models</a></li>
+  <li><a href="#development-and-test-support" id="toc-development-and-test-support" class="nav-link" data-scroll-target="#development-and-test-support"><span class="header-section-number">4.12</span> Development and Test Support</a></li>
+  </ul></li>
+  <li><a href="#pseudo-code-for-nomad-integration" id="toc-pseudo-code-for-nomad-integration" class="nav-link" data-scroll-target="#pseudo-code-for-nomad-integration"><span class="header-section-number">5</span> Pseudo-code for Nomad Integration</a></li>
+  <li><a href="#advanced-error-handling-and-recovery" id="toc-advanced-error-handling-and-recovery" class="nav-link" data-scroll-target="#advanced-error-handling-and-recovery"><span class="header-section-number">6</span> Advanced Error Handling and Recovery</a></li>
+  <li><a href="#security-and-compliance" id="toc-security-and-compliance" class="nav-link" data-scroll-target="#security-and-compliance"><span class="header-section-number">7</span> Security and Compliance</a></li>
+  <li><a href="#development-and-operations-support" id="toc-development-and-operations-support" class="nav-link" data-scroll-target="#development-and-operations-support"><span class="header-section-number">8</span> Development and Operations Support</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">9</span> Conclusion</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="enhanced-erp-extractor-design.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Enhanced Design Document for Distributor Data Extraction Ingestion</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Nathan Lunceford </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">February 25, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="overview" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="overview"><span class="header-section-number">1</span> Overview</h2>
+<p>This design document covers the extraction ingestion component of our ETL pipeline. In our architecture, distributors integrate with our system via two primary methods:</p>
+<ul>
+<li><strong>Direct Extraction Ingestion:</strong> Where our system automatically provisions the correct resources based solely on the three supplied parameters: <code>--erp-type</code>, <code>--client-id</code>, and <code>--data-type</code>.</li>
+<li><strong>SFTP Ingestion:</strong> Where distributors SFTP their data to our environment (this method is handled separately).</li>
+</ul>
+<p>The design detailed here pertains only to the <strong>direct extraction ingestion</strong> method. This process extracts distributor data and deposits it into a pre-dropzone S3 bucket. At this stage, a minor transformation is applied: column names are standardized according to our global data dictionary and the output files are converted to Parquet format. More complex transformations occur later in the pipeline.</p>
+</section>
+<section id="system-architecture" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="system-architecture"><span class="header-section-number">2</span> System Architecture</h2>
+<section id="entry-point-and-application-hosting" class="level3" data-number="2.1">
+<h3 data-number="2.1" class="anchored" data-anchor-id="entry-point-and-application-hosting"><span class="header-section-number">2.1</span> Entry Point and Application Hosting</h3>
+<ul>
+<li><strong>Program Class:</strong>
+<ul>
+<li><strong>Main Method:</strong>
+<ul>
+<li>Parses command-line options (e.g., <code>--erp-type</code>, <code>--client-id</code>, <code>--data-type</code>) using <code>System.CommandLine</code>.</li>
+<li>Sets up the dependency injection container and configures services.</li>
+<li>Resolves the primary extraction ingestion service (<code>ERPService</code>) from the DI container and triggers the extraction process.</li>
+</ul></li>
+<li><strong>CreateHostBuilder Method:</strong>
+<ul>
+<li>Configures the host with HashiCorp Vault, FerretDB services, core providers, registries, and builder components.</li>
+<li>Configures <code>IHttpClientFactory</code> with resilience policies for API-based integrations.</li>
+<li>Sets up feature flags, metrics collection, and health checks.</li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+<section id="extraction-ingestion-orchestration" class="level3" data-number="2.2">
+<h3 data-number="2.2" class="anchored" data-anchor-id="extraction-ingestion-orchestration"><span class="header-section-number">2.2</span> Extraction Ingestion Orchestration</h3>
+<ul>
+<li><strong>ERPService Class:</strong>
+<ul>
+<li>Acts as the orchestrator for the extraction ingestion process.</li>
+<li>Retrieves credentials from HashiCorp Vault and configuration from FerretDB, respectively.</li>
+<li>Dynamically resolves components for data extraction based on ERP type.</li>
+<li>Uses <a href="https://learn.microsoft.com/en-us/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests#benefits-of-using-ihttpclientfactory"><strong>IHttpClientFactory</strong></a> for managing HTTP connections in API mode.</li>
+<li>Supports two extraction modes:
+<ul>
+<li><strong>API Mode:</strong> For ERPs that expose APIs.</li>
+<li><strong>Database Mode:</strong> For ERPs that require direct database access.</li>
+</ul></li>
+<li>Supports both batch processing and incremental extraction with change data capture (CDC).</li>
+<li>Applies a minimal transform:
+<ul>
+<li>Standardizes column names according to our global data dictionary.</li>
+<li>Applies data quality validations against predefined rules.</li>
+<li>Converts all files to Parquet format with optional compression.</li>
+</ul></li>
+<li>Deposits the extracted (and minimally transformed) data into a pre-dropzone S3 bucket.</li>
+<li>Tracks data lineage for audit and compliance purposes.</li>
+<li>(Note: Subsequent, more complex transformations are performed later in the overall ETL pipeline.)</li>
+</ul></li>
+</ul>
+</section>
+<section id="external-dependencies" class="level3" data-number="2.3">
+<h3 data-number="2.3" class="anchored" data-anchor-id="external-dependencies"><span class="header-section-number">2.3</span> External Dependencies</h3>
+<ul>
+<li><strong>Infrastructure Services:</strong>
+<ul>
+<li><strong>IVaultService:</strong> Retrieves ERP credentials from HashiCorp Vault with least privilege access.</li>
+<li><strong>IFerretDBService:</strong> Fetches ERP configuration data from FerretDB.</li>
+<li><strong>IAmazonS3:</strong> Uploads the extracted data into the pre-dropzone S3 bucket.</li>
+<li><strong>IFeatureFlagService:</strong> Manages feature flags for gradual rollout of functionality.</li>
+<li><strong>ICatalogService:</strong> Integrates with data catalog for metadata management.</li>
+</ul></li>
+<li><strong>.NET Libraries:</strong>
+<ul>
+<li><strong>System.CommandLine:</strong> For command-line parsing.</li>
+<li><strong>Microsoft.Extensions.Hosting &amp; DI:</strong> For hosting and dependency injection.</li>
+<li><strong>System.Text.Json:</strong> For JSON serialization/deserialization.</li>
+<li><strong>IHttpClientFactory:</strong> For managing HttpClient instances in API extraction mode.</li>
+<li><strong>VaultSharp:</strong> For interacting with HashiCorp Vault.</li>
+<li><strong>MongoDB.Driver:</strong> For FerretDB interactions (FerretDB uses MongoDB wire protocol).</li>
+<li><strong>Polly:</strong> For resilience patterns including circuit breakers and bulkheads.</li>
+<li><strong>OpenTelemetry:</strong> For distributed tracing and metrics.</li>
+<li><strong>FluentValidation:</strong> For data contract validation.</li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="design-patterns-and-advanced-resilience-strategies" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="design-patterns-and-advanced-resilience-strategies"><span class="header-section-number">3</span> Design Patterns and Advanced Resilience Strategies</h2>
+<section id="dependency-injection-di" class="level3" data-number="3.1">
+<h3 data-number="3.1" class="anchored" data-anchor-id="dependency-injection-di"><span class="header-section-number">3.1</span> <a href="https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection">Dependency Injection (DI)</a></h3>
+<ul>
+<li><strong>Usage:</strong>
+<ul>
+<li>Decouples service construction from business logic.</li>
+<li>Registers Vault client, FerretDB connection, providers, registries, builder components, and the main extraction service in the DI container.</li>
+<li>Configures <code>IHttpClientFactory</code> and related services.</li>
+</ul></li>
+<li><strong>Benefits:</strong>
+<ul>
+<li>Enhances testability and maintainability.</li>
+<li>Promotes separation of concerns.</li>
+</ul></li>
+</ul>
+</section>
+<section id="registry-pattern" class="level3" data-number="3.2">
+<h3 data-number="3.2" class="anchored" data-anchor-id="registry-pattern"><span class="header-section-number">3.2</span> <a href="https://www.geeksforgeeks.org/registry-pattern/">Registry Pattern</a></h3>
+<ul>
+<li><strong>Components:</strong>
+<ul>
+<li><code>ERPRegistry</code>, <code>ExtractorRegistry</code>, <code>TransformationRegistry</code>, and <code>UploaderRegistry</code>.</li>
+</ul></li>
+<li><strong>Usage:</strong>
+<ul>
+<li>Centralizes lookup for ERP-specific factories and strategies.</li>
+<li>Dynamically resolves connectors, extractors, transformers, and uploaders based on ERP type or data type.</li>
+</ul></li>
+<li><strong>Benefits:</strong>
+<ul>
+<li>Simplifies addition of new ERP integrations.</li>
+<li>Reduces direct dependencies between the extraction process and concrete implementations.</li>
+</ul></li>
+</ul>
+</section>
+<section id="abstract-factory-pattern" class="level3" data-number="3.3">
+<h3 data-number="3.3" class="anchored" data-anchor-id="abstract-factory-pattern"><span class="header-section-number">3.3</span> <a href="https://refactoring.guru/design-patterns/abstract-factory">Abstract Factory Pattern</a></h3>
+<ul>
+<li><strong>Component:</strong>
+<ul>
+<li>The <code>IERPFactory</code> interface (managed via <code>ERPRegistry</code>).</li>
+<li><code>IHttpClientFactory</code> for HTTP client management.</li>
+</ul></li>
+<li><strong>Usage:</strong>
+<ul>
+<li>Encapsulates creation of ERP-specific components (e.g., connectors and jobs).</li>
+</ul></li>
+<li><strong>Benefits:</strong>
+<ul>
+<li>Supports multiple ERP systems with varying implementations without altering extraction logic.</li>
+</ul></li>
+</ul>
+</section>
+<section id="builder-pattern" class="level3" data-number="3.4">
+<h3 data-number="3.4" class="anchored" data-anchor-id="builder-pattern"><span class="header-section-number">3.4</span> <a href="https://refactoring.guru/design-patterns/builder">Builder Pattern</a></h3>
+<ul>
+<li><strong>Components:</strong>
+<ul>
+<li><strong>APIRequestBuilder &amp; AuthenticationBuilder:</strong>
+<ul>
+<li>Provide fluent interfaces to construct complex API request objects.</li>
+</ul></li>
+<li><strong>DatabaseQueryBuilder:</strong>
+<ul>
+<li>Dynamically constructs SQL queries for ERPs requiring direct database access.</li>
+</ul></li>
+<li><strong>ExtractConfigBuilder:</strong>
+<ul>
+<li>Builds extraction configurations supporting both full and incremental extracts.</li>
+</ul></li>
+</ul></li>
+<li><strong>Usage:</strong>
+<ul>
+<li>The <code>DatabaseQueryBuilder</code> collects parameters and produces a <code>DatabaseQuery</code> object with a <code>GenerateSql</code> method.</li>
+<li>The <code>APIRequestBuilder</code> works with <code>IHttpClientFactory</code> to construct properly configured HTTP requests.</li>
+<li>The <code>ExtractConfigBuilder</code> creates configurations for different extraction modes.</li>
+</ul></li>
+<li><strong>Benefits:</strong>
+<ul>
+<li>Enhances readability and modularity.</li>
+<li>Supports multiple extraction modes seamlessly.</li>
+</ul></li>
+</ul>
+</section>
+<section id="strategy-pattern" class="level3" data-number="3.5">
+<h3 data-number="3.5" class="anchored" data-anchor-id="strategy-pattern"><span class="header-section-number">3.5</span> <a href="https://refactoring.guru/design-patterns/strategy">Strategy Pattern</a></h3>
+<ul>
+<li><strong>Components:</strong>
+<ul>
+<li>Interfaces such as <code>IExtractor</code>, <code>ITransformer</code>, and <code>IValidator</code>.</li>
+</ul></li>
+<li><strong>Usage:</strong>
+<ul>
+<li>Encapsulate different implementations for data extraction, transformation, and validation.</li>
+<li>Registries select the appropriate strategy at runtime.</li>
+</ul></li>
+<li><strong>Benefits:</strong>
+<ul>
+<li>Provides flexibility to extend or change algorithms without impacting the overall system.</li>
+</ul></li>
+</ul>
+</section>
+<section id="decorator-pattern" class="level3" data-number="3.6">
+<h3 data-number="3.6" class="anchored" data-anchor-id="decorator-pattern"><span class="header-section-number">3.6</span> <a href="https://refactoring.guru/design-patterns/decorator">Decorator Pattern</a></h3>
+<ul>
+<li><strong>Components:</strong>
+<ul>
+<li><strong>VaultCredentialProviderDecorator:</strong>
+<ul>
+<li>Adds caching behavior to Vault credential retrieval.</li>
+</ul></li>
+<li><strong>MetricsDecorator:</strong>
+<ul>
+<li>Wraps core services to collect performance metrics.</li>
+</ul></li>
+<li><strong>EncryptionDecorator:</strong>
+<ul>
+<li>Adds field-level encryption for sensitive data.</li>
+</ul></li>
+<li><strong>DataQualityDecorator:</strong>
+<ul>
+<li>Adds data quality checks to transformations.</li>
+</ul></li>
+</ul></li>
+<li><strong>Usage:</strong>
+<ul>
+<li>Enhances existing components with additional functionality without modifying their core logic.</li>
+</ul></li>
+<li><strong>Benefits:</strong>
+<ul>
+<li>Improves performance through caching.</li>
+<li>Provides observability and enhances security.</li>
+<li>Ensures data quality through validation.</li>
+</ul></li>
+</ul>
+</section>
+<section id="circuit-breaker-pattern" class="level3" data-number="3.7">
+<h3 data-number="3.7" class="anchored" data-anchor-id="circuit-breaker-pattern"><span class="header-section-number">3.7</span> <a href="https://docs.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker">Circuit Breaker Pattern</a></h3>
+<ul>
+<li><strong>Components:</strong>
+<ul>
+<li><strong>VaultCircuitBreaker</strong>, <strong>FerretDBCircuitBreaker</strong>, <strong>S3CircuitBreaker</strong></li>
+</ul></li>
+<li><strong>Usage:</strong>
+<ul>
+<li>Prevents cascading failures by breaking the circuit when dependencies fail.</li>
+<li>Automatically restores service when dependencies recover.</li>
+</ul></li>
+<li><strong>Benefits:</strong>
+<ul>
+<li>Enhances system resilience during partial outages.</li>
+<li>Prevents overwhelming failing services with requests.</li>
+</ul></li>
+</ul>
+</section>
+<section id="bulkhead-pattern" class="level3" data-number="3.8">
+<h3 data-number="3.8" class="anchored" data-anchor-id="bulkhead-pattern"><span class="header-section-number">3.8</span> <a href="https://docs.microsoft.com/en-us/azure/architecture/patterns/bulkhead">Bulkhead Pattern</a></h3>
+<ul>
+<li><strong>Components:</strong>
+<ul>
+<li>Separate connection pools for different ERP types and operations.</li>
+<li>Isolated resource pools for critical vs.&nbsp;non-critical operations.</li>
+</ul></li>
+<li><strong>Usage:</strong>
+<ul>
+<li>Isolates failures to prevent system-wide degradation.</li>
+<li>Allocates resources based on operation criticality.</li>
+</ul></li>
+<li><strong>Benefits:</strong>
+<ul>
+<li>Prevents resource exhaustion.</li>
+<li>Improves system stability during partial failures.</li>
+</ul></li>
+</ul>
+</section>
+<section id="exponential-backoff-with-jitter" class="level3" data-number="3.9">
+<h3 data-number="3.9" class="anchored" data-anchor-id="exponential-backoff-with-jitter"><span class="header-section-number">3.9</span> <a href="https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/">Exponential Backoff with Jitter</a></h3>
+<ul>
+<li><strong>Usage:</strong>
+<ul>
+<li>Implements intelligent retry strategies for all external service calls.</li>
+<li>Adds randomization to prevent thundering herd problems.</li>
+</ul></li>
+<li><strong>Benefits:</strong>
+<ul>
+<li>Prevents overwhelming recovering services.</li>
+<li>Distributes retry attempts evenly over time.</li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="detailed-component-descriptions" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="detailed-component-descriptions"><span class="header-section-number">4</span> Detailed Component Descriptions</h2>
+<section id="program-class" class="level3" data-number="4.1">
+<h3 data-number="4.1" class="anchored" data-anchor-id="program-class"><span class="header-section-number">4.1</span> Program Class</h3>
+<ul>
+<li><strong>Main Method:</strong>
+<ul>
+<li>Parses Nomad-supplied command-line arguments.</li>
+<li>Builds the DI container via <code>CreateHostBuilder</code>.</li>
+<li>Resolves and invokes <code>ERPService.ProcessERPData</code>.</li>
+<li>Handles global errors for graceful failure.</li>
+</ul></li>
+<li><strong>CreateHostBuilder Method:</strong>
+<ul>
+<li>Configures services including Vault client, FerretDB connection, providers, registries, and builder components.</li>
+<li>Sets up resilience policies with circuit breakers and bulkheads.</li>
+<li>Configures feature flags, metrics collection, and health checks.</li>
+<li>Sets up OpenAPI documentation generation.</li>
+</ul></li>
+</ul>
+</section>
+<section id="erpservice-class" class="level3" data-number="4.2">
+<h3 data-number="4.2" class="anchored" data-anchor-id="erpservice-class"><span class="header-section-number">4.2</span> ERPService Class</h3>
+<ul>
+<li><strong>Responsibilities:</strong>
+<ul>
+<li>Orchestrates the extraction ingestion process.</li>
+<li>Retrieves credentials and ERP configuration.</li>
+<li>Dynamically resolves ERP-specific components using registries.</li>
+<li>Chooses between API or Database extraction modes based on the ERP configuration.</li>
+<li>Supports both batch and incremental extraction modes.</li>
+<li>Applies a minor transformation with data quality validation.</li>
+<li>Deposits the transformed data into a pre-dropzone S3 bucket.</li>
+<li>Tracks data lineage for audit and compliance.</li>
+</ul></li>
+<li><strong>Key Method – ProcessERPData:</strong>
+<ul>
+<li><strong>Credential &amp; Configuration Retrieval:</strong>
+<ul>
+<li>Uses <code>ICredentialProvider</code> to obtain short-lived, least-privilege credentials.</li>
+<li>Uses <code>IConfigurationProvider</code> to obtain ERP settings.</li>
+</ul></li>
+<li><strong>Dynamic Component Resolution:</strong>
+<ul>
+<li>Uses registries to resolve ERP-specific factories, extractors, transformers, and uploaders.</li>
+</ul></li>
+<li><strong>Integration Modes:</strong>
+<ul>
+<li><strong>API Mode:</strong>
+<ul>
+<li>Builds an API request via <code>APIRequestBuilder</code> with mutual TLS if supported.</li>
+<li>Extracts data via <code>IExtractor.Extract</code> with circuit breaker protection.</li>
+</ul></li>
+<li><strong>Database Mode:</strong>
+<ul>
+<li>Builds a SQL query using <code>DatabaseQueryBuilder</code>.</li>
+<li>Extracts data via <code>IExtractor.ExtractFromDatabase</code> with connection isolation.</li>
+</ul></li>
+</ul></li>
+<li><strong>Extraction Modes:</strong>
+<ul>
+<li><strong>Full Extract:</strong> Retrieves all data for the specified type.</li>
+<li><strong>Incremental Extract:</strong> Retrieves only changed data since the last extraction.</li>
+</ul></li>
+<li><strong>Self-Healing:</strong>
+<ul>
+<li>Implements automatic recovery procedures for common failure scenarios.</li>
+</ul></li>
+<li><strong>Subsequent Steps:</strong>
+<ul>
+<li>Applies the minor transform with data quality validation.</li>
+<li>Records data lineage metadata.</li>
+<li>Uploads the resulting data into a pre-dropzone S3 bucket via <code>IDataUploader</code>.</li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+<section id="providers" class="level3" data-number="4.3">
+<h3 data-number="4.3" class="anchored" data-anchor-id="providers"><span class="header-section-number">4.3</span> Providers</h3>
+<ul>
+<li><strong>VaultCredentialProvider:</strong>
+<ul>
+<li>Retrieves and deserializes credentials from HashiCorp Vault.</li>
+<li>Implements caching with TTL-based invalidation.</li>
+<li>Supports dynamic secret rotation with configurable TTL.</li>
+<li>Generates least-privilege, operation-specific credentials.</li>
+</ul></li>
+<li><strong>FerretDBConfigProvider:</strong>
+<ul>
+<li>Fetches ERP configuration from FerretDB and maps it to an <code>ERPConfiguration</code> object.</li>
+<li>Uses MongoDB driver since FerretDB implements MongoDB wire protocol.</li>
+<li>Supports read-preference strategies for replica sets.</li>
+<li>Implements schema evolution for backward compatibility.</li>
+</ul></li>
+</ul>
+</section>
+<section id="data-uploader-s3datauploader" class="level3" data-number="4.4">
+<h3 data-number="4.4" class="anchored" data-anchor-id="data-uploader-s3datauploader"><span class="header-section-number">4.4</span> Data Uploader – S3DataUploader</h3>
+<ul>
+<li><strong>Responsibilities:</strong>
+<ul>
+<li>Formats and uploads the minimally transformed data into S3.</li>
+<li>Applies data compression for efficient storage and transfer.</li>
+<li>Converts files to Parquet format and ensures standardized column names.</li>
+<li>Encrypts sensitive fields before upload.</li>
+<li>Records data lineage metadata.</li>
+</ul></li>
+<li><strong>Key Methods:</strong>
+<ul>
+<li><code>Upload</code>: Manages the upload process with checksums and integrity verification.</li>
+<li><code>FormatData</code>: Applies the transformation with data quality checks.</li>
+<li><code>TrackLineage</code>: Records data provenance information.</li>
+</ul></li>
+</ul>
+</section>
+<section id="data-quality-and-validation" class="level3" data-number="4.5">
+<h3 data-number="4.5" class="anchored" data-anchor-id="data-quality-and-validation"><span class="header-section-number">4.5</span> Data Quality and Validation</h3>
+<ul>
+<li><strong>DataContractValidator:</strong>
+<ul>
+<li><strong>Responsibilities:</strong>
+<ul>
+<li>Validates data against predefined schemas and rules.</li>
+<li>Reports quality issues with detailed diagnostics.</li>
+<li>Enforces data governance policies.</li>
+</ul></li>
+<li><strong>Key Methods:</strong>
+<ul>
+<li><code>ValidateSchema</code>: Ensures data adheres to expected structure.</li>
+<li><code>ValidateValues</code>: Checks data values against business rules.</li>
+<li><code>GenerateReport</code>: Creates detailed validation reports.</li>
+</ul></li>
+</ul></li>
+<li><strong>DataMaskingService:</strong>
+<ul>
+<li><strong>Responsibilities:</strong>
+<ul>
+<li>Identifies and masks sensitive information (PII).</li>
+<li>Supports various masking techniques (hashing, tokenization, etc.).</li>
+<li>Maintains referential integrity across masked datasets.</li>
+</ul></li>
+<li><strong>Key Methods:</strong>
+<ul>
+<li><code>IdentifySensitiveFields</code>: Automatically detects potential PII.</li>
+<li><code>ApplyMasking</code>: Applies appropriate masking techniques.</li>
+<li><code>VerifyMasking</code>: Ensures masking effectiveness.</li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+<section id="hashicorp-vault-integration" class="level3" data-number="4.6">
+<h3 data-number="4.6" class="anchored" data-anchor-id="hashicorp-vault-integration"><span class="header-section-number">4.6</span> HashiCorp Vault Integration</h3>
+<ul>
+<li><strong>VaultService:</strong>
+<ul>
+<li><strong>Responsibilities:</strong>
+<ul>
+<li>Manages connection to HashiCorp Vault with circuit breaker protection.</li>
+<li>Retrieves secrets with proper authentication.</li>
+<li>Handles secret versioning and rotation.</li>
+<li>Generates dynamic, least-privilege credentials.</li>
+</ul></li>
+<li><strong>Key Methods:</strong>
+<ul>
+<li><code>GetSecret</code>: Retrieves a secret by path.</li>
+<li><code>GetDynamicSecret</code>: Retrieves a dynamic secret with lease management.</li>
+<li><code>RenewToken</code>: Handles token renewal to maintain access.</li>
+</ul></li>
+<li><strong>Configuration:</strong>
+<ul>
+<li>Support for multiple authentication methods (AppRole, Token, K8s).</li>
+<li>Automatic token renewal.</li>
+<li>Secret caching with TTL-based invalidation.</li>
+<li>Mutual TLS for secure communication.</li>
+</ul></li>
+</ul></li>
+<li><strong>VaultConfiguration:</strong>
+<ul>
+<li>Stores settings such as <code>Address</code>, <code>AuthMethod</code>, <code>RoleId</code>, <code>SecretId</code>, and authentication paths.</li>
+<li>Includes retry and timeout settings with exponential backoff and jitter.</li>
+</ul></li>
+</ul>
+</section>
+<section id="ferretdb-integration" class="level3" data-number="4.7">
+<h3 data-number="4.7" class="anchored" data-anchor-id="ferretdb-integration"><span class="header-section-number">4.7</span> FerretDB Integration</h3>
+<ul>
+<li><strong>FerretDBService:</strong>
+<ul>
+<li><strong>Responsibilities:</strong>
+<ul>
+<li>Manages connection to FerretDB using MongoDB driver.</li>
+<li>Executes queries and maps results to domain models.</li>
+<li>Handles connection pooling and resilience.</li>
+<li>Supports schema evolution for backward compatibility.</li>
+</ul></li>
+<li><strong>Key Methods:</strong>
+<ul>
+<li><code>GetConfiguration</code>: Retrieves configuration by ERP type and client ID.</li>
+<li><code>UpdateConfiguration</code>: Updates configuration documents.</li>
+<li><code>ExecuteQuery</code>: Executes a MongoDB query and returns the results.</li>
+<li><code>GetSchemaVersion</code>: Retrieves schema version information.</li>
+</ul></li>
+<li><strong>Configuration:</strong>
+<ul>
+<li>Support for replica sets and read preferences.</li>
+<li>Connection pooling with bulkhead isolation.</li>
+<li>Automatic retry with exponential backoff and jitter.</li>
+<li>Circuit breaker protection against cascading failures.</li>
+</ul></li>
+</ul></li>
+<li><strong>FerretDBConfiguration:</strong>
+<ul>
+<li>Stores settings such as <code>ConnectionString</code>, <code>Database</code>, <code>Collection</code>, and authentication credentials.</li>
+<li>Includes timeout and retry settings.</li>
+<li>Defines bulkhead configuration for connection isolation.</li>
+</ul></li>
+</ul>
+</section>
+<section id="feature-flag-management" class="level3" data-number="4.8">
+<h3 data-number="4.8" class="anchored" data-anchor-id="feature-flag-management"><span class="header-section-number">4.8</span> Feature Flag Management</h3>
+<ul>
+<li><strong>FeatureFlagService:</strong>
+<ul>
+<li><strong>Responsibilities:</strong>
+<ul>
+<li>Manages feature flags for gradual rollout of new features.</li>
+<li>Supports A/B testing and canary releases.</li>
+<li>Provides runtime configuration without deployment.</li>
+</ul></li>
+<li><strong>Key Methods:</strong>
+<ul>
+<li><code>IsFeatureEnabled</code>: Checks if a feature is enabled for a specific context.</li>
+<li><code>GetFeatureConfiguration</code>: Retrieves configuration for an enabled feature.</li>
+<li><code>RecordFeatureUsage</code>: Tracks feature usage for analytics.</li>
+</ul></li>
+<li><strong>Configuration:</strong>
+<ul>
+<li>Support for user, client, and global targeting.</li>
+<li>Time-based and percentage-based rollouts.</li>
+<li>Integration with monitoring for impact assessment.</li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+<section id="metrics-and-observability" class="level3" data-number="4.9">
+<h3 data-number="4.9" class="anchored" data-anchor-id="metrics-and-observability"><span class="header-section-number">4.9</span> Metrics and Observability</h3>
+<ul>
+<li><strong>MetricsService:</strong>
+<ul>
+<li>Collects performance metrics on key operations.</li>
+<li>Integrates with Prometheus for metrics collection.</li>
+<li>Supports custom dimensions for detailed analysis.</li>
+<li>Records histogram metrics for latency distribution.</li>
+</ul></li>
+<li><strong>HealthCheckService:</strong>
+<ul>
+<li>Provides health status of dependencies (Vault, FerretDB, S3).</li>
+<li>Implements circuit breaker pattern for degraded services.</li>
+<li>Exposes health endpoints for monitoring.</li>
+<li>Supports self-healing procedures for common issues.</li>
+</ul></li>
+<li><strong>TracingService:</strong>
+<ul>
+<li>Provides distributed tracing across system components.</li>
+<li>Integrates with OpenTelemetry for standardized telemetry.</li>
+<li>Correlates logs, metrics, and traces for holistic observability.</li>
+<li>Supports sampling strategies for high-volume production environments.</li>
+</ul></li>
+</ul>
+</section>
+<section id="data-lineage-and-governance" class="level3" data-number="4.10">
+<h3 data-number="4.10" class="anchored" data-anchor-id="data-lineage-and-governance"><span class="header-section-number">4.10</span> Data Lineage and Governance</h3>
+<ul>
+<li><strong>DataLineageService:</strong>
+<ul>
+<li><strong>Responsibilities:</strong>
+<ul>
+<li>Tracks data origin, transformations, and destinations.</li>
+<li>Records metadata about extraction processes.</li>
+<li>Supports audit requirements and compliance verification.</li>
+</ul></li>
+<li><strong>Key Methods:</strong>
+<ul>
+<li><code>StartLineageRecord</code>: Creates a new lineage tracking record.</li>
+<li><code>RecordTransformation</code>: Logs applied transformations.</li>
+<li><code>CompleteLineageRecord</code>: Finalizes the lineage record.</li>
+</ul></li>
+<li><strong>Integration:</strong>
+<ul>
+<li>Connects with data catalog for metadata management.</li>
+<li>Provides lineage visualization through API.</li>
+<li>Supports data governance and compliance reporting.</li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+<section id="configuration-models" class="level3" data-number="4.11">
+<h3 data-number="4.11" class="anchored" data-anchor-id="configuration-models"><span class="header-section-number">4.11</span> Configuration Models</h3>
+<ul>
+<li><strong>ERPConfiguration:</strong>
+<ul>
+<li>Stores settings such as <code>BaseUrl</code>, <code>CompanyId</code>, <code>WarehouseId</code>, <code>RequiredHeaders</code>, and timeout/retry settings.</li>
+<li><strong>Fields for Database Access:</strong>
+<ul>
+<li><code>AccessType</code>: Enum (<code>API</code> or <code>Database</code>).</li>
+<li><code>ConnectionString</code>: For direct database connections.</li>
+<li><code>Schema</code>: Database schema.</li>
+<li><code>BatchSize</code>: Number of records to fetch per batch.</li>
+</ul></li>
+<li><strong>Fields for Incremental Extract:</strong>
+<ul>
+<li><code>SupportsCDC</code>: Whether the ERP supports Change Data Capture.</li>
+<li><code>CDCConfiguation</code>: Settings for CDC-based extraction.</li>
+<li><code>WatermarkColumn</code>: Column used for incremental extraction.</li>
+</ul></li>
+</ul></li>
+<li><strong>ERPCredentials:</strong>
+<ul>
+<li>Holds secure API keys and client secrets.</li>
+<li>Includes operation-specific scoped credentials.</li>
+<li>Supports dynamic credential generation.</li>
+</ul></li>
+<li><strong>UploadConfiguration:</strong>
+<ul>
+<li>Used by the data uploader to configure the S3 upload.</li>
+<li>Includes compression settings and encryption options.</li>
+<li>Defines metadata for data catalog integration.</li>
+</ul></li>
+<li><strong>ResilienceConfiguration:</strong>
+<ul>
+<li>Defines circuit breaker thresholds and recovery periods.</li>
+<li>Configures retry policies with exponential backoff and jitter.</li>
+<li>Specifies bulkhead isolation settings for resource pools.</li>
+</ul></li>
+</ul>
+</section>
+<section id="development-and-test-support" class="level3" data-number="4.12">
+<h3 data-number="4.12" class="anchored" data-anchor-id="development-and-test-support"><span class="header-section-number">4.12</span> Development and Test Support</h3>
+<ul>
+<li><strong>LocalDevelopmentEnvironment:</strong>
+<ul>
+<li>Provides containerized dependencies (Vault, FerretDB, S3-compatible storage).</li>
+<li>Supports mock ERP implementations for testing.</li>
+<li>Includes sample datasets for development.</li>
+</ul></li>
+<li><strong>IntegrationTestHarness:</strong>
+<ul>
+<li>Facilitates automated testing against mock ERPs.</li>
+<li>Supports scenario-based testing of the extraction process.</li>
+<li>Includes performance benchmarking capabilities.</li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="pseudo-code-for-nomad-integration" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="pseudo-code-for-nomad-integration"><span class="header-section-number">5</span> Pseudo-code for Nomad Integration</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode csharp code-with-copy"><code class="sourceCode cs"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">/// </span><span class="kw">&lt;summary&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">/// Entry point for the ERP data extraction and ingestion process.</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">/// Processes command-line arguments from Nomad and orchestrates the ETL workflow.</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">/// </span><span class="kw">&lt;/summary&gt;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>Main<span class="op">:</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Parse Nomad-supplied command-line arguments:</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">//   --erp-type, --client-id, --data-type</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    options <span class="op">=</span> <span class="fu">parseArguments</span><span class="op">([</span><span class="st">"--erp-type"</span><span class="op">,</span> <span class="st">"--client-id"</span><span class="op">,</span> <span class="st">"--data-type"</span><span class="op">])</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Build the host container with dependency injection configured</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    host <span class="op">=</span> <span class="fu">createHostBuilder</span><span class="op">().</span><span class="fu">build</span><span class="op">()</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Register health checks for dependencies</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    host<span class="op">.</span><span class="fu">registerHealthChecks</span><span class="op">()</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">addCheck</span><span class="op">&lt;</span>VaultHealthCheck<span class="op">&gt;(</span><span class="st">"vault"</span><span class="op">)</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">addCheck</span><span class="op">&lt;</span>FerretDBHealthCheck<span class="op">&gt;(</span><span class="st">"ferretdb"</span><span class="op">)</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">addCheck</span><span class="op">&lt;</span>S3HealthCheck<span class="op">&gt;(</span><span class="st">"s3"</span><span class="op">)</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Setup OpenAPI documentation</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    host<span class="op">.</span><span class="fu">configureOpenApi</span><span class="op">(</span>options <span class="op">=&gt;</span> <span class="op">{</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        options<span class="op">.</span><span class="fu">Title</span> <span class="op">=</span> <span class="st">"Distributor Data Extraction API"</span><span class="op">;</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        options<span class="op">.</span><span class="fu">Version</span> <span class="op">=</span> <span class="st">"v1"</span><span class="op">;</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>        options<span class="op">.</span><span class="fu">Description</span> <span class="op">=</span> <span class="st">"API for extracting distributor data from various ERP systems"</span><span class="op">;</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="op">})</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Retrieve the ERPService from the DI container</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    erpService <span class="op">=</span> host<span class="op">.</span><span class="fu">getService</span><span class="op">(</span>ERPService<span class="op">)</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Trigger the extraction ingestion process with the supplied parameters</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    erpService<span class="op">.</span><span class="fu">ProcessERPData</span><span class="op">(</span>options<span class="op">.</span><span class="fu">erpType</span><span class="op">,</span> options<span class="op">.</span><span class="fu">clientId</span><span class="op">,</span> options<span class="op">.</span><span class="fu">dataType</span><span class="op">)</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="co">/// </span><span class="kw">&lt;summary&gt;</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="co">/// Configures and builds the host with all necessary services.</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="co">/// </span><span class="kw">&lt;/summary&gt;</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>CreateHostBuilder<span class="op">:</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="fu">HostBuilder</span><span class="op">()</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">ConfigureServices</span><span class="op">(</span>services <span class="op">=&gt;</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Configure Vault client with circuit breaker</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>            services<span class="op">.</span><span class="fu">AddSingleton</span><span class="op">&lt;</span>IVaultClient<span class="op">&gt;(</span>provider <span class="op">=&gt;</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>            <span class="op">{</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>                <span class="dt">var</span> vaultOptions <span class="op">=</span> <span class="kw">new</span> <span class="fu">VaultClientSettings</span><span class="op">(</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"https://vault.example.com:8200"</span><span class="op">,</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>                    <span class="kw">new</span> <span class="fu">AppRoleAuthMethodInfo</span><span class="op">(</span>roleId<span class="op">,</span> secretId<span class="op">)</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>                <span class="op">);</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>                vaultOptions<span class="op">.</span><span class="fu">RetrySettings</span> <span class="op">=</span> <span class="kw">new</span> RetrySettings <span class="op">{</span> </span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>                    Enabled <span class="op">=</span> <span class="kw">true</span><span class="op">,</span> </span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>                    MaxAttempts <span class="op">=</span> <span class="dv">5</span><span class="op">,</span></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>                    BackoffType <span class="op">=</span> BackoffType<span class="op">.</span><span class="fu">ExponentialWithJitter</span></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>                <span class="op">};</span></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>                <span class="kw">return</span> <span class="kw">new</span> <span class="fu">VaultClient</span><span class="op">(</span>vaultOptions<span class="op">);</span></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>            <span class="op">});</span></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Configure FerretDB connection with bulkhead isolation</span></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>            services<span class="op">.</span><span class="fu">AddSingleton</span><span class="op">&lt;</span>IMongoClient<span class="op">&gt;(</span>provider <span class="op">=&gt;</span></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>            <span class="op">{</span></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>                <span class="dt">var</span> settings <span class="op">=</span> MongoClientSettings<span class="op">.</span><span class="fu">FromConnectionString</span><span class="op">(</span></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"mongodb://ferretdb.example.com:27017"</span></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>                <span class="op">);</span></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>                settings<span class="op">.</span><span class="fu">RetryWrites</span> <span class="op">=</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>                settings<span class="op">.</span><span class="fu">RetryReads</span> <span class="op">=</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>                settings<span class="op">.</span><span class="fu">ServerSelectionTimeout</span> <span class="op">=</span> TimeSpan<span class="op">.</span><span class="fu">FromSeconds</span><span class="op">(</span><span class="dv">5</span><span class="op">);</span></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>                settings<span class="op">.</span><span class="fu">MaxConnectionPoolSize</span> <span class="op">=</span> <span class="dv">100</span><span class="op">;</span></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>                <span class="kw">return</span> <span class="kw">new</span> <span class="fu">MongoClient</span><span class="op">(</span>settings<span class="op">);</span></span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>            <span class="op">});</span></span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Configure feature flag service</span></span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>            services<span class="op">.</span><span class="fu">AddSingleton</span><span class="op">&lt;</span>IFeatureFlagService<span class="op">,</span> FeatureFlagService<span class="op">&gt;();</span></span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Register providers with caching decorators</span></span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>            services<span class="op">.</span><span class="fu">AddSingleton</span><span class="op">&lt;</span>ICredentialProvider<span class="op">,</span> VaultCredentialProvider<span class="op">&gt;();</span></span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>            services<span class="op">.</span><span class="fu">Decorate</span><span class="op">&lt;</span>ICredentialProvider<span class="op">,</span> CachedCredentialProviderDecorator<span class="op">&gt;();</span></span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>            services<span class="op">.</span><span class="fu">AddSingleton</span><span class="op">&lt;</span>IConfigurationProvider<span class="op">,</span> FerretDBConfigProvider<span class="op">&gt;();</span></span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Register data quality and validation services</span></span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>            services<span class="op">.</span><span class="fu">AddSingleton</span><span class="op">&lt;</span>IDataContractValidator<span class="op">,</span> DataContractValidator<span class="op">&gt;();</span></span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>            services<span class="op">.</span><span class="fu">AddSingleton</span><span class="op">&lt;</span>IDataMaskingService<span class="op">,</span> DataMaskingService<span class="op">&gt;();</span></span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Register data lineage service</span></span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>            services<span class="op">.</span><span class="fu">AddSingleton</span><span class="op">&lt;</span>IDataLineageService<span class="op">,</span> DataLineageService<span class="op">&gt;();</span></span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Register registries</span></span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>            services<span class="op">.</span><span class="fu">AddSingleton</span><span class="op">&lt;</span>IERPRegistry<span class="op">,</span> ERPRegistry<span class="op">&gt;();</span></span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>            services<span class="op">.</span><span class="fu">AddSingleton</span><span class="op">&lt;</span>IExtractorRegistry<span class="op">,</span> ExtractorRegistry<span class="op">&gt;();</span></span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>            services<span class="op">.</span><span class="fu">AddSingleton</span><span class="op">&lt;</span>ITransformationRegistry<span class="op">,</span> TransformationRegistry<span class="op">&gt;();</span></span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>            services<span class="op">.</span><span class="fu">AddSingleton</span><span class="op">&lt;</span>IUploaderRegistry<span class="op">,</span> UploaderRegistry<span class="op">&gt;();</span></span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Register builders</span></span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>            services<span class="op">.</span><span class="fu">AddSingleton</span><span class="op">&lt;</span>IAPIRequestBuilder<span class="op">,</span> APIRequestBuilder<span class="op">&gt;();</span></span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>            services<span class="op">.</span><span class="fu">AddSingleton</span><span class="op">&lt;</span>IDatabaseQueryBuilder<span class="op">,</span> DatabaseQueryBuilder<span class="op">&gt;();</span></span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>            services<span class="op">.</span><span class="fu">AddSingleton</span><span class="op">&lt;</span>IAuthenticationBuilder<span class="op">,</span> AuthenticationBuilder<span class="op">&gt;();</span></span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>            services<span class="op">.</span><span class="fu">AddSingleton</span><span class="op">&lt;</span>IExtractConfigBuilder<span class="op">,</span> ExtractConfigBuilder<span class="op">&gt;();</span></span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Register S3 client for data upload</span></span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a>            services<span class="op">.</span><span class="fu">AddAWSService</span><span class="op">&lt;</span>IAmazonS3<span class="op">&gt;();</span></span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Register core service with decorators for cross-cutting concerns</span></span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>            services<span class="op">.</span><span class="fu">AddSingleton</span><span class="op">&lt;</span>ERPService<span class="op">&gt;();</span></span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>            services<span class="op">.</span><span class="fu">Decorate</span><span class="op">&lt;</span>ERPService<span class="op">,</span> MetricsERPServiceDecorator<span class="op">&gt;();</span></span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>            services<span class="op">.</span><span class="fu">Decorate</span><span class="op">&lt;</span>ERPService<span class="op">,</span> DataQualityDecorator<span class="op">&gt;();</span></span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a>            services<span class="op">.</span><span class="fu">Decorate</span><span class="op">&lt;</span>ERPService<span class="op">,</span> EncryptionDecorator<span class="op">&gt;();</span></span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Configure HTTP clients with resilience policies using Polly</span></span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>            services<span class="op">.</span><span class="fu">AddHttpClient</span><span class="op">(</span><span class="st">"default"</span><span class="op">)</span></span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">AddTransientHttpErrorPolicy</span><span class="op">(</span>builder <span class="op">=&gt;</span> </span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>                    builder<span class="op">.</span><span class="fu">WaitAndRetryAsync</span><span class="op">(</span></span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a>                        retryCount<span class="op">:</span> <span class="dv">3</span><span class="op">,</span> </span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a>                        sleepDurationProvider<span class="op">:</span> retryAttempt <span class="op">=&gt;</span> </span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>                            TimeSpan<span class="op">.</span><span class="fu">FromSeconds</span><span class="op">(</span>Math<span class="op">.</span><span class="fu">Pow</span><span class="op">(</span><span class="dv">2</span><span class="op">,</span> retryAttempt<span class="op">))</span> <span class="op">+</span> </span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>                            TimeSpan<span class="op">.</span><span class="fu">FromMilliseconds</span><span class="op">(</span><span class="kw">new</span> <span class="fu">Random</span><span class="op">().</span><span class="fu">Next</span><span class="op">(</span><span class="dv">0</span><span class="op">,</span> <span class="dv">1000</span><span class="op">)),</span> <span class="co">// Jitter</span></span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a>                        onRetry<span class="op">:</span> <span class="op">(</span>outcome<span class="op">,</span> timespan<span class="op">,</span> retryAttempt<span class="op">,</span> context<span class="op">)</span> <span class="op">=&gt;</span> <span class="op">{</span></span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a>                            <span class="co">// Log retry attempt</span></span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a>                            logger<span class="op">.</span><span class="fu">LogWarning</span><span class="op">(</span>$<span class="st">"Retry {retryAttempt} for {context.PolicyKey} after {timespan.TotalSeconds}s delay"</span><span class="op">);</span></span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>                        <span class="op">}</span></span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>                    <span class="op">))</span></span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">AddCircuitBreakerPolicy</span><span class="op">(</span>builder <span class="op">=&gt;</span></span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>                    builder<span class="op">.</span><span class="fu">CircuitBreakerAsync</span><span class="op">(</span></span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a>                        handledEventsAllowedBeforeBreaking<span class="op">:</span> <span class="dv">5</span><span class="op">,</span></span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a>                        durationOfBreak<span class="op">:</span> TimeSpan<span class="op">.</span><span class="fu">FromSeconds</span><span class="op">(</span><span class="dv">30</span><span class="op">),</span></span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a>                        onBreak<span class="op">:</span> <span class="op">(</span>outcome<span class="op">,</span> breakDelay<span class="op">)</span> <span class="op">=&gt;</span> <span class="op">{</span></span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a>                            logger<span class="op">.</span><span class="fu">LogError</span><span class="op">(</span>$<span class="st">"Circuit broken for {breakDelay.TotalSeconds}s!"</span><span class="op">);</span></span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a>                        <span class="op">},</span></span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a>                        onReset<span class="op">:</span> <span class="op">()</span> <span class="op">=&gt;</span> <span class="op">{</span></span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a>                            logger<span class="op">.</span><span class="fu">LogInformation</span><span class="op">(</span><span class="st">"Circuit reset!"</span><span class="op">);</span></span>
+<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a>                        <span class="op">}</span></span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a>                    <span class="op">));</span></span>
+<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Add OpenTelemetry tracing</span></span>
+<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a>            services<span class="op">.</span><span class="fu">AddOpenTelemetryTracing</span><span class="op">(</span>builder <span class="op">=&gt;</span> <span class="op">{</span></span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a>                builder</span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a>                    <span class="op">.</span><span class="fu">SetResourceBuilder</span><span class="op">(</span>ResourceBuilder<span class="op">.</span><span class="fu">CreateDefault</span><span class="op">().</span><span class="fu">AddService</span><span class="op">(</span><span class="st">"erp-extractor"</span><span class="op">))</span></span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a>                    <span class="op">.</span><span class="fu">AddSource</span><span class="op">(</span><span class="st">"erp-extractor"</span><span class="op">)</span></span>
+<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a>                    <span class="op">.</span><span class="fu">AddHttpClientInstrumentation</span><span class="op">()</span></span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a>                    <span class="op">.</span><span class="fu">AddMongoDBInstrumentation</span><span class="op">()</span></span>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a>                    <span class="op">.</span><span class="fu">AddAspNetCoreInstrumentation</span><span class="op">()</span></span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a>                    <span class="op">.</span><span class="fu">AddJaegerExporter</span><span class="op">();</span></span>
+<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a>            <span class="op">});</span></span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a>        <span class="op">});</span></span>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a><span class="co">/// </span><span class="kw">&lt;summary&gt;</span></span>
+<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a><span class="co">/// Processes ERP data extraction and performs initial transformation.</span></span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a><span class="co">/// </span><span class="kw">&lt;/summary&gt;</span></span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a><span class="co">/// </span><span class="kw">&lt;param</span><span class="ot"> name=</span><span class="dt">"erpType"</span><span class="kw">&gt;</span><span class="co">The type of ERP system to extract from</span><span class="kw">&lt;/param&gt;</span></span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a><span class="co">/// </span><span class="kw">&lt;param</span><span class="ot"> name=</span><span class="dt">"clientId"</span><span class="kw">&gt;</span><span class="co">The client identifier</span><span class="kw">&lt;/param&gt;</span></span>
+<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a><span class="co">/// </span><span class="kw">&lt;param</span><span class="ot"> name=</span><span class="dt">"dataType"</span><span class="kw">&gt;</span><span class="co">The type of data to extract</span><span class="kw">&lt;/param&gt;</span></span>
+<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a><span class="co">/// </span><span class="kw">&lt;remarks&gt;</span></span>
+<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a><span class="co">/// This method handles both API and Database extraction modes. For API mode,</span></span>
+<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a><span class="co">/// it constructs appropriate API requests with authentication. For Database mode,</span></span>
+<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a><span class="co">/// it builds and executes SQL queries. In both cases, the extracted data is:</span></span>
+<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a><span class="co">/// 1. Minimally transformed (column standardization)</span></span>
+<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a><span class="co">/// 2. Validated against data contracts</span></span>
+<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a><span class="co">/// 3. Converted to Parquet format with compression</span></span>
+<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a><span class="co">/// 4. Uploaded to a pre-dropzone S3 bucket</span></span>
+<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a><span class="co">/// </span><span class="kw">&lt;/remarks&gt;</span></span>
+<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a>ERPService<span class="op">.</span><span class="fu">ProcessERPData</span><span class="op">(</span>erpType<span class="op">,</span> clientId<span class="op">,</span> dataType<span class="op">):</span></span>
+<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a>    Log <span class="st">"Starting ETL extraction ingestion for client [clientId] using ERP [erpType]"</span></span>
+<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a>    <span class="co">/// </span><span class="kw">&lt;summary&gt;</span><span class="co">Start metrics collection for this operation</span><span class="kw">&lt;/summary&gt;</span></span>
+<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a>    <span class="kw">using</span> <span class="op">(</span>metricsTimer <span class="op">=</span> MetricsService<span class="op">.</span><span class="fu">StartTimer</span><span class="op">(</span><span class="st">"erp_process_data"</span><span class="op">,</span> </span>
+<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a>                                                  <span class="op">{</span> <span class="st">"erp_type"</span><span class="op">:</span> erpType<span class="op">,</span> <span class="st">"client_id"</span><span class="op">:</span> clientId <span class="op">}))</span></span>
+<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a>    <span class="kw">using</span> <span class="op">(</span>tracer <span class="op">=</span> TracingService<span class="op">.</span><span class="fu">StartTrace</span><span class="op">(</span><span class="st">"ProcessERPData"</span><span class="op">))</span></span>
+<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// </span><span class="kw">&lt;summary&gt;</span><span class="co">Start data lineage tracking</span><span class="kw">&lt;/summary&gt;</span></span>
+<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a>        lineage <span class="op">=</span> DataLineageService<span class="op">.</span><span class="fu">StartLineageRecord</span><span class="op">(</span>erpType<span class="op">,</span> clientId<span class="op">,</span> dataType<span class="op">)</span></span>
+<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// </span><span class="kw">&lt;summary&gt;</span><span class="co">Check feature flags for enabled features</span><span class="kw">&lt;/summary&gt;</span></span>
+<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a>        <span class="dt">bool</span> useIncrementalExtract <span class="op">=</span> FeatureFlagService<span class="op">.</span><span class="fu">IsFeatureEnabled</span><span class="op">(</span><span class="st">"IncrementalExtract"</span><span class="op">,</span> clientId<span class="op">)</span></span>
+<span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a>        <span class="dt">bool</span> useCompression <span class="op">=</span> FeatureFlagService<span class="op">.</span><span class="fu">IsFeatureEnabled</span><span class="op">(</span><span class="st">"Compression"</span><span class="op">,</span> clientId<span class="op">)</span></span>
+<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a>        <span class="dt">bool</span> useFieldEncryption <span class="op">=</span> FeatureFlagService<span class="op">.</span><span class="fu">IsFeatureEnabled</span><span class="op">(</span><span class="st">"FieldEncryption"</span><span class="op">,</span> clientId<span class="op">)</span></span>
+<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// </span><span class="kw">&lt;summary&gt;</span><span class="co">Retrieve least-privilege credentials from HashiCorp Vault</span><span class="kw">&lt;/summary&gt;</span></span>
+<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a>        credentials <span class="op">=</span> CredentialProvider<span class="op">.</span><span class="fu">GetLeastPrivilegeCredentials</span><span class="op">(</span>erpType<span class="op">,</span> clientId<span class="op">,</span> dataType<span class="op">)</span></span>
+<span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// </span><span class="kw">&lt;summary&gt;</span><span class="co">Retrieve configuration from FerretDB</span><span class="kw">&lt;/summary&gt;</span></span>
+<span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a>        erpConfig <span class="op">=</span> ConfigurationProvider<span class="op">.</span><span class="fu">GetConfiguration</span><span class="op">(</span>erpType<span class="op">,</span> clientId<span class="op">)</span></span>
+<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// </span><span class="kw">&lt;summary&gt;</span></span>
+<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// Lookup common components via registries:</span></span>
+<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// - ERP-specific factory (for connectors and jobs)</span></span>
+<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// - Data extractor (for API or DB extraction)</span></span>
+<span id="cb1-182"><a href="#cb1-182" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// - Data transformer (to standardize columns and convert to Parquet)</span></span>
+<span id="cb1-183"><a href="#cb1-183" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// - Data validator (to validate data quality)</span></span>
+<span id="cb1-184"><a href="#cb1-184" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// - Data uploader (to upload data to the pre-dropzone S3 bucket)</span></span>
+<span id="cb1-185"><a href="#cb1-185" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// </span><span class="kw">&lt;/summary&gt;</span></span>
+<span id="cb1-186"><a href="#cb1-186" aria-hidden="true" tabindex="-1"></a>        factory <span class="op">=</span> ERPRegistry<span class="op">.</span><span class="fu">GetFactory</span><span class="op">(</span>erpType<span class="op">,</span> clientId<span class="op">)</span></span>
+<span id="cb1-187"><a href="#cb1-187" aria-hidden="true" tabindex="-1"></a>        extractor <span class="op">=</span> ExtractorRegistry<span class="op">.</span><span class="fu">GetExtractor</span><span class="op">(</span>erpType<span class="op">)</span></span>
+<span id="cb1-188"><a href="#cb1-188" aria-hidden="true" tabindex="-1"></a>        transformer <span class="op">=</span> TransformationRegistry<span class="op">.</span><span class="fu">GetStrategy</span><span class="op">(</span>erpType<span class="op">,</span> dataType<span class="op">)</span></span>
+<span id="cb1-189"><a href="#cb1-189" aria-hidden="true" tabindex="-1"></a>        validator <span class="op">=</span> ValidatorRegistry<span class="op">.</span><span class="fu">GetValidator</span><span class="op">(</span>erpType<span class="op">,</span> dataType<span class="op">)</span></span>
+<span id="cb1-190"><a href="#cb1-190" aria-hidden="true" tabindex="-1"></a>        uploader <span class="op">=</span> UploaderRegistry<span class="op">.</span><span class="fu">GetUploader</span><span class="op">(</span><span class="st">"s3"</span><span class="op">)</span></span>
+<span id="cb1-191"><a href="#cb1-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-192"><a href="#cb1-192" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// </span><span class="kw">&lt;summary&gt;</span><span class="co">Build extraction configuration based on mode</span><span class="kw">&lt;/summary&gt;</span></span>
+<span id="cb1-193"><a href="#cb1-193" aria-hidden="true" tabindex="-1"></a>        extractConfig <span class="op">=</span> ExtractConfigBuilder<span class="op">.</span><span class="fu">New</span><span class="op">()</span></span>
+<span id="cb1-194"><a href="#cb1-194" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">ForERP</span><span class="op">(</span>erpType<span class="op">)</span></span>
+<span id="cb1-195"><a href="#cb1-195" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">ForClient</span><span class="op">(</span>clientId<span class="op">)</span></span>
+<span id="cb1-196"><a href="#cb1-196" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">ForDataType</span><span class="op">(</span>dataType<span class="op">)</span></span>
+<span id="cb1-197"><a href="#cb1-197" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">UseIncrementalExtract</span><span class="op">(</span>useIncrementalExtract <span class="op">&amp;&amp;</span> erpConfig<span class="op">.</span><span class="fu">SupportsCDC</span><span class="op">)</span></span>
+<span id="cb1-198"><a href="#cb1-198" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">WithLastExtractTime</span><span class="op">(</span>useIncrementalExtract <span class="op">?</span> <span class="fu">GetLastExtractTime</span><span class="op">(</span>erpType<span class="op">,</span> clientId<span class="op">,</span> dataType<span class="op">)</span> <span class="op">:</span> <span class="kw">null</span><span class="op">)</span></span>
+<span id="cb1-199"><a href="#cb1-199" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">WithBatchSize</span><span class="op">(</span>erpConfig<span class="op">.</span><span class="fu">BatchSize</span><span class="op">)</span></span>
+<span id="cb1-200"><a href="#cb1-200" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">Build</span><span class="op">()</span></span>
+<span id="cb1-201"><a href="#cb1-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-202"><a href="#cb1-202" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// </span><span class="kw">&lt;summary&gt;</span></span>
+<span id="cb1-203"><a href="#cb1-203" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// Handle database extraction mode</span></span>
+<span id="cb1-204"><a href="#cb1-204" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// Builds and executes SQL queries for direct database access</span></span>
+<span id="cb1-205"><a href="#cb1-205" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// </span><span class="kw">&lt;/summary&gt;</span></span>
+<span id="cb1-206"><a href="#cb1-206" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> erpConfig<span class="op">.</span><span class="fu">AccessType</span> <span class="op">==</span> Database then<span class="op">:</span></span>
+<span id="cb1-207"><a href="#cb1-207" aria-hidden="true" tabindex="-1"></a>            queryBuilder <span class="op">=</span> <span class="fu">DatabaseQueryBuilder</span><span class="op">()</span></span>
+<span id="cb1-208"><a href="#cb1-208" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">ForERP</span><span class="op">(</span>erpType<span class="op">)</span></span>
+<span id="cb1-209"><a href="#cb1-209" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">WithConnectionString</span><span class="op">(</span>erpConfig<span class="op">.</span><span class="fu">ConnectionString</span><span class="op">)</span></span>
+<span id="cb1-210"><a href="#cb1-210" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">WithSchema</span><span class="op">(</span>erpConfig<span class="op">.</span><span class="fu">Schema</span><span class="op">)</span></span>
+<span id="cb1-211"><a href="#cb1-211" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">WithTable</span><span class="op">(</span>dataType <span class="op">+</span> <span class="st">"_table"</span><span class="op">)</span></span>
+<span id="cb1-212"><a href="#cb1-212" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">WithColumns</span><span class="op">(</span><span class="st">"id"</span><span class="op">,</span> <span class="st">"created_at"</span><span class="op">,</span> <span class="st">"data"</span><span class="op">)</span></span>
+<span id="cb1-213"><a href="#cb1-213" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb1-214"><a href="#cb1-214" aria-hidden="true" tabindex="-1"></a>            <span class="kw">if</span> useIncrementalExtract <span class="op">&amp;&amp;</span> erpConfig<span class="op">.</span><span class="fu">SupportsCDC</span><span class="op">:</span></span>
+<span id="cb1-215"><a href="#cb1-215" aria-hidden="true" tabindex="-1"></a>                queryBuilder<span class="op">.</span><span class="fu">WithWhere</span><span class="op">(</span>erpConfig<span class="op">.</span><span class="fu">WatermarkColumn</span><span class="op">,</span> <span class="st">"&gt;"</span><span class="op">,</span> extractConfig<span class="op">.</span><span class="fu">LastExtractTime</span><span class="op">)</span></span>
+<span id="cb1-216"><a href="#cb1-216" aria-hidden="true" tabindex="-1"></a>            <span class="kw">else</span><span class="op">:</span></span>
+<span id="cb1-217"><a href="#cb1-217" aria-hidden="true" tabindex="-1"></a>                queryBuilder<span class="op">.</span><span class="fu">WithWhere</span><span class="op">(</span><span class="st">"is_processed"</span><span class="op">,</span> <span class="kw">false</span><span class="op">)</span></span>
+<span id="cb1-218"><a href="#cb1-218" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb1-219"><a href="#cb1-219" aria-hidden="true" tabindex="-1"></a>            query <span class="op">=</span> queryBuilder</span>
+<span id="cb1-220"><a href="#cb1-220" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">WithOrderBy</span><span class="op">(</span><span class="st">"created_at"</span><span class="op">)</span></span>
+<span id="cb1-221"><a href="#cb1-221" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">WithLimit</span><span class="op">(</span>erpConfig<span class="op">.</span><span class="fu">BatchSize</span><span class="op">)</span></span>
+<span id="cb1-222"><a href="#cb1-222" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">WithCommandTimeout</span><span class="op">(</span>erpConfig<span class="op">.</span><span class="fu">TimeoutSeconds</span><span class="op">)</span></span>
+<span id="cb1-223"><a href="#cb1-223" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">Build</span><span class="op">()</span></span>
+<span id="cb1-224"><a href="#cb1-224" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb1-225"><a href="#cb1-225" aria-hidden="true" tabindex="-1"></a>            Log <span class="st">"Executing database query: "</span> <span class="op">+</span> query<span class="op">.</span><span class="fu">GenerateSql</span><span class="op">()</span></span>
+<span id="cb1-226"><a href="#cb1-226" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb1-227"><a href="#cb1-227" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Use bulkhead isolation for database connection</span></span>
+<span id="cb1-228"><a href="#cb1-228" aria-hidden="true" tabindex="-1"></a>            <span class="kw">using</span> <span class="op">(</span>bulkhead <span class="op">=</span> BulkheadPolicy<span class="op">.</span><span class="fu">Execute</span><span class="op">(</span>erpType <span class="op">+</span> <span class="st">"-database"</span><span class="op">,</span> <span class="op">()</span> <span class="op">=&gt;</span> <span class="op">{</span></span>
+<span id="cb1-229"><a href="#cb1-229" aria-hidden="true" tabindex="-1"></a>                extractedData <span class="op">=</span> extractor<span class="op">.</span><span class="fu">ExtractFromDatabase</span><span class="op">(</span>query<span class="op">,</span> extractConfig<span class="op">)</span></span>
+<span id="cb1-230"><a href="#cb1-230" aria-hidden="true" tabindex="-1"></a>                <span class="kw">return</span> extractedData</span>
+<span id="cb1-231"><a href="#cb1-231" aria-hidden="true" tabindex="-1"></a>            <span class="op">}))</span></span>
+<span id="cb1-232"><a href="#cb1-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-233"><a href="#cb1-233" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// </span><span class="kw">&lt;summary&gt;</span></span>
+<span id="cb1-234"><a href="#cb1-234" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// Handle API extraction mode</span></span>
+<span id="cb1-235"><a href="#cb1-235" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// Constructs and executes authenticated API requests with resilience</span></span>
+<span id="cb1-236"><a href="#cb1-236" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// </span><span class="kw">&lt;/summary&gt;</span></span>
+<span id="cb1-237"><a href="#cb1-237" aria-hidden="true" tabindex="-1"></a>        <span class="kw">else</span><span class="op">:</span></span>
+<span id="cb1-238"><a href="#cb1-238" aria-hidden="true" tabindex="-1"></a>            authBuilder <span class="op">=</span> <span class="fu">AuthenticationBuilder</span><span class="op">()</span></span>
+<span id="cb1-239"><a href="#cb1-239" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">WithApiKey</span><span class="op">(</span>credentials<span class="op">.</span><span class="fu">ApiKey</span><span class="op">)</span></span>
+<span id="cb1-240"><a href="#cb1-240" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">WithClientId</span><span class="op">(</span>credentials<span class="op">.</span><span class="fu">ClientId</span><span class="op">)</span></span>
+<span id="cb1-241"><a href="#cb1-241" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">WithClientSecret</span><span class="op">(</span>credentials<span class="op">.</span><span class="fu">ClientSecret</span><span class="op">)</span></span>
+<span id="cb1-242"><a href="#cb1-242" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb1-243"><a href="#cb1-243" aria-hidden="true" tabindex="-1"></a>            <span class="kw">if</span> erpConfig<span class="op">.</span><span class="fu">SupportsMutualTLS</span><span class="op">:</span></span>
+<span id="cb1-244"><a href="#cb1-244" aria-hidden="true" tabindex="-1"></a>                authBuilder<span class="op">.</span><span class="fu">WithClientCertificate</span><span class="op">(</span>credentials<span class="op">.</span><span class="fu">ClientCertificate</span><span class="op">)</span></span>
+<span id="cb1-245"><a href="#cb1-245" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb1-246"><a href="#cb1-246" aria-hidden="true" tabindex="-1"></a>            auth <span class="op">=</span> authBuilder<span class="op">.</span><span class="fu">Build</span><span class="op">()</span></span>
+<span id="cb1-247"><a href="#cb1-247" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb1-248"><a href="#cb1-248" aria-hidden="true" tabindex="-1"></a>            requestBuilder <span class="op">=</span> <span class="fu">APIRequestBuilder</span><span class="op">()</span></span>
+<span id="cb1-249"><a href="#cb1-249" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">ForERP</span><span class="op">(</span>erpType<span class="op">)</span></span>
+<span id="cb1-250"><a href="#cb1-250" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">WithEndpoint</span><span class="op">(</span>erpConfig<span class="op">.</span><span class="fu">BaseUrl</span> <span class="op">+</span> <span class="st">"/api/v2/sales"</span><span class="op">)</span></span>
+<span id="cb1-251"><a href="#cb1-251" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">WithMethod</span><span class="op">(</span>GET<span class="op">)</span></span>
+<span id="cb1-252"><a href="#cb1-252" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">WithAuthentication</span><span class="op">(</span>auth<span class="op">)</span></span>
+<span id="cb1-253"><a href="#cb1-253" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">WithHeaders</span><span class="op">(</span>erpConfig<span class="op">.</span><span class="fu">RequiredHeaders</span><span class="op">)</span></span>
+<span id="cb1-254"><a href="#cb1-254" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb1-255"><a href="#cb1-255" aria-hidden="true" tabindex="-1"></a>            <span class="kw">if</span> useIncrementalExtract <span class="op">&amp;&amp;</span> erpConfig<span class="op">.</span><span class="fu">SupportsCDC</span><span class="op">:</span></span>
+<span id="cb1-256"><a href="#cb1-256" aria-hidden="true" tabindex="-1"></a>                requestBuilder<span class="op">.</span><span class="fu">WithQueryParameters</span><span class="op">({</span></span>
+<span id="cb1-257"><a href="#cb1-257" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"companyId"</span><span class="op">:</span> erpConfig<span class="op">.</span><span class="fu">CompanyId</span><span class="op">,</span></span>
+<span id="cb1-258"><a href="#cb1-258" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"warehouse"</span><span class="op">:</span> erpConfig<span class="op">.</span><span class="fu">WarehouseId</span><span class="op">,</span></span>
+<span id="cb1-259"><a href="#cb1-259" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"pageSize"</span><span class="op">:</span> erpConfig<span class="op">.</span><span class="fu">PageSize</span><span class="op">.</span><span class="fu">toString</span><span class="op">(),</span></span>
+<span id="cb1-260"><a href="#cb1-260" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"changedSince"</span><span class="op">:</span> extractConfig<span class="op">.</span><span class="fu">LastExtractTime</span><span class="op">.</span><span class="fu">toISOString</span><span class="op">()</span></span>
+<span id="cb1-261"><a href="#cb1-261" aria-hidden="true" tabindex="-1"></a>                <span class="op">})</span></span>
+<span id="cb1-262"><a href="#cb1-262" aria-hidden="true" tabindex="-1"></a>            <span class="kw">else</span><span class="op">:</span></span>
+<span id="cb1-263"><a href="#cb1-263" aria-hidden="true" tabindex="-1"></a>                requestBuilder<span class="op">.</span><span class="fu">WithQueryParameters</span><span class="op">({</span></span>
+<span id="cb1-264"><a href="#cb1-264" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"companyId"</span><span class="op">:</span> erpConfig<span class="op">.</span><span class="fu">CompanyId</span><span class="op">,</span></span>
+<span id="cb1-265"><a href="#cb1-265" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"warehouse"</span><span class="op">:</span> erpConfig<span class="op">.</span><span class="fu">WarehouseId</span><span class="op">,</span></span>
+<span id="cb1-266"><a href="#cb1-266" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"pageSize"</span><span class="op">:</span> erpConfig<span class="op">.</span><span class="fu">PageSize</span><span class="op">.</span><span class="fu">toString</span><span class="op">()</span></span>
+<span id="cb1-267"><a href="#cb1-267" aria-hidden="true" tabindex="-1"></a>                <span class="op">})</span></span>
+<span id="cb1-268"><a href="#cb1-268" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb1-269"><a href="#cb1-269" aria-hidden="true" tabindex="-1"></a>            request <span class="op">=</span> requestBuilder</span>
+<span id="cb1-270"><a href="#cb1-270" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">WithRetryPolicy</span><span class="op">(</span>erpConfig<span class="op">.</span><span class="fu">MaxRetries</span><span class="op">)</span></span>
+<span id="cb1-271"><a href="#cb1-271" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">WithTimeout</span><span class="op">(</span>erpConfig<span class="op">.</span><span class="fu">TimeoutSeconds</span><span class="op">)</span></span>
+<span id="cb1-272"><a href="#cb1-272" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">Build</span><span class="op">()</span></span>
+<span id="cb1-273"><a href="#cb1-273" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb1-274"><a href="#cb1-274" aria-hidden="true" tabindex="-1"></a>            Log <span class="st">"Executing API request to "</span> <span class="op">+</span> erpConfig<span class="op">.</span><span class="fu">BaseUrl</span> <span class="op">+</span> <span class="st">"/api/v2/sales"</span></span>
+<span id="cb1-275"><a href="#cb1-275" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb1-276"><a href="#cb1-276" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Execute with circuit breaker protection</span></span>
+<span id="cb1-277"><a href="#cb1-277" aria-hidden="true" tabindex="-1"></a>            extractedData <span class="op">=</span> CircuitBreakerPolicy</span>
+<span id="cb1-278"><a href="#cb1-278" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">ForService</span><span class="op">(</span><span class="st">"erp-api-"</span> <span class="op">+</span> erpType<span class="op">)</span></span>
+<span id="cb1-279"><a href="#cb1-279" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">Execute</span><span class="op">(()</span> <span class="op">=&gt;</span> extractor<span class="op">.</span><span class="fu">Extract</span><span class="op">(</span>request<span class="op">,</span> extractConfig<span class="op">))</span></span>
+<span id="cb1-280"><a href="#cb1-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-281"><a href="#cb1-281" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// </span><span class="kw">&lt;summary&gt;</span><span class="co">Validate data against contract</span><span class="kw">&lt;/summary&gt;</span></span>
+<span id="cb1-282"><a href="#cb1-282" aria-hidden="true" tabindex="-1"></a>        Log <span class="st">"Validating extracted data against contract"</span></span>
+<span id="cb1-283"><a href="#cb1-283" aria-hidden="true" tabindex="-1"></a>        validationResult <span class="op">=</span> validator<span class="op">.</span><span class="fu">Validate</span><span class="op">(</span>extractedData<span class="op">)</span></span>
+<span id="cb1-284"><a href="#cb1-284" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-285"><a href="#cb1-285" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="op">!</span>validationResult<span class="op">.</span><span class="fu">IsValid</span><span class="op">:</span></span>
+<span id="cb1-286"><a href="#cb1-286" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Handle data quality issues based on severity</span></span>
+<span id="cb1-287"><a href="#cb1-287" aria-hidden="true" tabindex="-1"></a>            <span class="kw">if</span> validationResult<span class="op">.</span><span class="fu">HasCriticalIssues</span><span class="op">():</span></span>
+<span id="cb1-288"><a href="#cb1-288" aria-hidden="true" tabindex="-1"></a>                <span class="kw">throw</span> <span class="kw">new</span> <span class="fu">DataContractException</span><span class="op">(</span></span>
+<span id="cb1-289"><a href="#cb1-289" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"Critical data quality issues detected: "</span> <span class="op">+</span> </span>
+<span id="cb1-290"><a href="#cb1-290" aria-hidden="true" tabindex="-1"></a>                    validationResult<span class="op">.</span><span class="fu">GetCriticalIssuesSummary</span><span class="op">()</span></span>
+<span id="cb1-291"><a href="#cb1-291" aria-hidden="true" tabindex="-1"></a>                <span class="op">)</span></span>
+<span id="cb1-292"><a href="#cb1-292" aria-hidden="true" tabindex="-1"></a>            <span class="kw">else</span><span class="op">:</span></span>
+<span id="cb1-293"><a href="#cb1-293" aria-hidden="true" tabindex="-1"></a>                <span class="co">// Log warnings but continue processing</span></span>
+<span id="cb1-294"><a href="#cb1-294" aria-hidden="true" tabindex="-1"></a>                Log <span class="st">"Warning: Data quality issues detected: "</span> <span class="op">+</span> validationResult<span class="op">.</span><span class="fu">GetIssuesSummary</span><span class="op">()</span></span>
+<span id="cb1-295"><a href="#cb1-295" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb1-296"><a href="#cb1-296" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// </span><span class="kw">&lt;summary&gt;</span><span class="co">Transform the extracted data with data lineage tracking</span><span class="kw">&lt;/summary&gt;</span></span>
+<span id="cb1-297"><a href="#cb1-297" aria-hidden="true" tabindex="-1"></a>        Log <span class="st">"Starting data transformation"</span></span>
+<span id="cb1-298"><a href="#cb1-298" aria-hidden="true" tabindex="-1"></a>        transformedData <span class="op">=</span> transformer<span class="op">.</span><span class="fu">Transform</span><span class="op">(</span>extractedData<span class="op">)</span></span>
+<span id="cb1-299"><a href="#cb1-299" aria-hidden="true" tabindex="-1"></a>        lineage<span class="op">.</span><span class="fu">RecordTransformation</span><span class="op">(</span><span class="st">"ColumnStandardization"</span><span class="op">,</span> <span class="st">"Standardized columns according to global data dictionary"</span><span class="op">)</span></span>
+<span id="cb1-300"><a href="#cb1-300" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-301"><a href="#cb1-301" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// </span><span class="kw">&lt;summary&gt;</span><span class="co">Apply field encryption for sensitive data if enabled</span><span class="kw">&lt;/summary&gt;</span></span>
+<span id="cb1-302"><a href="#cb1-302" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> useFieldEncryption<span class="op">:</span></span>
+<span id="cb1-303"><a href="#cb1-303" aria-hidden="true" tabindex="-1"></a>            transformedData <span class="op">=</span> EncryptionService<span class="op">.</span><span class="fu">EncryptSensitiveFields</span><span class="op">(</span></span>
+<span id="cb1-304"><a href="#cb1-304" aria-hidden="true" tabindex="-1"></a>                transformedData<span class="op">,</span> </span>
+<span id="cb1-305"><a href="#cb1-305" aria-hidden="true" tabindex="-1"></a>                <span class="fu">GetSensitiveFieldsConfig</span><span class="op">(</span>erpType<span class="op">,</span> dataType<span class="op">)</span></span>
+<span id="cb1-306"><a href="#cb1-306" aria-hidden="true" tabindex="-1"></a>            <span class="op">)</span></span>
+<span id="cb1-307"><a href="#cb1-307" aria-hidden="true" tabindex="-1"></a>            lineage<span class="op">.</span><span class="fu">RecordTransformation</span><span class="op">(</span><span class="st">"FieldEncryption"</span><span class="op">,</span> <span class="st">"Encrypted sensitive fields"</span><span class="op">)</span></span>
+<span id="cb1-308"><a href="#cb1-308" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb1-309"><a href="#cb1-309" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// </span><span class="kw">&lt;summary&gt;</span><span class="co">Apply masking for non-production environments</span><span class="kw">&lt;/summary&gt;</span></span>
+<span id="cb1-310"><a href="#cb1-310" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> environmentType <span class="op">!=</span> Production<span class="op">:</span></span>
+<span id="cb1-311"><a href="#cb1-311" aria-hidden="true" tabindex="-1"></a>            transformedData <span class="op">=</span> DataMaskingService<span class="op">.</span><span class="fu">ApplyMasking</span><span class="op">(</span></span>
+<span id="cb1-312"><a href="#cb1-312" aria-hidden="true" tabindex="-1"></a>                transformedData<span class="op">,</span></span>
+<span id="cb1-313"><a href="#cb1-313" aria-hidden="true" tabindex="-1"></a>                <span class="fu">GetDataMaskingConfig</span><span class="op">(</span>erpType<span class="op">,</span> dataType<span class="op">)</span></span>
+<span id="cb1-314"><a href="#cb1-314" aria-hidden="true" tabindex="-1"></a>            <span class="op">)</span></span>
+<span id="cb1-315"><a href="#cb1-315" aria-hidden="true" tabindex="-1"></a>            lineage<span class="op">.</span><span class="fu">RecordTransformation</span><span class="op">(</span><span class="st">"DataMasking"</span><span class="op">,</span> <span class="st">"Applied data masking for non-production environment"</span><span class="op">)</span></span>
+<span id="cb1-316"><a href="#cb1-316" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-317"><a href="#cb1-317" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// </span><span class="kw">&lt;summary&gt;</span></span>
+<span id="cb1-318"><a href="#cb1-318" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// Configure and execute the S3 upload operation</span></span>
+<span id="cb1-319"><a href="#cb1-319" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// Data is stored in a pre-dropzone bucket with standardized path structure</span></span>
+<span id="cb1-320"><a href="#cb1-320" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// </span><span class="kw">&lt;/summary&gt;</span></span>
+<span id="cb1-321"><a href="#cb1-321" aria-hidden="true" tabindex="-1"></a>        currentTimestamp <span class="op">=</span> <span class="fu">getCurrentTimestamp</span><span class="op">()</span></span>
+<span id="cb1-322"><a href="#cb1-322" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-323"><a href="#cb1-323" aria-hidden="true" tabindex="-1"></a>        uploadConfig <span class="op">=</span> <span class="kw">new</span> <span class="fu">UploadConfiguration</span><span class="op">(</span></span>
+<span id="cb1-324"><a href="#cb1-324" aria-hidden="true" tabindex="-1"></a>                        Bucket<span class="op">:</span> <span class="st">"erp-data-"</span> <span class="op">+</span> clientId<span class="op">,</span></span>
+<span id="cb1-325"><a href="#cb1-325" aria-hidden="true" tabindex="-1"></a>                        Key<span class="op">:</span> erpType <span class="op">+</span> <span class="st">"/"</span> <span class="op">+</span> dataType <span class="op">+</span> <span class="st">"/"</span> <span class="op">+</span> currentTimestamp <span class="op">+</span> <span class="st">"/data.parquet"</span><span class="op">,</span></span>
+<span id="cb1-326"><a href="#cb1-326" aria-hidden="true" tabindex="-1"></a>                        Format<span class="op">:</span> Parquet<span class="op">,</span></span>
+<span id="cb1-327"><a href="#cb1-327" aria-hidden="true" tabindex="-1"></a>                        Compress<span class="op">:</span> useCompression<span class="op">,</span></span>
+<span id="cb1-328"><a href="#cb1-328" aria-hidden="true" tabindex="-1"></a>                        CompressionType<span class="op">:</span> useCompression <span class="op">?</span> <span class="st">"SNAPPY"</span> <span class="op">:</span> <span class="kw">null</span><span class="op">,</span></span>
+<span id="cb1-329"><a href="#cb1-329" aria-hidden="true" tabindex="-1"></a>                        Metadata<span class="op">:</span> <span class="op">{</span></span>
+<span id="cb1-330"><a href="#cb1-330" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"erp_type"</span><span class="op">:</span> erpType<span class="op">,</span></span>
+<span id="cb1-331"><a href="#cb1-331" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"client_id"</span><span class="op">:</span> clientId<span class="op">,</span></span>
+<span id="cb1-332"><a href="#cb1-332" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"data_type"</span><span class="op">:</span> dataType<span class="op">,</span></span>
+<span id="cb1-333"><a href="#cb1-333" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"extract_timestamp"</span><span class="op">:</span> currentTimestamp<span class="op">,</span></span>
+<span id="cb1-334"><a href="#cb1-334" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"lineage_id"</span><span class="op">:</span> lineage<span class="op">.</span><span class="fu">Id</span><span class="op">,</span></span>
+<span id="cb1-335"><a href="#cb1-335" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"extract_mode"</span><span class="op">:</span> useIncrementalExtract <span class="op">?</span> <span class="st">"incremental"</span> <span class="op">:</span> <span class="st">"full"</span><span class="op">,</span></span>
+<span id="cb1-336"><a href="#cb1-336" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"record_count"</span><span class="op">:</span> transformedData<span class="op">.</span><span class="fu">Count</span><span class="op">,</span></span>
+<span id="cb1-337"><a href="#cb1-337" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"schema_version"</span><span class="op">:</span> <span class="st">"1.2"</span></span>
+<span id="cb1-338"><a href="#cb1-338" aria-hidden="true" tabindex="-1"></a>                        <span class="op">}</span></span>
+<span id="cb1-339"><a href="#cb1-339" aria-hidden="true" tabindex="-1"></a>                    <span class="op">)</span></span>
+<span id="cb1-340"><a href="#cb1-340" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-341"><a href="#cb1-341" aria-hidden="true" tabindex="-1"></a>        Log <span class="st">"Starting data upload to S3 pre-dropzone"</span></span>
+<span id="cb1-342"><a href="#cb1-342" aria-hidden="true" tabindex="-1"></a>        uploadResult <span class="op">=</span> uploader<span class="op">.</span><span class="fu">Upload</span><span class="op">(</span>transformedData<span class="op">,</span> uploadConfig<span class="op">)</span></span>
+<span id="cb1-343"><a href="#cb1-343" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-344"><a href="#cb1-344" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// </span><span class="kw">&lt;summary&gt;</span><span class="co">Update data catalog with metadata</span><span class="kw">&lt;/summary&gt;</span></span>
+<span id="cb1-345"><a href="#cb1-345" aria-hidden="true" tabindex="-1"></a>        CatalogService<span class="op">.</span><span class="fu">UpdateDatasetMetadata</span><span class="op">(</span></span>
+<span id="cb1-346"><a href="#cb1-346" aria-hidden="true" tabindex="-1"></a>            datasetId<span class="op">:</span> erpType <span class="op">+</span> <span class="st">"-"</span> <span class="op">+</span> clientId <span class="op">+</span> <span class="st">"-"</span> <span class="op">+</span> dataType<span class="op">,</span></span>
+<span id="cb1-347"><a href="#cb1-347" aria-hidden="true" tabindex="-1"></a>            metadata<span class="op">:</span> <span class="op">{</span></span>
+<span id="cb1-348"><a href="#cb1-348" aria-hidden="true" tabindex="-1"></a>                <span class="st">"lastUpdated"</span><span class="op">:</span> currentTimestamp<span class="op">,</span></span>
+<span id="cb1-349"><a href="#cb1-349" aria-hidden="true" tabindex="-1"></a>                <span class="st">"recordCount"</span><span class="op">:</span> transformedData<span class="op">.</span><span class="fu">Count</span><span class="op">,</span></span>
+<span id="cb1-350"><a href="#cb1-350" aria-hidden="true" tabindex="-1"></a>                <span class="st">"fileLocation"</span><span class="op">:</span> uploadResult<span class="op">.</span><span class="fu">Location</span><span class="op">,</span></span>
+<span id="cb1-351"><a href="#cb1-351" aria-hidden="true" tabindex="-1"></a>                <span class="st">"fileSize"</span><span class="op">:</span> uploadResult<span class="op">.</span><span class="fu">Size</span><span class="op">,</span></span>
+<span id="cb1-352"><a href="#cb1-352" aria-hidden="true" tabindex="-1"></a>                <span class="st">"schemaVersion"</span><span class="op">:</span> <span class="st">"1.2"</span><span class="op">,</span></span>
+<span id="cb1-353"><a href="#cb1-353" aria-hidden="true" tabindex="-1"></a>                <span class="st">"lineageId"</span><span class="op">:</span> lineage<span class="op">.</span><span class="fu">Id</span></span>
+<span id="cb1-354"><a href="#cb1-354" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb1-355"><a href="#cb1-355" aria-hidden="true" tabindex="-1"></a>        <span class="op">)</span></span>
+<span id="cb1-356"><a href="#cb1-356" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-357"><a href="#cb1-357" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// </span><span class="kw">&lt;summary&gt;</span><span class="co">Complete lineage record</span><span class="kw">&lt;/summary&gt;</span></span>
+<span id="cb1-358"><a href="#cb1-358" aria-hidden="true" tabindex="-1"></a>        lineage<span class="op">.</span><span class="fu">SetDestination</span><span class="op">(</span>uploadResult<span class="op">.</span><span class="fu">Location</span><span class="op">)</span></span>
+<span id="cb1-359"><a href="#cb1-359" aria-hidden="true" tabindex="-1"></a>        lineage<span class="op">.</span><span class="fu">CompleteLineageRecord</span><span class="op">()</span></span>
+<span id="cb1-360"><a href="#cb1-360" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-361"><a href="#cb1-361" aria-hidden="true" tabindex="-1"></a>        <span class="co">/// </span><span class="kw">&lt;summary&gt;</span><span class="co">Update last extract time for incremental extracts</span><span class="kw">&lt;/summary&gt;</span></span>
+<span id="cb1-362"><a href="#cb1-362" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> useIncrementalExtract<span class="op">:</span></span>
+<span id="cb1-363"><a href="#cb1-363" aria-hidden="true" tabindex="-1"></a>            <span class="fu">StoreLastExtractTime</span><span class="op">(</span>erpType<span class="op">,</span> clientId<span class="op">,</span> dataType<span class="op">,</span> currentTimestamp<span class="op">)</span></span>
+<span id="cb1-364"><a href="#cb1-364" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-365"><a href="#cb1-365" aria-hidden="true" tabindex="-1"></a>        Log <span class="st">"Extraction ingestion process completed successfully"</span></span>
+<span id="cb1-366"><a href="#cb1-366" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="advanced-error-handling-and-recovery" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="advanced-error-handling-and-recovery"><span class="header-section-number">6</span> Advanced Error Handling and Recovery</h2>
+<ul>
+<li><strong>Error Classification:</strong>
+<ul>
+<li>Categorizes errors as transient or persistent.</li>
+<li>Applies different recovery strategies based on error type.</li>
+<li>Records error patterns for proactive monitoring.</li>
+</ul></li>
+<li><strong>Self-Healing Procedures:</strong>
+<ul>
+<li><strong>Common Issue Resolution:</strong>
+<ul>
+<li>Automatic token renewal for expired credentials.</li>
+<li>Connection pool refresh for stale connections.</li>
+<li>Temporary file cleanup for storage-related issues.</li>
+</ul></li>
+<li><strong>Degraded Mode Operation:</strong>
+<ul>
+<li>Falls back to full extract if incremental extract fails.</li>
+<li>Disables optional features during high load.</li>
+<li>Implements progressive backoff for system recovery.</li>
+</ul></li>
+</ul></li>
+<li><strong>Comprehensive Logging:</strong>
+<ul>
+<li>Structured logging with correlation IDs across components.</li>
+<li>Context-enriched log entries for easier debugging.</li>
+<li>Log level adjustment based on operation criticality.</li>
+<li>Integration with log aggregation systems.</li>
+</ul></li>
+</ul>
+</section>
+<section id="security-and-compliance" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="security-and-compliance"><span class="header-section-number">7</span> Security and Compliance</h2>
+<ul>
+<li><strong>Least Privilege Access:</strong>
+<ul>
+<li>Dynamic generation of operation-specific credentials.</li>
+<li>Short-lived tokens with minimal required permissions.</li>
+<li>Credential scoping based on operation context.</li>
+<li>Role rotation and separation of duties.</li>
+</ul></li>
+<li><strong>Data Protection:</strong>
+<ul>
+<li>Field-level encryption for sensitive data.</li>
+<li>Data masking for non-production environments.</li>
+<li>Secure credential management with HashiCorp Vault.</li>
+<li>Mutual TLS for secure service communication.</li>
+</ul></li>
+<li><strong>Audit and Compliance:</strong>
+<ul>
+<li>Comprehensive data lineage tracking.</li>
+<li>Access and operation audit logging.</li>
+<li>Compliance validation against regulatory requirements.</li>
+<li>Regular security posture assessment.</li>
+</ul></li>
+</ul>
+</section>
+<section id="development-and-operations-support" class="level2" data-number="8">
+<h2 data-number="8" class="anchored" data-anchor-id="development-and-operations-support"><span class="header-section-number">8</span> Development and Operations Support</h2>
+<ul>
+<li><strong>Local Development Environment:</strong>
+<ul>
+<li>Docker Compose setup with all dependencies.</li>
+<li>Mock ERPs for integration testing.</li>
+<li>Configuration templates for different scenarios.</li>
+<li>Development tools for data visualization and debugging.</li>
+</ul></li>
+<li><strong>Deployment and Infrastructure:</strong>
+<ul>
+<li>GitOps-based deployment pipelines.</li>
+<li>Infrastructure as Code for all components.</li>
+<li>Canary deployment support for risk mitigation.</li>
+<li>Blue-green deployment capability for zero downtime.</li>
+</ul></li>
+<li><strong>Documentation and Knowledge Sharing:</strong>
+<ul>
+<li>OpenAPI documentation for all service interfaces.</li>
+<li>Architecture decision records (ADRs) for design choices.</li>
+<li>Runbooks for common operational procedures.</li>
+<li>Automated documentation generation from code.</li>
+</ul></li>
+</ul>
+</section>
+<section id="conclusion" class="level2" data-number="9">
+<h2 data-number="9" class="anchored" data-anchor-id="conclusion"><span class="header-section-number">9</span> Conclusion</h2>
+<p>The extraction ingestion component of the ETL pipeline has been redesigned with a focus on resilience, security, performance, and maintainability. The system now supports both batch and incremental extraction modes, implements comprehensive data quality validation, and provides robust error handling with self-healing capabilities.</p>
+<p>The transition from AWS Secrets Manager to HashiCorp Vault and from DynamoDB to FerretDB enhances security, scalability, and operational flexibility while maintaining compatibility with existing systems. The addition of circuit breakers, bulkheads, and exponential backoff strategies significantly improves system resilience during partial failures.</p>
+<p>Enhanced data governance capabilities, including data lineage tracking, field-level encryption, and data masking, ensure compliance with regulatory requirements and protect sensitive information. Feature flags enable gradual rollout of new functionality and provide flexibility for operational adjustments without code changes.</p>
+<p>The architecture and design patterns employed enable a flexible, maintainable, and scalable solution that can adapt to changing requirements and handle the varied needs of different ERP integrations at scale.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
