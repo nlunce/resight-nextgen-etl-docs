@@ -28,6 +28,8 @@ website:
         href: enhanced-erp-extractor-design.qmd
       - text: "DPP Project Tasking Outline"
         href: dpp-tasking-outline.qmd
+      - text: "Design Document for Distributor Data Extraction Ingestion (Version 3)"
+        href: erp-extractor-design-v3.qmd
 
 
 
