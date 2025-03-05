@@ -6,10 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Nathan Lunceford">
-<meta name="dcterms.date" content="2025-01-21">
 
-<title>ReSight: Building the Future of Pet Industry Analytics – ReSight - Next Gen ETL</title>
+<title>ml – ReSight - Next Gen ETL</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,27 +20,61 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-8ea72dc5fed832574809a9c94082fbbb.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-33006b8e78fc72882bd7e51eace35532.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-4cc3d5fc47974437f3b1ccac7930ab22.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-8ea72dc5fed832574809a9c94082fbbb.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-33006b8e78fc72882bd7e51eace35532.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-4cc3d5fc47974437f3b1ccac7930ab22.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -72,10 +104,10 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../styles.css">
 </head>
 
-<body class="nav-sidebar floating">
+<body class="nav-sidebar floating fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -84,7 +116,9 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">Archive</a></li><li class="breadcrumb-item"><a href="./index.html">Dev Plan and Overview</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">
+      ReSight - Next Gen ETL
+      </li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -99,7 +133,7 @@ ul.task-list li input[type="checkbox"] {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">ReSight - Next Gen ETL</a> 
+      <a href="../">ReSight - Next Gen ETL</a> 
         <div class="sidebar-tools-main">
   <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
@@ -123,55 +157,55 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link active">
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Dev Plan and Overview</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./archive/etl-pipeline-planning-questions.html" class="sidebar-item-text sidebar-link">
+  <a href="../archive/etl-pipeline-planning-questions.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">ETL Pipeline Planning Questions</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./archive/distributor-onboarding-system.html" class="sidebar-item-text sidebar-link">
+  <a href="../archive/distributor-onboarding-system.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Distributor Onboarding System</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./archive/upsert-ops.html" class="sidebar-item-text sidebar-link">
+  <a href="../archive/upsert-ops.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">UPSERT Operations</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./archive/upsert-ops-cost-analysis.html" class="sidebar-item-text sidebar-link">
+  <a href="../archive/upsert-ops-cost-analysis.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">UPSERT Operations Cost Analysis</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./archive/erp-extractor-design.html" class="sidebar-item-text sidebar-link">
+  <a href="../archive/erp-extractor-design.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Design Document for Distributor Data Extraction Ingestion</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./archive/enhanced-erp-extractor-design.html" class="sidebar-item-text sidebar-link">
+  <a href="../archive/enhanced-erp-extractor-design.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Enhanced Design Document for Distributor Data Extraction Ingestion</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./archive/dpp-tasking-outline.html" class="sidebar-item-text sidebar-link">
+  <a href="../archive/dpp-tasking-outline.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">DPP Project Tasking Outline</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./archive/erp-extractor-design-v3.html" class="sidebar-item-text sidebar-link">
+  <a href="../archive/erp-extractor-design-v3.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Design Document for Distributor Data Extraction Ingestion (Version 3)</span></a>
   </div>
 </li>
@@ -188,13 +222,13 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dpp/dpp-overview.qmd" class="sidebar-item-text sidebar-link">
+  <a href="../dpp/dpp-overview.qmd" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Overview</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dpp/core-business-use-cases.html" class="sidebar-item-text sidebar-link">
+  <a href="../dpp/core-business-use-cases.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Core Business Use Cases</span></a>
   </div>
 </li>
@@ -209,13 +243,13 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dpp/workflows/api-extraction-workflow.html" class="sidebar-item-text sidebar-link">
+  <a href="../dpp/workflows/api-extraction-workflow.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">API Extraction Workflow</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dpp/workflows/database-extraction-workflow.html" class="sidebar-item-text sidebar-link">
+  <a href="../dpp/workflows/database-extraction-workflow.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Database Extraction Workflow</span></a>
   </div>
 </li>
@@ -228,315 +262,159 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul class="collapse">
-  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">1</span> Overview</a>
-  <ul class="collapse">
-  <li><a href="#current-state-analysis-2024" id="toc-current-state-analysis-2024" class="nav-link" data-scroll-target="#current-state-analysis-2024"><span class="header-section-number">1.1</span> Current State Analysis (2024)</a></li>
-  <li><a href="#target-state-2026" id="toc-target-state-2026" class="nav-link" data-scroll-target="#target-state-2026"><span class="header-section-number">1.2</span> Target State (2026)</a></li>
-  <li><a href="#growth-requirements" id="toc-growth-requirements" class="nav-link" data-scroll-target="#growth-requirements"><span class="header-section-number">1.3</span> Growth Requirements</a></li>
-  </ul></li>
-  <li><a href="#infrastructure-strategy" id="toc-infrastructure-strategy" class="nav-link" data-scroll-target="#infrastructure-strategy"><span class="header-section-number">2</span> Infrastructure Strategy</a>
-  <ul class="collapse">
-  <li><a href="#core-requirements" id="toc-core-requirements" class="nav-link" data-scroll-target="#core-requirements"><span class="header-section-number">2.1</span> Core Requirements</a></li>
-  <li><a href="#key-performance-indicators" id="toc-key-performance-indicators" class="nav-link" data-scroll-target="#key-performance-indicators"><span class="header-section-number">2.2</span> Key Performance Indicators</a></li>
-  </ul></li>
-  <li><a href="#implementation-roadmap" id="toc-implementation-roadmap" class="nav-link" data-scroll-target="#implementation-roadmap"><span class="header-section-number">3</span> Implementation Roadmap</a>
-  <ul class="collapse">
-  <li><a href="#phase-1-foundation-q1-2025" id="toc-phase-1-foundation-q1-2025" class="nav-link" data-scroll-target="#phase-1-foundation-q1-2025"><span class="header-section-number">3.1</span> Phase 1: Foundation (Q1 2025)</a></li>
-  <li><a href="#phase-2-scaling-q2-q3-2025" id="toc-phase-2-scaling-q2-q3-2025" class="nav-link" data-scroll-target="#phase-2-scaling-q2-q3-2025"><span class="header-section-number">3.2</span> Phase 2: Scaling (Q2-Q3 2025)</a></li>
-  <li><a href="#phase-3-optimization-q4-2025" id="toc-phase-3-optimization-q4-2025" class="nav-link" data-scroll-target="#phase-3-optimization-q4-2025"><span class="header-section-number">3.3</span> Phase 3: Optimization (Q4 2025)</a></li>
-  <li><a href="#phase-4-enterprise-scale-2026" id="toc-phase-4-enterprise-scale-2026" class="nav-link" data-scroll-target="#phase-4-enterprise-scale-2026"><span class="header-section-number">3.4</span> Phase 4: Enterprise Scale (2026)</a></li>
-  </ul></li>
-  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">4</span> Conclusion</a></li>
-  </ul>
-<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="index.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
-    </div>
+    
 <!-- main -->
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">Archive</a></li><li class="breadcrumb-item"><a href="./index.html">Dev Plan and Overview</a></li></ol></nav>
-<div class="quarto-title">
-<h1 class="title">ReSight: Building the Future of Pet Industry Analytics</h1>
-<p class="subtitle lead">ETL Infrastructure Strategic Overview</p>
-</div>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
 
 
 
-<div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>Nathan Lunceford </p>
-          </div>
-  </div>
-    
-    <div>
-    <div class="quarto-title-meta-heading">Published</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">January 21, 2025</p>
-    </div>
-  </div>
-  
-    
-  </div>
-  
-
-
-</header>
-
-
-<section id="overview" class="level1" data-number="1">
-<h1 data-number="1"><span class="header-section-number">1</span> Overview</h1>
-<p>ReSight is positioning itself to become the authoritative source of truth and insights for the U.S. pet industry. This transformation requires a robust, scalable ETL infrastructure capable of processing comprehensive industry data at scale.</p>
-<section id="current-state-analysis-2024" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="current-state-analysis-2024"><span class="header-section-number">1.1</span> Current State Analysis (2024)</h2>
-<p>Our current ETL infrastructure demonstrates significant daily processing capacity with notable variability in workload:</p>
-<section id="daily-processing-statistics" class="level3" data-number="1.1.1">
-<h3 data-number="1.1.1" class="anchored" data-anchor-id="daily-processing-statistics"><span class="header-section-number">1.1.1</span> Daily Processing Statistics</h3>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Metric</th>
-<th style="text-align: left;">Typical Day (Median)</th>
-<th style="text-align: left;">Peak Day</th>
-<th style="text-align: left;">Average (Mean)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Loads Processed</td>
-<td style="text-align: left;">40</td>
-<td style="text-align: left;">303</td>
-<td style="text-align: left;">59.2</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Rows Processed</td>
-<td style="text-align: left;">70,588</td>
-<td style="text-align: left;">824,719</td>
-<td style="text-align: left;">105,218</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Processing Window</td>
-<td style="text-align: left;">Flexible</td>
-<td style="text-align: left;">Flexible</td>
-<td style="text-align: left;">Flexible</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="load-distribution-analysis" class="level3" data-number="1.1.2">
-<h3 data-number="1.1.2" class="anchored" data-anchor-id="load-distribution-analysis"><span class="header-section-number">1.1.2</span> Load Distribution Analysis</h3>
-<ul>
-<li><strong>Daily Load Range</strong>: 1-303 loads per day</li>
-<li><strong>Typical Range (Q1-Q3)</strong>: 24-65 loads per day</li>
-<li><strong>Standard Deviation</strong>: 54.8 loads, indicating high variability</li>
-<li><strong>Processing Reliability</strong>: 361 days of consistent operation with no outages</li>
-</ul>
-</section>
-<section id="data-volume-patterns" class="level3" data-number="1.1.3">
-<h3 data-number="1.1.3" class="anchored" data-anchor-id="data-volume-patterns"><span class="header-section-number">1.1.3</span> Data Volume Patterns</h3>
-<ul>
-<li><strong>Daily Row Range</strong>: 28-824,719 rows</li>
-<li><strong>Typical Range (Q1-Q3)</strong>: 15,606-159,225 rows</li>
-<li><strong>Volume Variability</strong>: Standard deviation of 115,282 rows</li>
-<li><strong>Processing Success Rate</strong>: 100% (no missing days)</li>
-</ul>
-</section>
-</section>
-<section id="target-state-2026" class="level2" data-number="1.2">
-<h2 data-number="1.2" class="anchored" data-anchor-id="target-state-2026"><span class="header-section-number">1.2</span> Target State (2026)</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 22%">
-<col style="width: 51%">
-<col style="width: 26%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Metric</th>
-<th style="text-align: left;">Value</th>
-<th style="text-align: left;">Growth Factor</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Daily Loads</td>
-<td style="text-align: left;">400+/day</td>
-<td style="text-align: left;">10x current median</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Data Volume</td>
-<td style="text-align: left;">700K+ rows/day typical</td>
-<td style="text-align: left;">10x current median</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Data Sources</td>
-<td style="text-align: left;">1000+ integrated sources</td>
-<td style="text-align: left;">10x current scale</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Complexity</td>
-<td style="text-align: left;">High (ML pipelines)</td>
-<td style="text-align: left;">Significant increase</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Processing Window</td>
-<td style="text-align: left;">Near real-time requirements (if needed)</td>
-<td style="text-align: left;">Minutes vs.&nbsp;flexible</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="growth-requirements" class="level2" data-number="1.3">
-<h2 data-number="1.3" class="anchored" data-anchor-id="growth-requirements"><span class="header-section-number">1.3</span> Growth Requirements</h2>
-<p>Our next-generation ETL pipeline must support:</p>
+<section id="pet-product-classification-system-documentation" class="level1">
+<h1>Pet Product Classification System Documentation</h1>
+<section id="overview" class="level2">
+<h2 class="anchored" data-anchor-id="overview">Overview</h2>
+<p>This project implements an automated product classification system that uses embedding-based similarity search and Large Language Models (LLMs) to categorize product descriptions. The system combines RAG (Retrieval Augmented Generation) techniques with both local Llama3.1 and gpt4 language models to provide structured classification outputs.</p>
+<section id="basic-flow-for-poc" class="level3">
+<h3 class="anchored" data-anchor-id="basic-flow-for-poc">Basic Flow for POC</h3>
 <ol type="1">
-<li><p><strong>Scalable Data Integration</strong></p>
+<li>Pull distributor description from csv file (csv file was create by querying from md.Sales joined with md.Items)</li>
+<li>Find similar master descriptions (from csv created from md.Items) then pull those with needed categories (species, type, lifestage, etc.)</li>
+<li>Create a prompt for LLM using distributor description and master descriptions with needed categories
 <ul>
-<li>Handle 10x increase in daily load frequency</li>
-<li>Process 10x current data volumes</li>
-<li>Support 10x growth in data source connections</li>
+<li>Looks prompt looks something like:
+<ul>
+<li>We want you to classify a new pet product into these categories: (species, type, lifestage, etc.). Here is a new description: {new_description} and here are some previous classifications to use as reference: {list of master descriptions with categories}. Here are some common abbreviation to keep in mind {list of abbreviations}.</li>
 </ul></li>
-<li><p><strong>Advanced Processing Capabilities</strong></p>
-<ul>
-<li>Predictive analytics pipelines</li>
-<li>Machine learning model integration</li>
-<li>Market insight generation</li>
 </ul></li>
-<li><p><strong>Enterprise-Scale Operations</strong></p>
+<li>Process LLM response</li>
+<li>Write results to a csv file</li>
+</ol>
+</section>
+<section id="core-classes" class="level3">
+<h3 class="anchored" data-anchor-id="core-classes">Core Classes</h3>
+<ol type="1">
+<li><strong>Config Management</strong> (<code>Config</code>)
 <ul>
-<li>Consistent high-volume processing</li>
-<li>24/7 operation with high availability</li>
-<li>Industry-leading security controls</li>
+<li>Centralizes all configuration settings including model parameters, file paths, and required categories</li>
+<li>Handles both local (ollama) and cloud (OpenAI) model configurations</li>
+</ul></li>
+<li><strong>Data Processing Pipeline</strong>
+<ul>
+<li><strong>Text Preprocessing</strong> (<code>PreprocessText</code>)
+<ul>
+<li>Cleans and standardizes input text</li>
+<li>Generates embeddings for product descriptions</li>
+</ul></li>
+<li><strong>Embedding Search</strong> (<code>EmbeddingSearcher</code>)
+<ul>
+<li>Uses FAISS for efficient similarity search for find similar master descriptions</li>
+<li>Maintains an index of product description embeddings</li>
+<li>Retrieves similar products for RAG</li>
+</ul></li>
+<li><strong>Formatting</strong> (<code>Formatter</code>)
+<ul>
+<li>Handles data formatting for model inputs</li>
+<li>Processes model outputs</li>
+<li>Records results</li>
+</ul></li>
+</ul></li>
+<li><strong>Core Processing</strong> (<code>Process</code>)
+<ul>
+<li>Orchestrates the entire classification workflow</li>
+<li>Manages model interactions</li>
+<li>Handles both batch and single-item processing</li>
+</ul></li>
+<li><strong>Output Structure</strong> (<code>StructuredOutput</code>)
+<ul>
+<li>Defines the schema for classification outputs</li>
+<li>Includes fields like Type, Formula, Species, etc.</li>
+<li>Uses Pydantic for data validation</li>
 </ul></li>
 </ol>
 </section>
-</section>
-<section id="infrastructure-strategy" class="level1" data-number="2">
-<h1 data-number="2"><span class="header-section-number">2</span> Infrastructure Strategy</h1>
-<section id="core-requirements" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="core-requirements"><span class="header-section-number">2.1</span> Core Requirements</h2>
-<section id="scalability" class="level3" data-number="2.1.1">
-<h3 data-number="2.1.1" class="anchored" data-anchor-id="scalability"><span class="header-section-number">2.1.1</span> Scalability</h3>
+<section id="key-features" class="level3">
+<h3 class="anchored" data-anchor-id="key-features">Key Features</h3>
 <ul>
-<li>Support for 400+ daily loads (10x current median)</li>
-<li>Peak capacity of 8M+ rows per day</li>
-<li>Elastic resource allocation</li>
-<li>Horizontal scaling support</li>
-</ul>
-</section>
-<section id="advanced-analytics" class="level3" data-number="2.1.2">
-<h3 data-number="2.1.2" class="anchored" data-anchor-id="advanced-analytics"><span class="header-section-number">2.1.2</span> Advanced Analytics</h3>
-<ul>
-<li>ML pipeline integration</li>
-<li>Complex data transformations</li>
-<li>Data science toolkit support</li>
-<li>Predictive modeling capability</li>
-</ul>
-</section>
-<section id="reliability" class="level3" data-number="2.1.3">
-<h3 data-number="2.1.3" class="anchored" data-anchor-id="reliability"><span class="header-section-number">2.1.3</span> Reliability</h3>
-<ul>
-<li>Zero downtime (matching current 100% reliability)</li>
-<li>Automated failover</li>
-<li>Comprehensive monitoring</li>
-<li>Proactive scaling</li>
+<li>Supports both GPT and Llama models</li>
+<li>RAG-based classification using similar product examples</li>
+<li>Efficient vector similarity search using FAISS</li>
+<li>Batch processing capabilities</li>
+<li>Structured output validation</li>
+<li>Performance monitoring and logging</li>
+<li>Error handling with Result type pattern</li>
 </ul>
 </section>
 </section>
-<section id="key-performance-indicators" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="key-performance-indicators"><span class="header-section-number">2.2</span> Key Performance Indicators</h2>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Metric</th>
-<th style="text-align: left;">Current (2024)</th>
-<th style="text-align: left;">Target (2026)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Daily Loads (Median)</td>
-<td style="text-align: left;">40</td>
-<td style="text-align: left;">400+</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Peak Daily Loads</td>
-<td style="text-align: left;">303</td>
-<td style="text-align: left;">3000+</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Daily Rows (Median)</td>
-<td style="text-align: left;">70,588</td>
-<td style="text-align: left;">700K+</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Peak Daily Rows</td>
-<td style="text-align: left;">824,719</td>
-<td style="text-align: left;">8M+</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Processing Latency</td>
-<td style="text-align: left;">Hours</td>
-<td style="text-align: left;">Minutes</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Data Sources</td>
-<td style="text-align: left;">~100</td>
-<td style="text-align: left;">1000+</td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="implementation-roadmap" class="level1" data-number="3">
-<h1 data-number="3"><span class="header-section-number">3</span> Implementation Roadmap</h1>
-<section id="phase-1-foundation-q1-2025" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="phase-1-foundation-q1-2025"><span class="header-section-number">3.1</span> Phase 1: Foundation (Q1 2025)</h2>
+<section id="workflow" class="level2">
+<h2 class="anchored" data-anchor-id="workflow">Workflow</h2>
+<ol type="1">
+<li><strong>Input Processing</strong>
 <ul>
-<li>Scale current infrastructure to handle 2x current peak load</li>
-<li>Implement comprehensive monitoring</li>
-<li>Deploy new stream processing architecture</li>
-</ul>
-</section>
-<section id="phase-2-scaling-q2-q3-2025" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="phase-2-scaling-q2-q3-2025"><span class="header-section-number">3.2</span> Phase 2: Scaling (Q2-Q3 2025)</h2>
+<li>Clean and standardize product descriptions</li>
+<li>Generate embeddings using SentenceTransformer</li>
+</ul></li>
+<li><strong>Similar Product Retrieval</strong>
 <ul>
-<li>Expand data source integration capacity</li>
-<li>Implement ML pipeline framework</li>
-</ul>
-</section>
-<section id="phase-3-optimization-q4-2025" class="level2" data-number="3.3">
-<h2 data-number="3.3" class="anchored" data-anchor-id="phase-3-optimization-q4-2025"><span class="header-section-number">3.3</span> Phase 3: Optimization (Q4 2025)</h2>
+<li>Search for similar master products using FAISS</li>
+<li>Retrieve top-k similar products as examples</li>
+</ul></li>
+<li><strong>Classification</strong>
 <ul>
-<li>Scale to 5x current capacity</li>
-<li>Deploy advanced analytics capabilities</li>
-</ul>
-</section>
-<section id="phase-4-enterprise-scale-2026" class="level2" data-number="3.4">
-<h2 data-number="3.4" class="anchored" data-anchor-id="phase-4-enterprise-scale-2026"><span class="header-section-number">3.4</span> Phase 4: Enterprise Scale (2026)</h2>
+<li>Format prompt with new description and similar examples</li>
+<li>Send to selected LLM (Llama or GPT)</li>
+<li>Parse and validate structured response</li>
+</ul></li>
+<li><strong>Output Processing</strong>
 <ul>
-<li>Achieve full target state capabilities</li>
-<li>Deploy full ML/AI integration</li>
-</ul>
+<li>Record results and performance metrics</li>
+<li>Store in specified output format</li>
+</ul></li>
+</ol>
 </section>
-</section>
-<section id="conclusion" class="level1" data-number="4">
-<h1 data-number="4"><span class="header-section-number">4</span> Conclusion</h1>
-<p>This ETL infrastructure strategy outlines our path from current state to future vision, supporting ReSight’s goal of becoming the authoritative analytics platform for the pet industry. Our implementation roadmap ensures a methodical progression toward our 2026 targets while maintaining our current high standards of reliability and data quality.</p>
-<p>Key success factors include:</p>
+<section id="setup-requirements" class="level2">
+<h2 class="anchored" data-anchor-id="setup-requirements">Setup Requirements</h2>
+<ol type="1">
+<li><strong>Dependencies</strong>
 <ul>
-<li>Maintaining 100% reliability while scaling 10x in load frequency</li>
-<li>Supporting 10x growth in data sources</li>
-<li>Enabling ML integration</li>
-</ul>
+<li>OpenAI API (for GPT models)</li>
+<li>SentenceTransformer</li>
+<li>FAISS</li>
+<li>Pandas</li>
+<li>Pydantic</li>
+<li>Requests (for Llama API)</li>
+</ul></li>
+<li><strong>Configuration</strong>
+<ul>
+<li>Model selection (Llama or GPT)</li>
+<li>API keys and endpoints</li>
+<li>Embedding model parameters</li>
+<li>File paths for data and outputs</li>
+</ul></li>
+</ol>
+</section>
+<section id="usage-examples" class="level2">
+<h2 class="anchored" data-anchor-id="usage-examples">Usage Examples</h2>
+<section id="single-item-classification" class="level3">
+<h3 class="anchored" data-anchor-id="single-item-classification">Single Item Classification</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize processor</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>process <span class="op">=</span> LLMProcess(config)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># num_examples defines how many master description examples we give the LLMs as reference data</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Classify single description</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> process.classify_description(new_description, num_examples<span class="op">=</span><span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="batch-processing" class="level3">
+<h3 class="anchored" data-anchor-id="batch-processing">Batch Processing</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># new_description_df -&gt; Pandas dataframe with many new descriptions</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># description_col -&gt; the column in dataframe where descriptions are </span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>description_col <span class="op">=</span> <span class="st">'ItemDescription'</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Process multiple descriptions</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> process.classify_batch(new_descriptions_df, description_col, num_examples<span class="op">=</span><span class="dv">50</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
+</section>
+</section>
 </section>
 
 </main> <!-- /main -->

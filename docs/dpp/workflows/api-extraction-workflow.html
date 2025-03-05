@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Nathan Lunceford">
-<meta name="dcterms.date" content="2025-02-06">
+<meta name="dcterms.date" content="2025-03-05">
 
-<title>Distributor Onboarding System – ReSight - Next Gen ETL</title>
+<title>API Extraction Workflow – ReSight - Next Gen ETL</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -25,24 +25,24 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-8ea72dc5fed832574809a9c94082fbbb.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-33006b8e78fc72882bd7e51eace35532.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-4cc3d5fc47974437f3b1ccac7930ab22.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-8ea72dc5fed832574809a9c94082fbbb.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-33006b8e78fc72882bd7e51eace35532.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-4cc3d5fc47974437f3b1ccac7930ab22.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -72,7 +72,7 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../../styles.css">
 </head>
 
 <body class="nav-sidebar floating">
@@ -84,7 +84,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./distributor-onboarding-system.html">Distributor Onboarding System</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../dpp/dpp-overview.qmd">Distributor Partner Program</a></li><li class="breadcrumb-item"><a href="../../dpp/workflows/api-extraction-workflow.html">Workflows</a></li><li class="breadcrumb-item"><a href="../../dpp/workflows/api-extraction-workflow.html">API Extraction Workflow</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -99,7 +99,7 @@ ul.task-list li input[type="checkbox"] {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">ReSight - Next Gen ETL</a> 
+      <a href="../../">ReSight - Next Gen ETL</a> 
         <div class="sidebar-tools-main">
   <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
@@ -112,74 +112,146 @@ ul.task-list li input[type="checkbox"] {
         </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
-        <li class="sidebar-item">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Archive</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link">
+  <a href="../../index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Dev Plan and Overview</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./etl-pipeline-planning-questions.html" class="sidebar-item-text sidebar-link">
+  <a href="../../archive/etl-pipeline-planning-questions.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">ETL Pipeline Planning Questions</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./distributor-onboarding-system.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../archive/distributor-onboarding-system.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Distributor Onboarding System</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./upsert-ops.html" class="sidebar-item-text sidebar-link">
+  <a href="../../archive/upsert-ops.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">UPSERT Operations</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./upsert-ops-cost-analysis.html" class="sidebar-item-text sidebar-link">
+  <a href="../../archive/upsert-ops-cost-analysis.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">UPSERT Operations Cost Analysis</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./erp-extractor-design.html" class="sidebar-item-text sidebar-link">
+  <a href="../../archive/erp-extractor-design.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Design Document for Distributor Data Extraction Ingestion</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./enhanced-erp-extractor-design.html" class="sidebar-item-text sidebar-link">
+  <a href="../../archive/enhanced-erp-extractor-design.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Enhanced Design Document for Distributor Data Extraction Ingestion</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dpp-tasking-outline.html" class="sidebar-item-text sidebar-link">
+  <a href="../../archive/dpp-tasking-outline.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">DPP Project Tasking Outline</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./erp-extractor-design-v3.html" class="sidebar-item-text sidebar-link">
+  <a href="../../archive/erp-extractor-design-v3.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Design Document for Distributor Data Extraction Ingestion (Version 3)</span></a>
   </div>
 </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Distributor Partner Program</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dpp/dpp-overview.qmd" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dpp/core-business-use-cases.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Core Business Use Cases</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Workflows</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dpp/workflows/api-extraction-workflow.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">API Extraction Workflow</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dpp/workflows/database-extraction-workflow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Database Extraction Workflow</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
     </ul>
     </div>
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="distributor-onboarding-system.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></div>
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#workflow-overview" id="toc-workflow-overview" class="nav-link active" data-scroll-target="#workflow-overview"><span class="header-section-number">1</span> Workflow Overview</a></li>
+  <li><a href="#process-steps" id="toc-process-steps" class="nav-link" data-scroll-target="#process-steps"><span class="header-section-number">2</span> Process Steps</a>
+  <ul class="collapse">
+  <li><a href="#erp-extraction-triggered" id="toc-erp-extraction-triggered" class="nav-link" data-scroll-target="#erp-extraction-triggered"><span class="header-section-number">2.1</span> ERP Extraction Triggered</a></li>
+  <li><a href="#get-connection-parameters" id="toc-get-connection-parameters" class="nav-link" data-scroll-target="#get-connection-parameters"><span class="header-section-number">2.2</span> Get Connection Parameters</a></li>
+  <li><a href="#query-data-endpoints" id="toc-query-data-endpoints" class="nav-link" data-scroll-target="#query-data-endpoints"><span class="header-section-number">2.3</span> Query Data Endpoints</a></li>
+  <li><a href="#transform-to-standard-columns" id="toc-transform-to-standard-columns" class="nav-link" data-scroll-target="#transform-to-standard-columns"><span class="header-section-number">2.4</span> Transform to Standard Columns</a></li>
+  <li><a href="#save-to-parquet" id="toc-save-to-parquet" class="nav-link" data-scroll-target="#save-to-parquet"><span class="header-section-number">2.5</span> Save to Parquet</a></li>
+  <li><a href="#push-to-s3" id="toc-push-to-s3" class="nav-link" data-scroll-target="#push-to-s3"><span class="header-section-number">2.6</span> Push to S3</a></li>
+  </ul></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="api-extraction-workflow.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../dpp/dpp-overview.qmd">Distributor Partner Program</a></li><li class="breadcrumb-item"><a href="../../dpp/workflows/api-extraction-workflow.html">Workflows</a></li><li class="breadcrumb-item"><a href="../../dpp/workflows/api-extraction-workflow.html">API Extraction Workflow</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Distributor Onboarding System</h1>
+<h1 class="title">API Extraction Workflow</h1>
 </div>
 
 
@@ -196,7 +268,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">February 6, 2025</p>
+      <p class="date">March 5, 2025</p>
     </div>
   </div>
   
@@ -208,66 +280,78 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<!-- 
-# Overview
+<section id="workflow-overview" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="workflow-overview"><span class="header-section-number">1</span> Workflow Overview</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../images/api-extraction-workflow.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:30.0%"></p>
+</figure>
+</div>
+</section>
+<section id="process-steps" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="process-steps"><span class="header-section-number">2</span> Process Steps</h2>
+<section id="erp-extraction-triggered" class="level3" data-number="2.1">
+<h3 data-number="2.1" class="anchored" data-anchor-id="erp-extraction-triggered"><span class="header-section-number">2.1</span> ERP Extraction Triggered</h3>
+<p>The workflow begins when an extraction request is initiated. This could happen:</p>
+<ul>
+<li>On a scheduled basis (e.g., nightly extractions)</li>
+<li>On-demand through user-initiated requests</li>
+<li>As part of a larger data processing workflow</li>
+</ul>
+</section>
+<section id="get-connection-parameters" class="level3" data-number="2.2">
+<h3 data-number="2.2" class="anchored" data-anchor-id="get-connection-parameters"><span class="header-section-number">2.2</span> Get Connection Parameters</h3>
+<p>The system retrieves the necessary connection parameters for the specified ERP system and client:</p>
+<ul>
+<li>API endpoint URLs</li>
+<li>Connection settings</li>
+<li>Timeout configurations</li>
+</ul>
+<p>The system establishes a secure connection to the ERP API by:</p>
+<ul>
+<li>Retrieving secure credentials from the vault</li>
+<li>Applying the appropriate authentication method (API key, OAuth token, etc.)</li>
+<li>Establishing the connection with the ERP API</li>
+<li>Verifying successful authentication</li>
+</ul>
+</section>
+<section id="query-data-endpoints" class="level3" data-number="2.3">
+<h3 data-number="2.3" class="anchored" data-anchor-id="query-data-endpoints"><span class="header-section-number">2.3</span> Query Data Endpoints</h3>
+<p>With a successful connection established, the system queries the appropriate endpoints to extract the required data:</p>
+<ul>
+<li>Sales orders</li>
+<li>Sales order details</li>
+<li>Inventory spec fields</li>
+<li>Customer details</li>
+<li>Vendor details</li>
+<li>Product spec fields</li>
+</ul>
+</section>
+<section id="transform-to-standard-columns" class="level3" data-number="2.4">
+<h3 data-number="2.4" class="anchored" data-anchor-id="transform-to-standard-columns"><span class="header-section-number">2.4</span> Transform to Standard Columns</h3>
+<p>The raw data from the ERP system is transformed to follow our standardized data model:</p>
+<ul>
+<li>Column names are mapped to our standard naming conventions</li>
+<li>Basic data quality checks are performed</li>
+</ul>
+</section>
+<section id="save-to-parquet" class="level3" data-number="2.5">
+<h3 data-number="2.5" class="anchored" data-anchor-id="save-to-parquet"><span class="header-section-number">2.5</span> Save to Parquet</h3>
+<p>The transformed data is converted to Parquet format:</p>
+<ul>
+<li>Efficient columnar storage format</li>
+<li>Compressed to save space</li>
+<li>Optimized for analytical queries</li>
+<li>Schema is preserved with appropriate data types</li>
+</ul>
+</section>
+<section id="push-to-s3" class="level3" data-number="2.6">
+<h3 data-number="2.6" class="anchored" data-anchor-id="push-to-s3"><span class="header-section-number">2.6</span> Push to S3</h3>
+<p>The Parquet files are uploaded to our S3 storage: - Organized by client and data type - Stored with appropriate metadata - Secured with proper access controls - Made available for downstream processing</p>
 
-This document outlines the implementation of a **self-service distributor onboarding system** that simplifies the process of integrating various **ERP systems** with our data pipeline. The system consists of:
 
-
-
-- **A web portal for distributor registration and ERP selection**.
-- **A C# (ASP.NET Core) backend for managing ERP authentication and configurations**.
-- **Apache MiNiFi deployed at distributor sites for local ERP data extraction**.
-- **Apache NiFi for central data ingestion, transformation, and routing to AWS S3**.
-
-This approach ensures **scalability, security, and ease of use** for non-technical distributors.
-
-## System Components
-
-### **Web Portal (Next.js + Auth0)**
-- Distributors **log in via Auth0**.
-- Select their **ERP system** from a dropdown list.
-- Enter **API credentials, database connection details, or FTP settings**.
-- Download a **pre-configured MiNiFi agent** for their system.
-
-### **Backend API (C# + ASP.NET Core)**
-- **Handles distributor authentication & authorization**.
-- **Validates ERP credentials** and ensures secure storage.
-- **Generates MiNiFi configuration files dynamically** based on ERP type.
-- **Communicates with Apache NiFi to register new distributors**.
-
-### **Apache MiNiFi (Deployed at Distributor’s Location)**
-- **Extracts ERP data via API, database queries, or FTP/SFTP**.
-- **Buffers and transmits data securely to NiFi**.
-- **Handles network outages with built-in retry mechanisms**.
-
-### **Apache NiFi (Central Data Processing Hub)**
-- **Receives data from MiNiFi agents**.
-- **Transforms and routes data to AWS S3**.
-- **Handles error logging, retries, and alerting**.
-
-
-
-## ERP System Integration Strategy
-
-### **ERP Categorization & Integration Methods**
-| **ERP Type** | **Integration Method** | **Examples** |
-|-------------|----------------------|-------------|
-| **API-Based** | REST/SOAP API Calls | NetSuite, SAP ERP, QuickBooks, ASC Portal |
-| **Database-Driven** | SQL (JDBC/ODBC) Queries | Sage 300, Epicor Prophet 21, CloudSuite |
-| **File-Based** | FTP/SFTP, CSV/XML Parsing | TGI Enterprise 21, OneView, HP (Excel) |
-| **Legacy Systems** | AS/400, Custom In-House Systems | DARTS, Samco Software |
-
-### **Integration Workflow**
- -->
-<!-- ## Expected Benefits
-
-- **Simplified onboarding** – Non-technical distributors can self-register and integrate their ERP systems.  
-- **Automated ERP data extraction** – Reduces manual intervention.  
-- **Secure & scalable solution** – MiNiFi ensures local data security and retries failed transfers.  
-- **Cloud-ready architecture** – AWS S3 and NiFi provide a robust and extensible pipeline.   -->
-
-
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

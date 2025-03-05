@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.40">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Nathan Lunceford">
+<meta name="dcterms.date" content="2025-03-05">
+
+<title>Design Document for Distributor Data Extraction Ingestion - VBD – ReSight - Next Gen ETL</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-8ea72dc5fed832574809a9c94082fbbb.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-33006b8e78fc72882bd7e51eace35532.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-4cc3d5fc47974437f3b1ccac7930ab22.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">
+      ReSight - Next Gen ETL
+      </li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ReSight - Next Gen ETL</a> 
+        <div class="sidebar-tools-main">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Archive</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Dev Plan and Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./archive/etl-pipeline-planning-questions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">ETL Pipeline Planning Questions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./archive/distributor-onboarding-system.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Distributor Onboarding System</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./archive/upsert-ops.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">UPSERT Operations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./archive/upsert-ops-cost-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">UPSERT Operations Cost Analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./archive/erp-extractor-design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Design Document for Distributor Data Extraction Ingestion</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./archive/enhanced-erp-extractor-design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Enhanced Design Document for Distributor Data Extraction Ingestion</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./archive/dpp-tasking-outline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DPP Project Tasking Outline</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./archive/erp-extractor-design-v3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Design Document for Distributor Data Extraction Ingestion (Version 3)</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Distributor Partner Program</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dpp/dpp-overview.qmd" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dpp/core-business-use-cases.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Core Business Use Cases</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Workflows</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dpp/workflows/api-extraction-workflow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">API Extraction Workflow</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dpp/workflows/database-extraction-workflow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Database Extraction Workflow</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#core-business-use-cases" id="toc-core-business-use-cases" class="nav-link active" data-scroll-target="#core-business-use-cases"><span class="header-section-number">1</span> Core Business Use Cases</a>
+  <ul class="collapse">
+  <li><a href="#extract-data-from-erp-systems-via-api" id="toc-extract-data-from-erp-systems-via-api" class="nav-link" data-scroll-target="#extract-data-from-erp-systems-via-api"><span class="header-section-number">1.1</span> Extract Data from ERP Systems via API</a></li>
+  <li><a href="#extract-data-from-erp-databases" id="toc-extract-data-from-erp-databases" class="nav-link" data-scroll-target="#extract-data-from-erp-databases"><span class="header-section-number">1.2</span> Extract Data from ERP Databases</a></li>
+  <li><a href="#transform-extracted-data" id="toc-transform-extracted-data" class="nav-link" data-scroll-target="#transform-extracted-data"><span class="header-section-number">1.3</span> Transform Extracted Data</a></li>
+  <li><a href="#secure-credential-management" id="toc-secure-credential-management" class="nav-link" data-scroll-target="#secure-credential-management"><span class="header-section-number">1.4</span> Secure Credential Management</a></li>
+  <li><a href="#track-data-lineage" id="toc-track-data-lineage" class="nav-link" data-scroll-target="#track-data-lineage"><span class="header-section-number">1.5</span> Track Data Lineage</a></li>
+  <li><a href="#monitor-and-report-system-health" id="toc-monitor-and-report-system-health" class="nav-link" data-scroll-target="#monitor-and-report-system-health"><span class="header-section-number">1.6</span> Monitor and Report System Health</a></li>
+  </ul></li>
+  <li><a href="#workflow-documentation" id="toc-workflow-documentation" class="nav-link" data-scroll-target="#workflow-documentation"><span class="header-section-number">2</span> Workflow Documentation</a>
+  <ul class="collapse">
+  <li><a href="#api-data-extraction-workflow" id="toc-api-data-extraction-workflow" class="nav-link" data-scroll-target="#api-data-extraction-workflow"><span class="header-section-number">2.1</span> API Data Extraction Workflow</a></li>
+  <li><a href="#database-data-extraction-workflow" id="toc-database-data-extraction-workflow" class="nav-link" data-scroll-target="#database-data-extraction-workflow"><span class="header-section-number">2.2</span> Database Data Extraction Workflow</a></li>
+  </ul></li>
+  <li><a href="#idesign-layer-components" id="toc-idesign-layer-components" class="nav-link" data-scroll-target="#idesign-layer-components"><span class="header-section-number">3</span> IDesign Layer Components</a>
+  <ul class="collapse">
+  <li><a href="#clients-layer" id="toc-clients-layer" class="nav-link" data-scroll-target="#clients-layer"><span class="header-section-number">3.1</span> Clients Layer</a>
+  <ul class="collapse">
+  <li><a href="#components" id="toc-components" class="nav-link" data-scroll-target="#components"><span class="header-section-number">3.1.1</span> Components</a></li>
+  </ul></li>
+  <li><a href="#managers-layer" id="toc-managers-layer" class="nav-link" data-scroll-target="#managers-layer"><span class="header-section-number">3.2</span> Managers Layer</a>
+  <ul class="collapse">
+  <li><a href="#components-1" id="toc-components-1" class="nav-link" data-scroll-target="#components-1"><span class="header-section-number">3.2.1</span> Components</a></li>
+  </ul></li>
+  <li><a href="#engines-layer" id="toc-engines-layer" class="nav-link" data-scroll-target="#engines-layer"><span class="header-section-number">3.3</span> Engines Layer</a>
+  <ul class="collapse">
+  <li><a href="#components-2" id="toc-components-2" class="nav-link" data-scroll-target="#components-2"><span class="header-section-number">3.3.1</span> Components</a></li>
+  </ul></li>
+  <li><a href="#accessors-layer" id="toc-accessors-layer" class="nav-link" data-scroll-target="#accessors-layer"><span class="header-section-number">3.4</span> Accessors Layer</a>
+  <ul class="collapse">
+  <li><a href="#components-3" id="toc-components-3" class="nav-link" data-scroll-target="#components-3"><span class="header-section-number">3.4.1</span> Components</a></li>
+  </ul></li>
+  <li><a href="#resources-layer" id="toc-resources-layer" class="nav-link" data-scroll-target="#resources-layer"><span class="header-section-number">3.5</span> Resources Layer</a>
+  <ul class="collapse">
+  <li><a href="#components-4" id="toc-components-4" class="nav-link" data-scroll-target="#components-4"><span class="header-section-number">3.5.1</span> Components</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#implementation-plan" id="toc-implementation-plan" class="nav-link" data-scroll-target="#implementation-plan"><span class="header-section-number">4</span> Implementation Plan</a>
+  <ul class="collapse">
+  <li><a href="#phase-1-core-extraction-capability" id="toc-phase-1-core-extraction-capability" class="nav-link" data-scroll-target="#phase-1-core-extraction-capability"><span class="header-section-number">4.1</span> Phase 1: Core Extraction Capability</a></li>
+  <li><a href="#phase-2-expand-erp-support" id="toc-phase-2-expand-erp-support" class="nav-link" data-scroll-target="#phase-2-expand-erp-support"><span class="header-section-number">4.2</span> Phase 2: Expand ERP Support</a></li>
+  <li><a href="#phase-3-resilience-and-monitoring" id="toc-phase-3-resilience-and-monitoring" class="nav-link" data-scroll-target="#phase-3-resilience-and-monitoring"><span class="header-section-number">4.3</span> Phase 3: Resilience and Monitoring</a></li>
+  <li><a href="#phase-4-security-and-compliance" id="toc-phase-4-security-and-compliance" class="nav-link" data-scroll-target="#phase-4-security-and-compliance"><span class="header-section-number">4.4</span> Phase 4: Security and Compliance</a></li>
+  </ul></li>
+  <li><a href="#detailed-interface-specifications" id="toc-detailed-interface-specifications" class="nav-link" data-scroll-target="#detailed-interface-specifications"><span class="header-section-number">5</span> Detailed Interface Specifications</a>
+  <ul class="collapse">
+  <li><a href="#iextractionmanager" id="toc-iextractionmanager" class="nav-link" data-scroll-target="#iextractionmanager"><span class="header-section-number">5.1</span> IExtractionManager</a></li>
+  <li><a href="#isecuritymanager" id="toc-isecuritymanager" class="nav-link" data-scroll-target="#isecuritymanager"><span class="header-section-number">5.2</span> ISecurityManager</a></li>
+  <li><a href="#iextractorengine" id="toc-iextractorengine" class="nav-link" data-scroll-target="#iextractorengine"><span class="header-section-number">5.3</span> IExtractorEngine</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">6</span> Conclusion</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="erp-extraction-ingestion-vbd.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Design Document for Distributor Data Extraction Ingestion - VBD</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Nathan Lunceford </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">March 5, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="core-business-use-cases" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Core Business Use Cases</h1>
+<section id="extract-data-from-erp-systems-via-api" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="extract-data-from-erp-systems-via-api"><span class="header-section-number">1.1</span> Extract Data from ERP Systems via API</h2>
+<p>The system must be able to connect to various ERP systems (e.g., Epicor, Sage) via their APIs, authenticate, and extract required data types. This includes:</p>
+<ul>
+<li>Authenticating with proper credentials (API keys, tokens, client certificates)</li>
+<li>Building appropriate requests for each ERP system</li>
+<li>Handling pagination and batching for large datasets</li>
+<li>Managing rate limits and connection timeouts</li>
+<li>Capturing and processing response data</li>
+<li>Implementing resilience patterns for API communication</li>
+</ul>
+</section>
+<section id="extract-data-from-erp-databases" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="extract-data-from-erp-databases"><span class="header-section-number">1.2</span> Extract Data from ERP Databases</h2>
+<p>For ERP systems that allow or require direct database access, the system must:</p>
+<ul>
+<li>Connect securely to various database types</li>
+<li>Execute appropriate queries for different data types</li>
+<li>Handle connection pooling and resource management</li>
+<li>Apply appropriate filtering for incremental extraction</li>
+<li>Process result sets efficiently</li>
+<li>Release database resources properly</li>
+</ul>
+</section>
+<section id="transform-extracted-data" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="transform-extracted-data"><span class="header-section-number">1.3</span> Transform Extracted Data</h2>
+<p>All extracted data must undergo initial transformation to:</p>
+<ul>
+<li>Standardize column names according to our global data dictionary</li>
+<li>Validate data against defined schemas and quality rules</li>
+<li>Convert to Parquet format for efficient storage and processing</li>
+<li>Apply optional compression for reduced storage needs</li>
+<li>Identify and mask sensitive information when required</li>
+<li>Preserve data lineage information</li>
+</ul>
+</section>
+<section id="secure-credential-management" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="secure-credential-management"><span class="header-section-number">1.4</span> Secure Credential Management</h2>
+<p>The system must securely manage credentials for various ERP systems:</p>
+<ul>
+<li>Retrieve credentials from HashiCorp Vault using least privilege access</li>
+<li>Support different credential types (API keys, database credentials, certificates)</li>
+<li>Handle credential rotation and expiration</li>
+<li>Ensure credentials are never logged or persisted outside secure storage</li>
+<li>Apply proper authentication mechanisms for each ERP type</li>
+</ul>
+</section>
+<section id="track-data-lineage" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="track-data-lineage"><span class="header-section-number">1.5</span> Track Data Lineage</h2>
+<p>For audit and compliance purposes, the system must:</p>
+<ul>
+<li>Track the source, extraction time, and parameters of each data extraction</li>
+<li>Record transformation details and any quality issues</li>
+<li>Link extracted data to its final storage location</li>
+<li>Provide metrics on extraction volume and timing</li>
+<li>Enable traceability for data governance</li>
+</ul>
+</section>
+<section id="monitor-and-report-system-health" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="monitor-and-report-system-health"><span class="header-section-number">1.6</span> Monitor and Report System Health</h2>
+<p>The system must provide comprehensive monitoring:</p>
+<ul>
+<li>Report on successful and failed extractions</li>
+<li>Expose metrics for performance and throughput</li>
+<li>Alert on critical failures or data quality issues</li>
+<li>Log detailed information for troubleshooting</li>
+<li>Provide health check endpoints for operational status</li>
+</ul>
+</section>
+</section>
+<section id="workflow-documentation" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Workflow Documentation</h1>
+<section id="api-data-extraction-workflow" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="api-data-extraction-workflow"><span class="header-section-number">2.1</span> API Data Extraction Workflow</h2>
+<ol type="1">
+<li><strong>Initiation</strong>:
+<ul>
+<li>System receives extraction command with parameters (ERP type, client ID, data type)</li>
+<li>Validate parameters and check authorization</li>
+</ul></li>
+<li><strong>Preparation</strong>:
+<ul>
+<li>Retrieve ERP configuration from FerretDB</li>
+<li>Obtain appropriate credentials from HashiCorp Vault</li>
+<li>Determine extraction mode (full or incremental)</li>
+<li>Initialize data lineage tracking</li>
+</ul></li>
+<li><strong>Request Construction</strong>:
+<ul>
+<li>Build appropriate API request with authentication</li>
+<li>Apply ERP-specific headers and parameters</li>
+<li>Configure timeouts and retry settings</li>
+</ul></li>
+<li><strong>Execution</strong>:
+<ul>
+<li>Send request to ERP API endpoint</li>
+<li>Handle pagination for large datasets</li>
+<li>Apply circuit breaker pattern for resilience</li>
+<li>Process response data into standardized format</li>
+</ul></li>
+<li><strong>Transformation</strong>:
+<ul>
+<li>Map column names to standard dictionary</li>
+<li>Validate data against quality rules</li>
+<li>Mask sensitive information if required</li>
+<li>Convert to Parquet format</li>
+</ul></li>
+<li><strong>Storage</strong>:
+<ul>
+<li>Upload transformed data to pre-dropzone S3 bucket</li>
+<li>Organize by client, ERP type, and data type</li>
+<li>Apply appropriate permissions</li>
+</ul></li>
+<li><strong>Completion</strong>:
+<ul>
+<li>Update data lineage with completion status</li>
+<li>Log extraction metrics and results</li>
+<li>Report success or failure</li>
+</ul></li>
+</ol>
+</section>
+<section id="database-data-extraction-workflow" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="database-data-extraction-workflow"><span class="header-section-number">2.2</span> Database Data Extraction Workflow</h2>
+<ol type="1">
+<li><strong>Initiation</strong>:
+<ul>
+<li>System receives extraction command with parameters</li>
+<li>Validate parameters and check authorization</li>
+</ul></li>
+<li><strong>Preparation</strong>:
+<ul>
+<li>Retrieve ERP database configuration</li>
+<li>Obtain database credentials from Vault</li>
+<li>Determine extraction mode (full or incremental)</li>
+<li>Initialize data lineage tracking</li>
+</ul></li>
+<li><strong>Query Construction</strong>:
+<ul>
+<li>Build appropriate SQL query for the data type</li>
+<li>Apply filters for incremental extraction if needed</li>
+<li>Set appropriate query timeout and batch size</li>
+</ul></li>
+<li><strong>Execution</strong>:
+<ul>
+<li>Establish database connection with proper isolation</li>
+<li>Execute query with bulkhead protection</li>
+<li>Stream results to minimize memory usage</li>
+<li>Map database results to standardized format</li>
+</ul></li>
+<li><strong>Transformation</strong>:
+<ul>
+<li>(Same as API workflow)</li>
+</ul></li>
+<li><strong>Storage</strong>:
+<ul>
+<li>(Same as API workflow)</li>
+</ul></li>
+<li><strong>Completion</strong>:
+<ul>
+<li>(Same as API workflow)</li>
+</ul></li>
+</ol>
+</section>
+</section>
+<section id="idesign-layer-components" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> IDesign Layer Components</h1>
+<section id="clients-layer" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="clients-layer"><span class="header-section-number">3.1</span> Clients Layer</h2>
+<p>The clients layer serves as the entry point for the extraction process, receiving commands and initiating the workflow.</p>
+<section id="components" class="level3" data-number="3.1.1">
+<h3 data-number="3.1.1" class="anchored" data-anchor-id="components"><span class="header-section-number">3.1.1</span> Components</h3>
+<ol type="1">
+<li><strong>Program Class</strong>:
+<ul>
+<li>Parses command-line arguments</li>
+<li>Configures dependency injection</li>
+<li>Initializes and starts the host</li>
+</ul></li>
+<li><strong>ExtractionHostedService</strong>:
+<ul>
+<li>Serves as the main entry point for the extraction process</li>
+<li>Delegates to appropriate managers</li>
+<li>Handles top-level error reporting and exit codes</li>
+</ul></li>
+</ol>
+</section>
+</section>
+<section id="managers-layer" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="managers-layer"><span class="header-section-number">3.2</span> Managers Layer</h2>
+<p>The managers layer orchestrates the workflows, coordinating between different components without containing business logic.</p>
+<section id="components-1" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="components-1"><span class="header-section-number">3.2.1</span> Components</h3>
+<ol type="1">
+<li><strong>ExtractionManager</strong>:
+<ul>
+<li>Coordinates the overall extraction process</li>
+<li>Delegates to other managers and engines</li>
+<li>Tracks progress and ensures completion</li>
+<li>Handles exceptions and ensures proper cleanup</li>
+</ul></li>
+<li><strong>SecurityManager</strong>:
+<ul>
+<li>Manages credential retrieval and security concerns</li>
+<li>Ensures least privilege access to resources</li>
+<li>Handles rotation and expiration of credentials</li>
+</ul></li>
+<li><strong>ConfigurationManager</strong>:
+<ul>
+<li>Retrieves and manages ERP configuration</li>
+<li>Determines correct extraction mode and settings</li>
+<li>Configures feature flags and system behavior</li>
+</ul></li>
+</ol>
+</section>
+</section>
+<section id="engines-layer" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="engines-layer"><span class="header-section-number">3.3</span> Engines Layer</h2>
+<p>The engines layer contains the core business logic, implementing the rules and processes that define the system’s behavior.</p>
+<section id="components-2" class="level3" data-number="3.3.1">
+<h3 data-number="3.3.1" class="anchored" data-anchor-id="components-2"><span class="header-section-number">3.3.1</span> Components</h3>
+<ol type="1">
+<li><strong>ExtractorEngine</strong>:
+<ul>
+<li>Implements data extraction logic for different sources</li>
+<li>Builds appropriate requests or queries</li>
+<li>Processes extracted data into standardized format</li>
+<li>Applies ERP-specific extraction rules</li>
+</ul></li>
+<li><strong>TransformerEngine</strong>:
+<ul>
+<li>Standardizes column names per data dictionary</li>
+<li>Applies data type conversions</li>
+<li>Implements transformation rules</li>
+<li>Generates Parquet output</li>
+</ul></li>
+<li><strong>ValidationEngine</strong>:
+<ul>
+<li>Validates data against schemas and rules</li>
+<li>Identifies quality issues</li>
+<li>Reports validation results</li>
+<li>Enforces data governance policies</li>
+</ul></li>
+<li><strong>LineageEngine</strong>:
+<ul>
+<li>Tracks data provenance and transformations</li>
+<li>Records extraction parameters and results</li>
+<li>Maintains audit trail for compliance</li>
+<li>Links extracted data to downstream processes</li>
+</ul></li>
+</ol>
+</section>
+</section>
+<section id="accessors-layer" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="accessors-layer"><span class="header-section-number">3.4</span> Accessors Layer</h2>
+<p>The accessors layer handles all interactions with external systems and resources.</p>
+<section id="components-3" class="level3" data-number="3.4.1">
+<h3 data-number="3.4.1" class="anchored" data-anchor-id="components-3"><span class="header-section-number">3.4.1</span> Components</h3>
+<ol type="1">
+<li><strong>VaultAccessor</strong>:
+<ul>
+<li>Interacts with HashiCorp Vault</li>
+<li>Retrieves and manages secrets</li>
+<li>Applies caching and resilience patterns</li>
+<li>Ensures secure credential handling</li>
+</ul></li>
+<li><strong>FerretDBAccessor</strong>:
+<ul>
+<li>Connects to FerretDB (MongoDB protocol)</li>
+<li>Retrieves configuration documents</li>
+<li>Manages database connections efficiently</li>
+<li>Applies retry and circuit breaker patterns</li>
+</ul></li>
+<li><strong>ERPApiAccessor</strong>:
+<ul>
+<li>Handles HTTP communication with ERP APIs</li>
+<li>Applies authentication and security measures</li>
+<li>Manages request/response lifecycle</li>
+<li>Implements resilience patterns for API calls</li>
+</ul></li>
+<li><strong>ERPDatabaseAccessor</strong>:
+<ul>
+<li>Connects to ERP databases</li>
+<li>Executes queries and processes results</li>
+<li>Manages database resources efficiently</li>
+<li>Applies connection pooling and isolation</li>
+</ul></li>
+<li><strong>S3Accessor</strong>:
+<ul>
+<li>Uploads data to S3 storage</li>
+<li>Manages bucket permissions and organization</li>
+<li>Ensures data integrity during transfer</li>
+<li>Handles S3 API interactions</li>
+</ul></li>
+</ol>
+</section>
+</section>
+<section id="resources-layer" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="resources-layer"><span class="header-section-number">3.5</span> Resources Layer</h2>
+<p>The resources layer represents external systems and dependencies that our system interacts with.</p>
+<section id="components-4" class="level3" data-number="3.5.1">
+<h3 data-number="3.5.1" class="anchored" data-anchor-id="components-4"><span class="header-section-number">3.5.1</span> Components</h3>
+<ol type="1">
+<li><strong>HashiCorp Vault</strong>:
+<ul>
+<li>Secure storage for credentials and secrets</li>
+<li>Provides short-lived, least-privilege access tokens</li>
+</ul></li>
+<li><strong>FerretDB</strong>:
+<ul>
+<li>Configuration storage using MongoDB protocol</li>
+<li>Stores ERP-specific settings and parameters</li>
+</ul></li>
+<li><strong>ERP APIs</strong>:
+<ul>
+<li>External API endpoints for various ERP systems</li>
+<li>Provides data access via HTTP/HTTPS</li>
+</ul></li>
+<li><strong>ERP Databases</strong>:
+<ul>
+<li>Direct database connections to ERP systems</li>
+<li>Provides data access via SQL queries</li>
+</ul></li>
+<li><strong>S3 Storage</strong>:
+<ul>
+<li>Pre-dropzone bucket for extracted data</li>
+<li>Destination for transformed Parquet files</li>
+</ul></li>
+</ol>
+</section>
+</section>
+</section>
+<section id="implementation-plan" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Implementation Plan</h1>
+<section id="phase-1-core-extraction-capability" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="phase-1-core-extraction-capability"><span class="header-section-number">4.1</span> Phase 1: Core Extraction Capability</h2>
+<ol type="1">
+<li><strong>Setup Project Structure</strong>:
+<ul>
+<li>Create solution with projects for each layer</li>
+<li>Set up dependency injection framework</li>
+<li>Implement basic interfaces and models</li>
+</ul></li>
+<li><strong>Implement Initial Vertical Slice</strong>:
+<ul>
+<li>Focus on one ERP type (Epicor API)</li>
+<li>Implement minimal components in each layer</li>
+<li>Create end-to-end workflow for basic extraction</li>
+</ul></li>
+<li><strong>Add Basic Validation and Transformation</strong>:
+<ul>
+<li>Implement column name standardization</li>
+<li>Add simple data quality checks</li>
+<li>Convert to Parquet format</li>
+</ul></li>
+</ol>
+</section>
+<section id="phase-2-expand-erp-support" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="phase-2-expand-erp-support"><span class="header-section-number">4.2</span> Phase 2: Expand ERP Support</h2>
+<ol type="1">
+<li><strong>Add Database Extraction</strong>:
+<ul>
+<li>Implement database accessor</li>
+<li>Add query building functionality</li>
+<li>Support direct database extraction</li>
+</ul></li>
+<li><strong>Add Additional ERP Types</strong>:
+<ul>
+<li>Implement Sage connector</li>
+<li>Support for other common ERP systems</li>
+<li>Create factory functions for dynamic resolution</li>
+</ul></li>
+<li><strong>Enhance Transformation Capabilities</strong>:
+<ul>
+<li>Implement more advanced data validation</li>
+<li>Add field-level masking for sensitive data</li>
+<li>Support incremental extraction with CDC</li>
+</ul></li>
+</ol>
+</section>
+<section id="phase-3-resilience-and-monitoring" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="phase-3-resilience-and-monitoring"><span class="header-section-number">4.3</span> Phase 3: Resilience and Monitoring</h2>
+<ol type="1">
+<li><strong>Implement Resilience Patterns</strong>:
+<ul>
+<li>Add circuit breakers for external dependencies</li>
+<li>Implement retry with exponential backoff</li>
+<li>Add bulkhead isolation for critical operations</li>
+</ul></li>
+<li><strong>Add Monitoring and Metrics</strong>:
+<ul>
+<li>Implement OpenTelemetry integration</li>
+<li>Add performance metrics collection</li>
+<li>Create health check endpoints</li>
+</ul></li>
+<li><strong>Enhance Error Handling</strong>:
+<ul>
+<li>Implement comprehensive exception handling</li>
+<li>Add detailed logging for troubleshooting</li>
+<li>Create structured error reporting</li>
+</ul></li>
+</ol>
+</section>
+<section id="phase-4-security-and-compliance" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="phase-4-security-and-compliance"><span class="header-section-number">4.4</span> Phase 4: Security and Compliance</h2>
+<ol type="1">
+<li><strong>Enhance Security Features</strong>:
+<ul>
+<li>Implement mutual TLS for applicable ERPs</li>
+<li>Add field-level encryption</li>
+<li>Enhance credential management</li>
+</ul></li>
+<li><strong>Complete Data Lineage</strong>:
+<ul>
+<li>Implement comprehensive lineage tracking</li>
+<li>Add audit logging for compliance</li>
+<li>Create lineage visualization tools</li>
+</ul></li>
+<li><strong>Documentation and Training</strong>:
+<ul>
+<li>Finalize system documentation</li>
+<li>Create operator guides and runbooks</li>
+<li>Conduct training sessions for support teams</li>
+</ul></li>
+</ol>
+</section>
+</section>
+<section id="detailed-interface-specifications" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Detailed Interface Specifications</h1>
+<section id="iextractionmanager" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="iextractionmanager"><span class="header-section-number">5.1</span> IExtractionManager</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode csharp code-with-copy"><code class="sourceCode cs"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">/// </span><span class="kw">&lt;summary&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">/// Manages the extraction workflow for ERP data</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">/// </span><span class="kw">&lt;/summary&gt;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">interface</span> IExtractionManager</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">/// </span><span class="kw">&lt;summary&gt;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">/// Extracts data from the specified ERP system</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">/// </span><span class="kw">&lt;/summary&gt;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">/// </span><span class="kw">&lt;param</span><span class="ot"> name=</span><span class="dt">"erpType"</span><span class="kw">&gt;</span><span class="co">The type of ERP system</span><span class="kw">&lt;/param&gt;</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">/// </span><span class="kw">&lt;param</span><span class="ot"> name=</span><span class="dt">"clientId"</span><span class="kw">&gt;</span><span class="co">The client identifier</span><span class="kw">&lt;/param&gt;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">/// </span><span class="kw">&lt;param</span><span class="ot"> name=</span><span class="dt">"dataType"</span><span class="kw">&gt;</span><span class="co">The type of data to extract</span><span class="kw">&lt;/param&gt;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">/// </span><span class="kw">&lt;param</span><span class="ot"> name=</span><span class="dt">"cancellationToken"</span><span class="kw">&gt;</span><span class="co">Cancellation token</span><span class="kw">&lt;/param&gt;</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">/// </span><span class="kw">&lt;returns&gt;</span><span class="co">A task representing the extraction operation</span><span class="kw">&lt;/returns&gt;</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    Task <span class="fu">ExtractDataAsync</span><span class="op">(</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        <span class="dt">string</span> erpType<span class="op">,</span> </span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        <span class="dt">string</span> clientId<span class="op">,</span> </span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        <span class="dt">string</span> dataType<span class="op">,</span> </span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>        CancellationToken cancellationToken<span class="op">);</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="isecuritymanager" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="isecuritymanager"><span class="header-section-number">5.2</span> ISecurityManager</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode csharp code-with-copy"><code class="sourceCode cs"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">/// </span><span class="kw">&lt;summary&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">/// Manages security concerns including credential retrieval</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">/// </span><span class="kw">&lt;/summary&gt;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">interface</span> ISecurityManager</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">/// </span><span class="kw">&lt;summary&gt;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">/// Gets credentials for the specified ERP system</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">/// </span><span class="kw">&lt;/summary&gt;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">/// </span><span class="kw">&lt;param</span><span class="ot"> name=</span><span class="dt">"erpType"</span><span class="kw">&gt;</span><span class="co">The type of ERP system</span><span class="kw">&lt;/param&gt;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">/// </span><span class="kw">&lt;param</span><span class="ot"> name=</span><span class="dt">"clientId"</span><span class="kw">&gt;</span><span class="co">The client identifier</span><span class="kw">&lt;/param&gt;</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">/// </span><span class="kw">&lt;param</span><span class="ot"> name=</span><span class="dt">"dataType"</span><span class="kw">&gt;</span><span class="co">The type of data to extract</span><span class="kw">&lt;/param&gt;</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">/// </span><span class="kw">&lt;returns&gt;</span><span class="co">Credentials for the specified ERP system</span><span class="kw">&lt;/returns&gt;</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    Task<span class="op">&lt;</span>Credentials<span class="op">&gt;</span> <span class="fu">GetCredentialsAsync</span><span class="op">(</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        <span class="dt">string</span> erpType<span class="op">,</span> </span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="dt">string</span> clientId<span class="op">,</span> </span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        <span class="dt">string</span> dataType<span class="op">);</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="iextractorengine" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="iextractorengine"><span class="header-section-number">5.3</span> IExtractorEngine</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode csharp code-with-copy"><code class="sourceCode cs"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">/// </span><span class="kw">&lt;summary&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">/// Implements core extraction logic for different ERP systems</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">/// </span><span class="kw">&lt;/summary&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">interface</span> IExtractorEngine</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">/// </span><span class="kw">&lt;summary&gt;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">/// Extracts data from the specified ERP system</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">/// </span><span class="kw">&lt;/summary&gt;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">/// </span><span class="kw">&lt;param</span><span class="ot"> name=</span><span class="dt">"erpType"</span><span class="kw">&gt;</span><span class="co">The type of ERP system</span><span class="kw">&lt;/param&gt;</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">/// </span><span class="kw">&lt;param</span><span class="ot"> name=</span><span class="dt">"config"</span><span class="kw">&gt;</span><span class="co">Extraction configuration</span><span class="kw">&lt;/param&gt;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">/// </span><span class="kw">&lt;param</span><span class="ot"> name=</span><span class="dt">"credentials"</span><span class="kw">&gt;</span><span class="co">ERP credentials</span><span class="kw">&lt;/param&gt;</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">/// </span><span class="kw">&lt;param</span><span class="ot"> name=</span><span class="dt">"cancellationToken"</span><span class="kw">&gt;</span><span class="co">Cancellation token</span><span class="kw">&lt;/param&gt;</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">/// </span><span class="kw">&lt;returns&gt;</span><span class="co">The extracted data</span><span class="kw">&lt;/returns&gt;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    Task<span class="op">&lt;</span>ExtractedData<span class="op">&gt;</span> <span class="fu">ExtractAsync</span><span class="op">(</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>        <span class="dt">string</span> erpType<span class="op">,</span> </span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>        ExtractorConfig config<span class="op">,</span> </span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>        Credentials credentials<span class="op">,</span> </span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>        CancellationToken cancellationToken<span class="op">);</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="conclusion" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Conclusion</h1>
+<p>This IDesign architecture provides a clear, maintainable structure for our Distributor Data Extraction System. By following the principles of separation of concerns and single responsibility, we’ve created a design that can accommodate various ERP systems while remaining flexible for future enhancements.</p>
+<p>The layered approach ensures that:</p>
+<ol type="1">
+<li>Each component has a clear, focused responsibility</li>
+<li>Dependencies flow in a single direction</li>
+<li>Components can be tested and replaced independently</li>
+<li>The system can be extended without major refactoring</li>
+</ol>
+<p>Implementation should proceed in phases, starting with a minimal vertical slice and gradually expanding to cover all required functionality. This approach will allow us to deliver value incrementally while maintaining a consistent architectural vision.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

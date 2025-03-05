@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Nathan Lunceford">
+<meta name="dcterms.date" content="2025-02-06">
 
-<title>ml – ReSight - Next Gen ETL</title>
+<title>Distributor Onboarding System – ReSight - Next Gen ETL</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,61 +22,27 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-8ea72dc5fed832574809a9c94082fbbb.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-33006b8e78fc72882bd7e51eace35532.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-4cc3d5fc47974437f3b1ccac7930ab22.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-8ea72dc5fed832574809a9c94082fbbb.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-33006b8e78fc72882bd7e51eace35532.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-4cc3d5fc47974437f3b1ccac7930ab22.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -104,10 +72,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../styles.css">
 </head>
 
-<body class="nav-sidebar floating fullcontent">
+<body class="nav-sidebar floating">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -116,9 +84,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">
-      ReSight - Next Gen ETL
-      </li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../index.html">Archive</a></li><li class="breadcrumb-item"><a href="../archive/distributor-onboarding-system.html">Distributor Onboarding System</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -133,7 +99,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">ReSight - Next Gen ETL</a> 
+      <a href="../">ReSight - Next Gen ETL</a> 
         <div class="sidebar-tools-main">
   <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
@@ -146,219 +112,219 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
-        <li class="sidebar-item">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Archive</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link">
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Dev Plan and Overview</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./etl-pipeline-planning-questions.html" class="sidebar-item-text sidebar-link">
+  <a href="../archive/etl-pipeline-planning-questions.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">ETL Pipeline Planning Questions</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./distributor-onboarding-system.html" class="sidebar-item-text sidebar-link">
+  <a href="../archive/distributor-onboarding-system.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Distributor Onboarding System</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./upsert-ops.html" class="sidebar-item-text sidebar-link">
+  <a href="../archive/upsert-ops.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">UPSERT Operations</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./upsert-ops-cost-analysis.html" class="sidebar-item-text sidebar-link">
+  <a href="../archive/upsert-ops-cost-analysis.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">UPSERT Operations Cost Analysis</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./erp-extractor-design.html" class="sidebar-item-text sidebar-link">
+  <a href="../archive/erp-extractor-design.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Design Document for Distributor Data Extraction Ingestion</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./enhanced-erp-extractor-design.html" class="sidebar-item-text sidebar-link">
+  <a href="../archive/enhanced-erp-extractor-design.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Enhanced Design Document for Distributor Data Extraction Ingestion</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dpp-tasking-outline.html" class="sidebar-item-text sidebar-link">
+  <a href="../archive/dpp-tasking-outline.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">DPP Project Tasking Outline</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./erp-extractor-design-v3.html" class="sidebar-item-text sidebar-link">
+  <a href="../archive/erp-extractor-design-v3.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Design Document for Distributor Data Extraction Ingestion (Version 3)</span></a>
   </div>
 </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Distributor Partner Program</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dpp/dpp-overview.qmd" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dpp/core-business-use-cases.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Core Business Use Cases</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Workflows</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dpp/workflows/api-extraction-workflow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">API Extraction Workflow</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dpp/workflows/database-extraction-workflow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Database Extraction Workflow</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
     </ul>
     </div>
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        
+    <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="distributor-onboarding-system.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../index.html">Archive</a></li><li class="breadcrumb-item"><a href="../archive/distributor-onboarding-system.html">Distributor Onboarding System</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Distributor Onboarding System</h1>
+</div>
 
 
 
+<div class="quarto-title-meta">
 
-<section id="pet-product-classification-system-documentation" class="level1">
-<h1>Pet Product Classification System Documentation</h1>
-<section id="overview" class="level2">
-<h2 class="anchored" data-anchor-id="overview">Overview</h2>
-<p>This project implements an automated product classification system that uses embedding-based similarity search and Large Language Models (LLMs) to categorize product descriptions. The system combines RAG (Retrieval Augmented Generation) techniques with both local Llama3.1 and gpt4 language models to provide structured classification outputs.</p>
-<section id="basic-flow-for-poc" class="level3">
-<h3 class="anchored" data-anchor-id="basic-flow-for-poc">Basic Flow for POC</h3>
-<ol type="1">
-<li>Pull distributor description from csv file (csv file was create by querying from md.Sales joined with md.Items)</li>
-<li>Find similar master descriptions (from csv created from md.Items) then pull those with needed categories (species, type, lifestage, etc.)</li>
-<li>Create a prompt for LLM using distributor description and master descriptions with needed categories
-<ul>
-<li>Looks prompt looks something like:
-<ul>
-<li>We want you to classify a new pet product into these categories: (species, type, lifestage, etc.). Here is a new description: {new_description} and here are some previous classifications to use as reference: {list of master descriptions with categories}. Here are some common abbreviation to keep in mind {list of abbreviations}.</li>
-</ul></li>
-</ul></li>
-<li>Process LLM response</li>
-<li>Write results to a csv file</li>
-</ol>
-</section>
-<section id="core-classes" class="level3">
-<h3 class="anchored" data-anchor-id="core-classes">Core Classes</h3>
-<ol type="1">
-<li><strong>Config Management</strong> (<code>Config</code>)
-<ul>
-<li>Centralizes all configuration settings including model parameters, file paths, and required categories</li>
-<li>Handles both local (ollama) and cloud (OpenAI) model configurations</li>
-</ul></li>
-<li><strong>Data Processing Pipeline</strong>
-<ul>
-<li><strong>Text Preprocessing</strong> (<code>PreprocessText</code>)
-<ul>
-<li>Cleans and standardizes input text</li>
-<li>Generates embeddings for product descriptions</li>
-</ul></li>
-<li><strong>Embedding Search</strong> (<code>EmbeddingSearcher</code>)
-<ul>
-<li>Uses FAISS for efficient similarity search for find similar master descriptions</li>
-<li>Maintains an index of product description embeddings</li>
-<li>Retrieves similar products for RAG</li>
-</ul></li>
-<li><strong>Formatting</strong> (<code>Formatter</code>)
-<ul>
-<li>Handles data formatting for model inputs</li>
-<li>Processes model outputs</li>
-<li>Records results</li>
-</ul></li>
-</ul></li>
-<li><strong>Core Processing</strong> (<code>Process</code>)
-<ul>
-<li>Orchestrates the entire classification workflow</li>
-<li>Manages model interactions</li>
-<li>Handles both batch and single-item processing</li>
-</ul></li>
-<li><strong>Output Structure</strong> (<code>StructuredOutput</code>)
-<ul>
-<li>Defines the schema for classification outputs</li>
-<li>Includes fields like Type, Formula, Species, etc.</li>
-<li>Uses Pydantic for data validation</li>
-</ul></li>
-</ol>
-</section>
-<section id="key-features" class="level3">
-<h3 class="anchored" data-anchor-id="key-features">Key Features</h3>
-<ul>
-<li>Supports both GPT and Llama models</li>
-<li>RAG-based classification using similar product examples</li>
-<li>Efficient vector similarity search using FAISS</li>
-<li>Batch processing capabilities</li>
-<li>Structured output validation</li>
-<li>Performance monitoring and logging</li>
-<li>Error handling with Result type pattern</li>
-</ul>
-</section>
-</section>
-<section id="workflow" class="level2">
-<h2 class="anchored" data-anchor-id="workflow">Workflow</h2>
-<ol type="1">
-<li><strong>Input Processing</strong>
-<ul>
-<li>Clean and standardize product descriptions</li>
-<li>Generate embeddings using SentenceTransformer</li>
-</ul></li>
-<li><strong>Similar Product Retrieval</strong>
-<ul>
-<li>Search for similar master products using FAISS</li>
-<li>Retrieve top-k similar products as examples</li>
-</ul></li>
-<li><strong>Classification</strong>
-<ul>
-<li>Format prompt with new description and similar examples</li>
-<li>Send to selected LLM (Llama or GPT)</li>
-<li>Parse and validate structured response</li>
-</ul></li>
-<li><strong>Output Processing</strong>
-<ul>
-<li>Record results and performance metrics</li>
-<li>Store in specified output format</li>
-</ul></li>
-</ol>
-</section>
-<section id="setup-requirements" class="level2">
-<h2 class="anchored" data-anchor-id="setup-requirements">Setup Requirements</h2>
-<ol type="1">
-<li><strong>Dependencies</strong>
-<ul>
-<li>OpenAI API (for GPT models)</li>
-<li>SentenceTransformer</li>
-<li>FAISS</li>
-<li>Pandas</li>
-<li>Pydantic</li>
-<li>Requests (for Llama API)</li>
-</ul></li>
-<li><strong>Configuration</strong>
-<ul>
-<li>Model selection (Llama or GPT)</li>
-<li>API keys and endpoints</li>
-<li>Embedding model parameters</li>
-<li>File paths for data and outputs</li>
-</ul></li>
-</ol>
-</section>
-<section id="usage-examples" class="level2">
-<h2 class="anchored" data-anchor-id="usage-examples">Usage Examples</h2>
-<section id="single-item-classification" class="level3">
-<h3 class="anchored" data-anchor-id="single-item-classification">Single Item Classification</h3>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize processor</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>process <span class="op">=</span> LLMProcess(config)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># num_examples defines how many master description examples we give the LLMs as reference data</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Classify single description</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> process.classify_description(new_description, num_examples<span class="op">=</span><span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="batch-processing" class="level3">
-<h3 class="anchored" data-anchor-id="batch-processing">Batch Processing</h3>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># new_description_df -&gt; Pandas dataframe with many new descriptions</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># description_col -&gt; the column in dataframe where descriptions are </span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>description_col <span class="op">=</span> <span class="st">'ItemDescription'</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Process multiple descriptions</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> process.classify_batch(new_descriptions_df, description_col, num_examples<span class="op">=</span><span class="dv">50</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Nathan Lunceford </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">February 6, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
 
 
-</section>
-</section>
-</section>
+</header>
+
+
+<!-- 
+# Overview
+
+This document outlines the implementation of a **self-service distributor onboarding system** that simplifies the process of integrating various **ERP systems** with our data pipeline. The system consists of:
+
+
+
+- **A web portal for distributor registration and ERP selection**.
+- **A C# (ASP.NET Core) backend for managing ERP authentication and configurations**.
+- **Apache MiNiFi deployed at distributor sites for local ERP data extraction**.
+- **Apache NiFi for central data ingestion, transformation, and routing to AWS S3**.
+
+This approach ensures **scalability, security, and ease of use** for non-technical distributors.
+
+## System Components
+
+### **Web Portal (Next.js + Auth0)**
+- Distributors **log in via Auth0**.
+- Select their **ERP system** from a dropdown list.
+- Enter **API credentials, database connection details, or FTP settings**.
+- Download a **pre-configured MiNiFi agent** for their system.
+
+### **Backend API (C# + ASP.NET Core)**
+- **Handles distributor authentication & authorization**.
+- **Validates ERP credentials** and ensures secure storage.
+- **Generates MiNiFi configuration files dynamically** based on ERP type.
+- **Communicates with Apache NiFi to register new distributors**.
+
+### **Apache MiNiFi (Deployed at Distributor’s Location)**
+- **Extracts ERP data via API, database queries, or FTP/SFTP**.
+- **Buffers and transmits data securely to NiFi**.
+- **Handles network outages with built-in retry mechanisms**.
+
+### **Apache NiFi (Central Data Processing Hub)**
+- **Receives data from MiNiFi agents**.
+- **Transforms and routes data to AWS S3**.
+- **Handles error logging, retries, and alerting**.
+
+
+
+## ERP System Integration Strategy
+
+### **ERP Categorization & Integration Methods**
+| **ERP Type** | **Integration Method** | **Examples** |
+|-------------|----------------------|-------------|
+| **API-Based** | REST/SOAP API Calls | NetSuite, SAP ERP, QuickBooks, ASC Portal |
+| **Database-Driven** | SQL (JDBC/ODBC) Queries | Sage 300, Epicor Prophet 21, CloudSuite |
+| **File-Based** | FTP/SFTP, CSV/XML Parsing | TGI Enterprise 21, OneView, HP (Excel) |
+| **Legacy Systems** | AS/400, Custom In-House Systems | DARTS, Samco Software |
+
+### **Integration Workflow**
+ -->
+<!-- ## Expected Benefits
+
+- **Simplified onboarding** – Non-technical distributors can self-register and integrate their ERP systems.  
+- **Automated ERP data extraction** – Reduces manual intervention.  
+- **Secure & scalable solution** – MiNiFi ensures local data security and retries failed transfers.  
+- **Cloud-ready architecture** – AWS S3 and NiFi provide a robust and extensible pipeline.   -->
+
+
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

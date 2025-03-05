@@ -12,24 +12,38 @@ website:
   sidebar:
     style: "floating"
     contents:
-      - text: "Dev Plan and Overview"
-        href: index.qmd
-      - text: "ETL Pipeline Planning Questions"
-        href: etl-pipeline-planning-questions.qmd
-      - text: "Distributor Onboarding System"
-        href: distributor-onboarding-system.qmd
-      - text: "UPSERT Operations"
-        href: upsert-ops.qmd
-      - text: "UPSERT Operations Cost Analysis"
-        href: upsert-ops-cost-analysis.qmd
-      - text: "Design Document for Distributor Data Extraction Ingestion"
-        href: erp-extractor-design.qmd
-      - text: "Enhanced Design Document for Distributor Data Extraction Ingestion"
-        href: enhanced-erp-extractor-design.qmd
-      - text: "DPP Project Tasking Outline"
-        href: dpp-tasking-outline.qmd
-      - text: "Design Document for Distributor Data Extraction Ingestion (Version 3)"
-        href: erp-extractor-design-v3.qmd
+      - section: "Archive"
+        contents:
+          - text: "Dev Plan and Overview"
+            href: index.qmd
+          - text: "ETL Pipeline Planning Questions"
+            href: archive/etl-pipeline-planning-questions.qmd
+          - text: "Distributor Onboarding System"
+            href: archive/distributor-onboarding-system.qmd
+          - text: "UPSERT Operations"
+            href: archive/upsert-ops.qmd
+          - text: "UPSERT Operations Cost Analysis"
+            href: archive/upsert-ops-cost-analysis.qmd
+          - text: "Design Document for Distributor Data Extraction Ingestion"
+            href: archive/erp-extractor-design.qmd
+          - text: "Enhanced Design Document for Distributor Data Extraction Ingestion"
+            href: archive/enhanced-erp-extractor-design.qmd
+          - text: "DPP Project Tasking Outline"
+            href: archive/dpp-tasking-outline.qmd
+          - text: "Design Document for Distributor Data Extraction Ingestion (Version 3)"
+            href: archive/erp-extractor-design-v3.qmd
+      - section: "Distributor Partner Program"
+        contents: 
+          - text: "Overview"
+            href: dpp/dpp-overview.qmd
+          - text: "Core Business Use Cases"
+            href: dpp/core-business-use-cases.qmd
+          - section: "Workflows"
+            contents: 
+              - text: "API Extraction Workflow"
+                href: dpp/workflows/api-extraction-workflow.qmd
+              - text: "Database Extraction Workflow"
+                href: dpp/workflows/database-extraction-workflow.qmd
 
 
 
@@ -45,4 +59,3 @@ execute:
   message: false
 
 jupyter: python3
-

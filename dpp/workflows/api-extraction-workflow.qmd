@@ -1,0 +1,82 @@
+---
+title: "API Extraction Workflow"
+author: "Nathan Lunceford"
+date: "2025-03-05"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+  pdf:
+    toc: true
+    number-sections: true
+    colorlinks: true
+jupyter: python3
+---
+
+## Workflow Overview
+
+![](../images/api-extraction-workflow.png){width=30% fig-align="center"}
+
+## Process Steps
+
+### ERP Extraction Triggered
+
+The workflow begins when an extraction request is initiated. This could happen:
+
+- On a scheduled basis (e.g., nightly extractions)
+- On-demand through user-initiated requests
+- As part of a larger data processing workflow
+
+
+### Get Connection Parameters
+
+The system retrieves the necessary connection parameters for the specified ERP system and client:
+
+- API endpoint URLs
+- Connection settings
+- Timeout configurations
+  
+The system establishes a secure connection to the ERP API by:
+
+- Retrieving secure credentials from the vault
+- Applying the appropriate authentication method (API key, OAuth token, etc.)
+- Establishing the connection with the ERP API
+- Verifying successful authentication
+
+### Query Data Endpoints
+
+With a successful connection established, the system queries the appropriate endpoints to extract the required data:
+
+- Sales orders
+- Sales order details
+- Inventory spec fields
+- Customer details
+- Vendor details
+- Product spec fields
+
+
+### Transform to Standard Columns
+
+The raw data from the ERP system is transformed to follow our standardized data model:
+
+- Column names are mapped to our standard naming conventions
+- Basic data quality checks are performed
+
+### Save to Parquet
+
+The transformed data is converted to Parquet format:
+
+- Efficient columnar storage format
+- Compressed to save space
+- Optimized for analytical queries
+- Schema is preserved with appropriate data types
+
+### Push to S3
+
+The Parquet files are uploaded to our S3 storage:
+- Organized by client and data type
+- Stored with appropriate metadata
+- Secured with proper access controls
+- Made available for downstream processing

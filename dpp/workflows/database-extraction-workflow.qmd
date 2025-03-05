@@ -1,0 +1,85 @@
+---
+title: "Database Extraction Workflow"
+author: "Nathan Lunceford"
+date: "2025-03-05"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+  pdf:
+    toc: true
+    number-sections: true
+    colorlinks: true
+jupyter: python3
+---
+
+## Workflow Overview
+
+![](../images/database-extraction-workflow.png){width=30% fig-align="center"}
+
+## Process Steps
+
+### ERP Extraction Triggered
+
+The workflow begins when an extraction request is initiated. This could happen:
+
+- On a scheduled basis (e.g., nightly extractions)
+- On-demand through user-initiated requests
+- As part of a larger data processing workflow
+
+### Get Database Configuration
+
+The system retrieves the necessary database configuration for the specified ERP system and client:
+
+- Database connection strings
+- Schema information
+- Table structures
+- Connection pool settings
+- Query timeout configurations
+
+The system securely accesses the ERP database by:
+
+- Retrieving secure credentials from the vault
+- Establishing a secure database connection
+- Verifying connection success
+- Configuring connection parameters (transaction isolation, timeouts)
+
+### Execute Database Queries
+
+With a successful connection established, the system executes the appropriate queries to extract the required data:
+
+- Sales orders
+- Sales order details
+- Inventory spec fields
+- Customer details
+- Vendor details
+- Product spec fields
+
+
+### Transform to Standard Columns
+
+The raw data from the database is transformed to follow our standardized data model:
+
+- Column names are mapped to our standard naming conventions
+- Basic data quality checks are performed
+
+### Save to Parquet
+
+The transformed data is converted to Parquet format:
+
+- Efficient columnar storage format
+- Compressed to save space
+- Optimized for analytical queries
+- Schema is preserved with appropriate data types
+
+### Push to S3
+
+The Parquet files are uploaded to our S3 storage:
+
+- Organized by client and data type
+- Stored with appropriate metadata
+- Secured with proper access controls
+- Made available for downstream processing
+
