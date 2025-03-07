@@ -1,15 +1,17 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 
-<meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.40">
+<head>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta charset="utf-8" />
+<meta name="generator" content="quarto-1.6.40" />
 
-<meta name="author" content="Nathan Lunceford">
-<meta name="dcterms.date" content="2025-03-05">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
 
-<title>API Extraction Workflow – ReSight - Next Gen ETL</title>
+<meta name="author" content="Nathan Lunceford" />
+<meta name="dcterms.date" content="2025-03-06" />
+
+<title>Extract Orchestration Process – ReSight - Next Gen ETL</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -24,25 +26,7 @@ ul.task-list li input[type="checkbox"] {
 }
 </style>
 
-
-<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../../">
-<script src="../../site_libs/quarto-html/quarto.js"></script>
-<script src="../../site_libs/quarto-html/popper.min.js"></script>
-<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-8ea72dc5fed832574809a9c94082fbbb.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-33006b8e78fc72882bd7e51eace35532.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark-4cc3d5fc47974437f3b1ccac7930ab22.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<!-- htmldependencies:E3FAD763 -->
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -70,22 +54,30 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<script  src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script  src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link  href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet" />
 
 
-<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="../../styles.css" />
 </head>
 
-<body class="nav-sidebar floating">
+<body>
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn"
+      data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" 
+      aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation"
+      onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../dpp/core-business-use-cases.html">Distributor Partner Program</a></li><li class="breadcrumb-item"><a href="../../dpp/workflows/api-extraction-workflow.html">Workflows</a></li><li class="breadcrumb-item"><a href="../../dpp/workflows/api-extraction-workflow.html">API Extraction Workflow</a></li></ol></nav>
-        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <h1 class="quarto-secondary-nav-title no-breadcrumbs"></h1>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" role="link"
+        aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation"
+        onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
@@ -99,7 +91,9 @@ ul.task-list li input[type="checkbox"] {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="../../">ReSight - Next Gen ETL</a> 
+      <a href="/">
+      ReSight - Next Gen ETL
+      </a> 
         <div class="sidebar-tools-main">
   <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
@@ -114,7 +108,7 @@ ul.task-list li input[type="checkbox"] {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1"  role="navigation" aria-expanded="true">
  <span class="menu-text">Distributor Partner Program</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -123,28 +117,28 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../dpp/core-business-use-cases.html" class="sidebar-item-text sidebar-link">
+  <a href="/dpp/core-business-use-cases.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Core Business Use Cases</span></a>
   </div>
 </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2"  role="navigation" aria-expanded="false">
  <span class="menu-text">Workflows</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 show">  
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../dpp/workflows/api-extraction-workflow.html" class="sidebar-item-text sidebar-link active">
+  <a href="/dpp/workflows/api-extraction-workflow.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">API Extraction Workflow</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../dpp/workflows/database-extraction-workflow.html" class="sidebar-item-text sidebar-link">
+  <a href="/dpp/workflows/database-extraction-workflow.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Database Extraction Workflow</span></a>
   </div>
 </li>
@@ -152,16 +146,16 @@ ul.task-list li input[type="checkbox"] {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3"  role="navigation" aria-expanded="true">
  <span class="menu-text">Core Supporting Processes</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../dpp/core-supporting-processes/extract-orchestration-process.html" class="sidebar-item-text sidebar-link">
+  <a href="/dpp/core-supporting-processes/extract-orchestration-process.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Extract Orchestration Process</span></a>
   </div>
 </li>
@@ -169,7 +163,7 @@ ul.task-list li input[type="checkbox"] {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4"  role="navigation" aria-expanded="false">
  <span class="menu-text">Designs</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -178,13 +172,13 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../dpp/designs/services-overview.qmd" class="sidebar-item-text sidebar-link">
+  <a href="/dpp/designs/services-overview.qmd" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Services Overview</span></a>
   </div>
 </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5"  role="navigation" aria-expanded="false">
  <span class="menu-text">Managers</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -193,7 +187,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth3 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../dpp/designs/managers/extraction-manager-design.html" class="sidebar-item-text sidebar-link">
+  <a href="/dpp/designs/managers/extraction-manager-design.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Extraction Manager Design</span></a>
   </div>
 </li>
@@ -201,7 +195,7 @@ ul.task-list li input[type="checkbox"] {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6"  role="navigation" aria-expanded="false">
  <span class="menu-text">Engines</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -210,19 +204,19 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth3 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../dpp/designs/managers/extractor-engine-design.qmd" class="sidebar-item-text sidebar-link">
+  <a href="/dpp/designs/managers/extractor-engine-design.qmd" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Extractor Engine Design</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../dpp/designs/engines/transformer-engine-design.html" class="sidebar-item-text sidebar-link">
+  <a href="/dpp/designs/engines/transformer-engine-design.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Transformer Engine Design</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../dpp/designs/engines/validator-engine-design.html" class="sidebar-item-text sidebar-link">
+  <a href="/dpp/designs/engines/validator-engine-design.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Validator Engine Design</span></a>
   </div>
 </li>
@@ -230,7 +224,7 @@ ul.task-list li input[type="checkbox"] {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7"  role="navigation" aria-expanded="false">
  <span class="menu-text">Accessors</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -239,19 +233,19 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth3 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../dpp/designs/accessors/configuration-accessor-design.qmd" class="sidebar-item-text sidebar-link">
+  <a href="/dpp/designs/accessors/configuration-accessor-design.qmd" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Configuration Accessor Design</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../dpp/designs/accessors/vault-accessor-design.html" class="sidebar-item-text sidebar-link">
+  <a href="/dpp/designs/accessors/vault-accessor-design.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Vault Accessor Design</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../dpp/designs/accessors/storage-accessor-design.html" class="sidebar-item-text sidebar-link">
+  <a href="/dpp/designs/accessors/storage-accessor-design.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Storage Accessor Design</span></a>
   </div>
 </li>
@@ -259,7 +253,7 @@ ul.task-list li input[type="checkbox"] {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8"  role="navigation" aria-expanded="false">
  <span class="menu-text">Utilities</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -268,13 +262,13 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth3 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../dpp/designs/utilities/security-utility-design.qmd" class="sidebar-item-text sidebar-link">
+  <a href="/dpp/designs/utilities/security-utility-design.qmd" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Security Utility Design</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../dpp/designs/utilities/monitoring-utility-design.qmd" class="sidebar-item-text sidebar-link">
+  <a href="/dpp/designs/utilities/monitoring-utility-design.qmd" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Monitoring Utility Design</span></a>
   </div>
 </li>
@@ -286,7 +280,7 @@ ul.task-list li input[type="checkbox"] {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9"  role="navigation" aria-expanded="true">
  <span class="menu-text">Archive</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -295,55 +289,55 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../index.html" class="sidebar-item-text sidebar-link">
+  <a href="/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Dev Plan and Overview</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../archive/etl-pipeline-planning-questions.html" class="sidebar-item-text sidebar-link">
+  <a href="/archive/etl-pipeline-planning-questions.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">ETL Pipeline Planning Questions</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../archive/distributor-onboarding-system.html" class="sidebar-item-text sidebar-link">
+  <a href="/archive/distributor-onboarding-system.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Distributor Onboarding System</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../archive/upsert-ops.html" class="sidebar-item-text sidebar-link">
+  <a href="/archive/upsert-ops.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">UPSERT Operations</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../archive/upsert-ops-cost-analysis.html" class="sidebar-item-text sidebar-link">
+  <a href="/archive/upsert-ops-cost-analysis.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">UPSERT Operations Cost Analysis</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../archive/erp-extractor-design.html" class="sidebar-item-text sidebar-link">
+  <a href="/archive/erp-extractor-design.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Design Document for Distributor Data Extraction Ingestion</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../archive/enhanced-erp-extractor-design.html" class="sidebar-item-text sidebar-link">
+  <a href="/archive/enhanced-erp-extractor-design.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Enhanced Design Document for Distributor Data Extraction Ingestion</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../archive/dpp-tasking-outline.html" class="sidebar-item-text sidebar-link">
+  <a href="/archive/dpp-tasking-outline.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">DPP Project Tasking Outline</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../archive/erp-extractor-design-v3.html" class="sidebar-item-text sidebar-link">
+  <a href="/archive/erp-extractor-design-v3.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Design Document for Distributor Data Extraction Ingestion (Version 3)</span></a>
   </div>
 </li>
@@ -352,32 +346,17 @@ ul.task-list li input[type="checkbox"] {
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" ></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#workflow-overview" id="toc-workflow-overview" class="nav-link active" data-scroll-target="#workflow-overview"><span class="header-section-number">1</span> Workflow Overview</a></li>
-  <li><a href="#process-steps" id="toc-process-steps" class="nav-link" data-scroll-target="#process-steps"><span class="header-section-number">2</span> Process Steps</a>
-  <ul class="collapse">
-  <li><a href="#erp-extraction-triggered" id="toc-erp-extraction-triggered" class="nav-link" data-scroll-target="#erp-extraction-triggered"><span class="header-section-number">2.1</span> ERP Extraction Triggered</a></li>
-  <li><a href="#get-connection-parameters" id="toc-get-connection-parameters" class="nav-link" data-scroll-target="#get-connection-parameters"><span class="header-section-number">2.2</span> Get Connection Parameters</a></li>
-  <li><a href="#query-data-endpoints" id="toc-query-data-endpoints" class="nav-link" data-scroll-target="#query-data-endpoints"><span class="header-section-number">2.3</span> Query Data Endpoints</a></li>
-  <li><a href="#transform-to-standard-columns" id="toc-transform-to-standard-columns" class="nav-link" data-scroll-target="#transform-to-standard-columns"><span class="header-section-number">2.4</span> Transform to Standard Columns</a></li>
-  <li><a href="#save-to-parquet" id="toc-save-to-parquet" class="nav-link" data-scroll-target="#save-to-parquet"><span class="header-section-number">2.5</span> Save to Parquet</a></li>
-  <li><a href="#push-to-s3" id="toc-push-to-s3" class="nav-link" data-scroll-target="#push-to-s3"><span class="header-section-number">2.6</span> Push to S3</a></li>
-  </ul></li>
-  </ul>
-<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="api-extraction-workflow.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+        <div id="quarto-toc-target"></div>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../dpp/core-business-use-cases.html">Distributor Partner Program</a></li><li class="breadcrumb-item"><a href="../../dpp/workflows/api-extraction-workflow.html">Workflows</a></li><li class="breadcrumb-item"><a href="../../dpp/workflows/api-extraction-workflow.html">API Extraction Workflow</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">API Extraction Workflow</h1>
+<h1 class="title">Extract Orchestration Process</h1>
 </div>
 
 
@@ -394,7 +373,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 5, 2025</p>
+      <p class="date">March 6, 2025</p>
     </div>
   </div>
   
@@ -405,82 +384,301 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-
-<section id="workflow-overview" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="workflow-overview"><span class="header-section-number">1</span> Workflow Overview</h2>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="../images/api-extraction-workflow.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:30.0%"></p>
-</figure>
+<nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#extract-orchestration-process" id="toc-extract-orchestration-process"><span class="header-section-number">1</span> Extract Orchestration Process</a>
+  <ul>
+  <li><a href="#overview" id="toc-overview"><span class="header-section-number">1.1</span> Overview</a></li>
+  <li><a href="#process-responsibilities" id="toc-process-responsibilities"><span class="header-section-number">1.2</span> Process Responsibilities</a></li>
+  <li><a href="#orchestration-flow" id="toc-orchestration-flow"><span class="header-section-number">1.3</span> Orchestration Flow</a></li>
+  <li><a href="#key-orchestration-phases" id="toc-key-orchestration-phases"><span class="header-section-number">1.4</span> Key Orchestration Phases</a>
+  <ul>
+  <li><a href="#initialization-phase" id="toc-initialization-phase"><span class="header-section-number">1.4.1</span> Initialization Phase</a></li>
+  <li><a href="#preparation-phase" id="toc-preparation-phase"><span class="header-section-number">1.4.2</span> Preparation Phase</a></li>
+  <li><a href="#execution-phase" id="toc-execution-phase"><span class="header-section-number">1.4.3</span> Execution Phase</a></li>
+  <li><a href="#processing-phase" id="toc-processing-phase"><span class="header-section-number">1.4.4</span> Processing Phase</a></li>
+  <li><a href="#completion-phase" id="toc-completion-phase"><span class="header-section-number">1.4.5</span> Completion Phase</a></li>
+  </ul></li>
+  <li><a href="#error-handling-strategy" id="toc-error-handling-strategy"><span class="header-section-number">1.5</span> Error Handling Strategy</a>
+  <ul>
+  <li><a href="#connection-issues" id="toc-connection-issues"><span class="header-section-number">1.5.1</span> Connection Issues</a></li>
+  <li><a href="#data-quality-issues" id="toc-data-quality-issues"><span class="header-section-number">1.5.2</span> Data Quality Issues</a></li>
+  <li><a href="#resource-limitations" id="toc-resource-limitations"><span class="header-section-number">1.5.3</span> Resource Limitations</a></li>
+  </ul></li>
+  <li><a href="#decision-points" id="toc-decision-points"><span class="header-section-number">1.6</span> Decision Points</a>
+  <ul>
+  <li><a href="#extraction-mode-selection" id="toc-extraction-mode-selection"><span class="header-section-number">1.6.1</span> Extraction Mode Selection</a></li>
+  <li><a href="#quality-threshold-enforcement" id="toc-quality-threshold-enforcement"><span class="header-section-number">1.6.2</span> Quality Threshold Enforcement</a></li>
+  <li><a href="#resource-allocation" id="toc-resource-allocation"><span class="header-section-number">1.6.3</span> Resource Allocation</a></li>
+  </ul></li>
+  <li><a href="#monitoring-and-control" id="toc-monitoring-and-control"><span class="header-section-number">1.7</span> Monitoring and Control</a>
+  <ul>
+  <li><a href="#real-time-metrics" id="toc-real-time-metrics"><span class="header-section-number">1.7.1</span> Real-time Metrics</a></li>
+  <li><a href="#control-points" id="toc-control-points"><span class="header-section-number">1.7.2</span> Control Points</a></li>
+  </ul></li>
+  <li><a href="#integration-with-workflows" id="toc-integration-with-workflows"><span class="header-section-number">1.8</span> Integration with Workflows</a></li>
+  <li><a href="#design-principles" id="toc-design-principles"><span class="header-section-number">1.9</span> Design Principles</a>
+  <ul>
+  <li><a href="#separation-of-concerns" id="toc-separation-of-concerns"><span class="header-section-number">1.9.1</span> Separation of Concerns</a></li>
+  <li><a href="#resilience-by-design" id="toc-resilience-by-design"><span class="header-section-number">1.9.2</span> Resilience by Design</a></li>
+  <li><a href="#transparency" id="toc-transparency"><span class="header-section-number">1.9.3</span> Transparency</a></li>
+  <li><a href="#adaptability" id="toc-adaptability"><span class="header-section-number">1.9.4</span> Adaptability</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+<section id="extract-orchestration-process" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Extract Orchestration Process</h1>
+<section id="overview" class="level2" data-number="1.1">
+<h2 data-number="1.1"><span class="header-section-number">1.1</span> Overview</h2>
+<p>The Extract Orchestration Process defines how our system coordinates and manages the various activities required to extract data from distributor ERP systems. This process is a critical supporting component that enables both API-based and database-based extraction workflows.</p>
+</section>
+<section id="process-responsibilities" class="level2" data-number="1.2">
+<h2 data-number="1.2"><span class="header-section-number">1.2</span> Process Responsibilities</h2>
+<p>The Extract Orchestration Process is responsible for:</p>
+<ul>
+<li>Coordinating the end-to-end extraction sequence</li>
+<li>Managing transitions between extraction phases</li>
+<li>Delegating specialized tasks to appropriate components</li>
+<li>Handling error conditions and recovery procedures</li>
+<li>Monitoring extraction progress and performance</li>
+<li>Ensuring data lineage and traceability</li>
+</ul>
+</section>
+<section id="orchestration-flow" class="level2" data-number="1.3">
+<h2 data-number="1.3"><span class="header-section-number">1.3</span> Orchestration Flow</h2>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p><figure class=''></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TB
+    A[Receive Extraction Request] --&gt; B[Initialize Extraction Context]
+    B --&gt; C[Obtain Configuration]
+    C --&gt; D[Secure Credentials]
+    D --&gt; E{Extraction Type?}
+    E --&gt;|API| F1[Execute API Extraction]
+    E --&gt;|Database| F2[Execute Database Extraction]
+    F1 --&gt; G[Process Extracted Data]
+    F2 --&gt; G
+    G --&gt; H[Transform to Standard Format]
+    H --&gt; I[Validate Data Quality]
+    I --&gt; J[Convert to Parquet]
+    J --&gt; K[Store in S3]
+    K --&gt; L[Record Lineage]
+    L --&gt; M[Report Completion]
+    
+    C -.-&gt;|Error| N[Handle Configuration Issues]
+    D -.-&gt;|Error| O[Handle Credential Issues]
+    F1 -.-&gt;|Error| P[Handle Extraction Failures]
+    F2 -.-&gt;|Error| P
+    I -.-&gt;|Quality Issues| Q[Record Quality Concerns]
+    Q --&gt; J
+    
+    N -.-&gt; M
+    O -.-&gt; M
+    P -.-&gt; M
+</pre>
+</div>
+<p></figure></p>
+</div>
+</div>
 </div>
 </section>
-<section id="process-steps" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="process-steps"><span class="header-section-number">2</span> Process Steps</h2>
-<section id="erp-extraction-triggered" class="level3" data-number="2.1">
-<h3 data-number="2.1" class="anchored" data-anchor-id="erp-extraction-triggered"><span class="header-section-number">2.1</span> ERP Extraction Triggered</h3>
-<p>The workflow begins when an extraction request is initiated. This could happen:</p>
+<section id="key-orchestration-phases" class="level2" data-number="1.4">
+<h2 data-number="1.4"><span class="header-section-number">1.4</span> Key Orchestration Phases</h2>
+<section id="initialization-phase" class="level3" data-number="1.4.1">
+<h3 data-number="1.4.1"><span class="header-section-number">1.4.1</span> Initialization Phase</h3>
+<p>The orchestration process begins by establishing the extraction context:</p>
 <ul>
-<li>On a scheduled basis (e.g., nightly extractions)</li>
-<li>On-demand through user-initiated requests</li>
-<li>As part of a larger data processing workflow</li>
+<li>Creating a unique identifier for the extraction operation</li>
+<li>Recording start time and requested parameters</li>
+<li>Initializing monitoring and metrics collection</li>
+<li>Establishing extraction boundaries and scope</li>
 </ul>
 </section>
-<section id="get-connection-parameters" class="level3" data-number="2.2">
-<h3 data-number="2.2" class="anchored" data-anchor-id="get-connection-parameters"><span class="header-section-number">2.2</span> Get Connection Parameters</h3>
-<p>The system retrieves the necessary connection parameters for the specified ERP system and client:</p>
+<section id="preparation-phase" class="level3" data-number="1.4.2">
+<h3 data-number="1.4.2"><span class="header-section-number">1.4.2</span> Preparation Phase</h3>
+<p>Before data extraction begins, the process:</p>
 <ul>
-<li>API endpoint URLs</li>
-<li>Connection settings</li>
-<li>Timeout configurations</li>
-</ul>
-<p>The system establishes a secure connection to the ERP API by:</p>
-<ul>
-<li>Retrieving secure credentials from the vault</li>
-<li>Applying the appropriate authentication method (API key, OAuth token, etc.)</li>
-<li>Establishing the connection with the ERP API</li>
-<li>Verifying successful authentication</li>
+<li>Obtains and validates the appropriate configuration</li>
+<li>Retrieves necessary security credentials</li>
+<li>Determines extraction mode (full or incremental)</li>
+<li>Prepares extraction parameters based on data type</li>
+<li>Allocates resources needed for extraction</li>
 </ul>
 </section>
-<section id="query-data-endpoints" class="level3" data-number="2.3">
-<h3 data-number="2.3" class="anchored" data-anchor-id="query-data-endpoints"><span class="header-section-number">2.3</span> Query Data Endpoints</h3>
-<p>With a successful connection established, the system queries the appropriate endpoints to extract the required data:</p>
+<section id="execution-phase" class="level3" data-number="1.4.3">
+<h3 data-number="1.4.3"><span class="header-section-number">1.4.3</span> Execution Phase</h3>
+<p>During the execution phase, the process:</p>
 <ul>
-<li>Sales orders</li>
-<li>Sales order details</li>
-<li>Inventory spec fields</li>
-<li>Customer details</li>
-<li>Vendor details</li>
-<li>Product spec fields</li>
+<li>Delegates to the appropriate extraction mechanism (API or database)</li>
+<li>Monitors progress and handles pagination</li>
+<li>Collects and assembles extracted data</li>
+<li>Manages resource utilization during extraction</li>
+<li>Applies resilience patterns for reliability</li>
 </ul>
 </section>
-<section id="transform-to-standard-columns" class="level3" data-number="2.4">
-<h3 data-number="2.4" class="anchored" data-anchor-id="transform-to-standard-columns"><span class="header-section-number">2.4</span> Transform to Standard Columns</h3>
-<p>The raw data from the ERP system is transformed to follow our standardized data model:</p>
+<section id="processing-phase" class="level3" data-number="1.4.4">
+<h3 data-number="1.4.4"><span class="header-section-number">1.4.4</span> Processing Phase</h3>
+<p>Once data is extracted, the process:</p>
 <ul>
-<li>Column names are mapped to our standard naming conventions</li>
-<li>Basic data quality checks are performed</li>
+<li>Coordinates data transformation to standard format</li>
+<li>Ensures data validation against quality rules</li>
+<li>Manages the conversion to efficient storage format</li>
+<li>Handles the storage of processed data</li>
+<li>Records data lineage and provenance information</li>
 </ul>
 </section>
-<section id="save-to-parquet" class="level3" data-number="2.5">
-<h3 data-number="2.5" class="anchored" data-anchor-id="save-to-parquet"><span class="header-section-number">2.5</span> Save to Parquet</h3>
-<p>The transformed data is converted to Parquet format:</p>
+<section id="completion-phase" class="level3" data-number="1.4.5">
+<h3 data-number="1.4.5"><span class="header-section-number">1.4.5</span> Completion Phase</h3>
+<p>The final phase includes:</p>
 <ul>
-<li>Efficient columnar storage format</li>
-<li>Compressed to save space</li>
-<li>Optimized for analytical queries</li>
-<li>Schema is preserved with appropriate data types</li>
+<li>Finalizing extraction metrics and statistics</li>
+<li>Reporting on extraction outcomes</li>
+<li>Releasing allocated resources</li>
+<li>Logging completion status and results</li>
+<li>Triggering any necessary follow-up actions</li>
 </ul>
 </section>
-<section id="push-to-s3" class="level3" data-number="2.6">
-<h3 data-number="2.6" class="anchored" data-anchor-id="push-to-s3"><span class="header-section-number">2.6</span> Push to S3</h3>
-<p>The Parquet files are uploaded to our S3 storage: - Organized by client and data type - Stored with appropriate metadata - Secured with proper access controls - Made available for downstream processing</p>
-
-
+</section>
+<section id="error-handling-strategy" class="level2" data-number="1.5">
+<h2 data-number="1.5"><span class="header-section-number">1.5</span> Error Handling Strategy</h2>
+<p>The Extract Orchestration Process implements a comprehensive error handling strategy:</p>
+<section id="connection-issues" class="level3" data-number="1.5.1">
+<h3 data-number="1.5.1"><span class="header-section-number">1.5.1</span> Connection Issues</h3>
+<ul>
+<li>Retries with exponential backoff for transient failures</li>
+<li>Circuit breaking for persistent failures</li>
+<li>Detailed logging of connection problems</li>
+<li>Graceful shutdown for unrecoverable errors</li>
+</ul>
+</section>
+<section id="data-quality-issues" class="level3" data-number="1.5.2">
+<h3 data-number="1.5.2"><span class="header-section-number">1.5.2</span> Data Quality Issues</h3>
+<ul>
+<li>Classification of quality issues by severity</li>
+<li>Tracking of quality metrics for reporting</li>
+<li>Continuation despite non-critical issues</li>
+<li>Configurable quality thresholds</li>
+</ul>
+</section>
+<section id="resource-limitations" class="level3" data-number="1.5.3">
+<h3 data-number="1.5.3"><span class="header-section-number">1.5.3</span> Resource Limitations</h3>
+<ul>
+<li>Monitoring of memory and connection usage</li>
+<li>Backpressure mechanisms for large datasets</li>
+<li>Resource cleanup during errors</li>
+<li>Checkpointing for resumable operations</li>
+</ul>
+</section>
+</section>
+<section id="decision-points" class="level2" data-number="1.6">
+<h2 data-number="1.6"><span class="header-section-number">1.6</span> Decision Points</h2>
+<p>The Extract Orchestration Process makes several key decisions during execution:</p>
+<section id="extraction-mode-selection" class="level3" data-number="1.6.1">
+<h3 data-number="1.6.1"><span class="header-section-number">1.6.1</span> Extraction Mode Selection</h3>
+<ul>
+<li>Full extraction when no previous extraction exists</li>
+<li>Incremental extraction when possible for efficiency</li>
+<li>Force full extraction when data integrity concerns exist</li>
+</ul>
+</section>
+<section id="quality-threshold-enforcement" class="level3" data-number="1.6.2">
+<h3 data-number="1.6.2"><span class="header-section-number">1.6.2</span> Quality Threshold Enforcement</h3>
+<ul>
+<li>Proceed despite minor quality issues</li>
+<li>Halt for critical data integrity problems</li>
+<li>Record all quality concerns for later analysis</li>
+</ul>
+</section>
+<section id="resource-allocation" class="level3" data-number="1.6.3">
+<h3 data-number="1.6.3"><span class="header-section-number">1.6.3</span> Resource Allocation</h3>
+<ul>
+<li>Adjust batch sizes based on data volume</li>
+<li>Manage connection pool for optimal throughput</li>
+<li>Balance memory usage with processing speed</li>
+</ul>
+</section>
+</section>
+<section id="monitoring-and-control" class="level2" data-number="1.7">
+<h2 data-number="1.7"><span class="header-section-number">1.7</span> Monitoring and Control</h2>
+<p>Throughout the extraction process, several monitoring mechanisms provide visibility and control:</p>
+<section id="real-time-metrics" class="level3" data-number="1.7.1">
+<h3 data-number="1.7.1"><span class="header-section-number">1.7.1</span> Real-time Metrics</h3>
+<ul>
+<li>Extraction progress percentage</li>
+<li>Records processed per second</li>
+<li>Resource utilization statistics</li>
+<li>Error and warning counts</li>
+</ul>
+</section>
+<section id="control-points" class="level3" data-number="1.7.2">
+<h3 data-number="1.7.2"><span class="header-section-number">1.7.2</span> Control Points</h3>
+<ul>
+<li>Ability to pause extraction if needed</li>
+<li>Emergency shutdown for problematic extractions</li>
+<li>Priority adjustment for concurrent extractions</li>
+</ul>
+</section>
+</section>
+<section id="integration-with-workflows" class="level2" data-number="1.8">
+<h2 data-number="1.8"><span class="header-section-number">1.8</span> Integration with Workflows</h2>
+<p>The Extract Orchestration Process serves as the core supporting process for:</p>
+<ul>
+<li><strong>API Extraction Workflow</strong>: Handling the coordination of API-based extractions</li>
+<li><strong>Database Extraction Workflow</strong>: Managing the flow of database extraction operations</li>
+</ul>
+<p>By centralizing orchestration logic, we ensure consistent behavior, error handling, and monitoring across different extraction methods.</p>
+</section>
+<section id="design-principles" class="level2" data-number="1.9">
+<h2 data-number="1.9"><span class="header-section-number">1.9</span> Design Principles</h2>
+<p>The Extract Orchestration Process follows several key design principles:</p>
+<section id="separation-of-concerns" class="level3" data-number="1.9.1">
+<h3 data-number="1.9.1"><span class="header-section-number">1.9.1</span> Separation of Concerns</h3>
+<ul>
+<li>Orchestration logic separated from extraction mechanisms</li>
+<li>Clear boundaries between orchestration and business rules</li>
+<li>Distinct responsibilities for each phase of the process</li>
+</ul>
+</section>
+<section id="resilience-by-design" class="level3" data-number="1.9.2">
+<h3 data-number="1.9.2"><span class="header-section-number">1.9.2</span> Resilience by Design</h3>
+<ul>
+<li>Graceful handling of failures</li>
+<li>Recovery mechanisms for common error scenarios</li>
+<li>Isolation of failures to prevent cascading issues</li>
+</ul>
+</section>
+<section id="transparency" class="level3" data-number="1.9.3">
+<h3 data-number="1.9.3"><span class="header-section-number">1.9.3</span> Transparency</h3>
+<ul>
+<li>Complete visibility into extraction status</li>
+<li>Detailed logging of decision points</li>
+<li>Comprehensive metrics collection</li>
+</ul>
+</section>
+<section id="adaptability" class="level3" data-number="1.9.4">
+<h3 data-number="1.9.4"><span class="header-section-number">1.9.4</span> Adaptability</h3>
+<ul>
+<li>Support for different extraction methods</li>
+<li>Extensibility for new ERP systems</li>
+<li>Configurability for different extraction requirements</li>
+</ul>
+<div id="quarto-navigation-envelope" class="hidden">
+<p><span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyLXRpdGxl">ReSight - Next Gen ETL</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uYXZiYXItdGl0bGU=">ReSight - Next Gen ETL</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1uZXh0">Services Overview</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1wcmV2">Database Extraction Workflow</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOnF1YXJ0by1zaWRlYmFyLXNlY3Rpb24tMQ==">Distributor Partner Program</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9kcHAvY29yZS1idXNpbmVzcy11c2UtY2FzZXMuaHRtbENvcmUtQnVzaW5lc3MtVXNlLUNhc2Vz">Core Business Use Cases</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOnF1YXJ0by1zaWRlYmFyLXNlY3Rpb24tMg==">Workflows</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9kcHAvd29ya2Zsb3dzL2FwaS1leHRyYWN0aW9uLXdvcmtmbG93Lmh0bWxBUEktRXh0cmFjdGlvbi1Xb3JrZmxvdw==">API Extraction Workflow</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9kcHAvd29ya2Zsb3dzL2RhdGFiYXNlLWV4dHJhY3Rpb24td29ya2Zsb3cuaHRtbERhdGFiYXNlLUV4dHJhY3Rpb24tV29ya2Zsb3c=">Database Extraction Workflow</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOnF1YXJ0by1zaWRlYmFyLXNlY3Rpb24tMw==">Core Supporting Processes</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9kcHAvY29yZS1zdXBwb3J0aW5nLXByb2Nlc3Nlcy9leHRyYWN0LW9yY2hlc3RyYXRpb24tcHJvY2Vzcy5odG1sRXh0cmFjdC1PcmNoZXN0cmF0aW9uLVByb2Nlc3M=">Extract Orchestration Process</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOnF1YXJ0by1zaWRlYmFyLXNlY3Rpb24tNA==">Designs</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9kcHAvZGVzaWducy9zZXJ2aWNlcy1vdmVydmlldy5xbWRTZXJ2aWNlcy1PdmVydmlldw==">Services Overview</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOnF1YXJ0by1zaWRlYmFyLXNlY3Rpb24tNQ==">Managers</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9kcHAvZGVzaWducy9tYW5hZ2Vycy9leHRyYWN0aW9uLW1hbmFnZXItZGVzaWduLmh0bWxFeHRyYWN0aW9uLU1hbmFnZXItRGVzaWdu">Extraction Manager Design</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOnF1YXJ0by1zaWRlYmFyLXNlY3Rpb24tNg==">Engines</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9kcHAvZGVzaWducy9tYW5hZ2Vycy9leHRyYWN0b3ItZW5naW5lLWRlc2lnbi5xbWRFeHRyYWN0b3ItRW5naW5lLURlc2lnbg==">Extractor Engine Design</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9kcHAvZGVzaWducy9lbmdpbmVzL3RyYW5zZm9ybWVyLWVuZ2luZS1kZXNpZ24uaHRtbFRyYW5zZm9ybWVyLUVuZ2luZS1EZXNpZ24=">Transformer Engine Design</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9kcHAvZGVzaWducy9lbmdpbmVzL3ZhbGlkYXRvci1lbmdpbmUtZGVzaWduLmh0bWxWYWxpZGF0b3ItRW5naW5lLURlc2lnbg==">Validator Engine Design</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOnF1YXJ0by1zaWRlYmFyLXNlY3Rpb24tNw==">Accessors</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9kcHAvZGVzaWducy9hY2Nlc3NvcnMvY29uZmlndXJhdGlvbi1hY2Nlc3Nvci1kZXNpZ24ucW1kQ29uZmlndXJhdGlvbi1BY2Nlc3Nvci1EZXNpZ24=">Configuration Accessor Design</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9kcHAvZGVzaWducy9hY2Nlc3NvcnMvdmF1bHQtYWNjZXNzb3ItZGVzaWduLmh0bWxWYXVsdC1BY2Nlc3Nvci1EZXNpZ24=">Vault Accessor Design</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9kcHAvZGVzaWducy9hY2Nlc3NvcnMvc3RvcmFnZS1hY2Nlc3Nvci1kZXNpZ24uaHRtbFN0b3JhZ2UtQWNjZXNzb3ItRGVzaWdu">Storage Accessor Design</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOnF1YXJ0by1zaWRlYmFyLXNlY3Rpb24tOA==">Utilities</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9kcHAvZGVzaWducy91dGlsaXRpZXMvc2VjdXJpdHktdXRpbGl0eS1kZXNpZ24ucW1kU2VjdXJpdHktVXRpbGl0eS1EZXNpZ24=">Security Utility Design</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9kcHAvZGVzaWducy91dGlsaXRpZXMvbW9uaXRvcmluZy11dGlsaXR5LWRlc2lnbi5xbWRNb25pdG9yaW5nLVV0aWxpdHktRGVzaWdu">Monitoring Utility Design</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOnF1YXJ0by1zaWRlYmFyLXNlY3Rpb24tOQ==">Archive</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9pbmRleC5odG1sRGV2LVBsYW4tYW5kLU92ZXJ2aWV3">Dev Plan and Overview</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9hcmNoaXZlL2V0bC1waXBlbGluZS1wbGFubmluZy1xdWVzdGlvbnMuaHRtbEVUTC1QaXBlbGluZS1QbGFubmluZy1RdWVzdGlvbnM=">ETL Pipeline Planning Questions</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9hcmNoaXZlL2Rpc3RyaWJ1dG9yLW9uYm9hcmRpbmctc3lzdGVtLmh0bWxEaXN0cmlidXRvci1PbmJvYXJkaW5nLVN5c3RlbQ==">Distributor Onboarding System</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9hcmNoaXZlL3Vwc2VydC1vcHMuaHRtbFVQU0VSVC1PcGVyYXRpb25z">UPSERT Operations</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9hcmNoaXZlL3Vwc2VydC1vcHMtY29zdC1hbmFseXNpcy5odG1sVVBTRVJULU9wZXJhdGlvbnMtQ29zdC1BbmFseXNpcw==">UPSERT Operations Cost Analysis</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9hcmNoaXZlL2VycC1leHRyYWN0b3ItZGVzaWduLmh0bWxEZXNpZ24tRG9jdW1lbnQtZm9yLURpc3RyaWJ1dG9yLURhdGEtRXh0cmFjdGlvbi1Jbmdlc3Rpb24=">Design Document for Distributor Data Extraction Ingestion</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9hcmNoaXZlL2VuaGFuY2VkLWVycC1leHRyYWN0b3ItZGVzaWduLmh0bWxFbmhhbmNlZC1EZXNpZ24tRG9jdW1lbnQtZm9yLURpc3RyaWJ1dG9yLURhdGEtRXh0cmFjdGlvbi1Jbmdlc3Rpb24=">Enhanced Design Document for Distributor Data Extraction Ingestion</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9hcmNoaXZlL2RwcC10YXNraW5nLW91dGxpbmUuaHRtbERQUC1Qcm9qZWN0LVRhc2tpbmctT3V0bGluZQ==">DPP Project Tasking Outline</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWludC1zaWRlYmFyOi9hcmNoaXZlL2VycC1leHRyYWN0b3ItZGVzaWduLXYzLmh0bWxEZXNpZ24tRG9jdW1lbnQtZm9yLURpc3RyaWJ1dG9yLURhdGEtRXh0cmFjdGlvbi1Jbmdlc3Rpb24tKFZlcnNpb24tMyk=">Design Document for Distributor Data Extraction Ingestion (Version 3)</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWJyZWFkY3J1bWJzLURpc3RyaWJ1dG9yLVBhcnRuZXItUHJvZ3JhbQ==">Distributor Partner Program</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWJyZWFkY3J1bWJzLUNvcmUtU3VwcG9ydGluZy1Qcm9jZXNzZXM=">Core Supporting Processes</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLWJyZWFkY3J1bWJzLUV4dHJhY3QtT3JjaGVzdHJhdGlvbi1Qcm9jZXNz">Extract Orchestration Process</span></p>
+</div>
+<div id="quarto-meta-markdown" class="hidden">
+<p><span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLW1ldGF0aXRsZQ==">Extract Orchestration Process – ReSight - Next Gen ETL</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLXR3aXR0ZXJjYXJkdGl0bGU=">Extract Orchestration Process – ReSight - Next Gen ETL</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLW9nY2FyZHRpdGxl">Extract Orchestration Process – ReSight - Next Gen ETL</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLW1ldGFzaXRlbmFtZQ==">ReSight - Next Gen ETL</span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLXR3aXR0ZXJjYXJkZGVzYw=="></span> <span class="hidden quarto-markdown-envelope-contents" data-render-id="cXVhcnRvLW9nY2FyZGRkZXNj"></span></p>
+</div>
+</section>
 </section>
 </section>
 
 </main> <!-- /main -->
-<script id="quarto-html-after-body" type="application/javascript">
+<script id = "quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
     const mode = bsSheetEl.getAttribute("data-mode");
@@ -1043,7 +1241,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 </div> <!-- /content -->
 
+</body>
 
-
-
-</body></html>
+</html>

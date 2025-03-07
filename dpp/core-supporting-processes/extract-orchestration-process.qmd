@@ -1,0 +1,202 @@
+---
+title: "Extract Orchestration Process"
+author: "Nathan Lunceford"
+date: "2025-03-06"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+  pdf:
+    toc: true
+    number-sections: true
+    colorlinks: true
+---
+
+# Extract Orchestration Process
+
+## Overview
+
+The Extract Orchestration Process defines how our system coordinates and manages the various activities required to extract data from distributor ERP systems. This process is a critical supporting component that enables both API-based and database-based extraction workflows.
+
+## Process Responsibilities
+
+The Extract Orchestration Process is responsible for:
+
+- Coordinating the end-to-end extraction sequence
+- Managing transitions between extraction phases
+- Delegating specialized tasks to appropriate components
+- Handling error conditions and recovery procedures
+- Monitoring extraction progress and performance
+- Ensuring data lineage and traceability
+
+## Orchestration Flow
+
+```{mermaid}
+flowchart TB
+    A[Receive Extraction Request] --> B[Initialize Extraction Context]
+    B --> C[Obtain Configuration]
+    C --> D[Secure Credentials]
+    D --> E{Extraction Type?}
+    E -->|API| F1[Execute API Extraction]
+    E -->|Database| F2[Execute Database Extraction]
+    F1 --> G[Process Extracted Data]
+    F2 --> G
+    G --> H[Transform to Standard Format]
+    H --> I[Validate Data Quality]
+    I --> J[Convert to Parquet]
+    J --> K[Store in S3]
+    K --> L[Record Lineage]
+    L --> M[Report Completion]
+    
+    C -.->|Error| N[Handle Configuration Issues]
+    D -.->|Error| O[Handle Credential Issues]
+    F1 -.->|Error| P[Handle Extraction Failures]
+    F2 -.->|Error| P
+    I -.->|Quality Issues| Q[Record Quality Concerns]
+    Q --> J
+    
+    N -.-> M
+    O -.-> M
+    P -.-> M
+```
+
+## Key Orchestration Phases
+
+### Initialization Phase
+
+The orchestration process begins by establishing the extraction context:
+
+- Creating a unique identifier for the extraction operation
+- Recording start time and requested parameters
+- Initializing monitoring and metrics collection
+- Establishing extraction boundaries and scope
+
+### Preparation Phase
+
+Before data extraction begins, the process:
+
+- Obtains and validates the appropriate configuration
+- Retrieves necessary security credentials
+- Determines extraction mode (full or incremental)
+- Prepares extraction parameters based on data type
+- Allocates resources needed for extraction
+
+### Execution Phase
+
+During the execution phase, the process:
+
+- Delegates to the appropriate extraction mechanism (API or database)
+- Monitors progress and handles pagination
+- Collects and assembles extracted data
+- Manages resource utilization during extraction
+- Applies resilience patterns for reliability
+
+### Processing Phase
+
+Once data is extracted, the process:
+
+- Coordinates data transformation to standard format
+- Ensures data validation against quality rules
+- Manages the conversion to efficient storage format
+- Handles the storage of processed data
+- Records data lineage and provenance information
+
+### Completion Phase
+
+The final phase includes:
+
+- Finalizing extraction metrics and statistics
+- Reporting on extraction outcomes
+- Releasing allocated resources
+- Logging completion status and results
+- Triggering any necessary follow-up actions
+
+## Error Handling Strategy
+
+The Extract Orchestration Process implements a comprehensive error handling strategy:
+
+### Connection Issues
+- Retries with exponential backoff for transient failures
+- Circuit breaking for persistent failures
+- Detailed logging of connection problems
+- Graceful shutdown for unrecoverable errors
+
+### Data Quality Issues
+- Classification of quality issues by severity
+- Tracking of quality metrics for reporting
+- Continuation despite non-critical issues
+- Configurable quality thresholds
+
+### Resource Limitations
+- Monitoring of memory and connection usage
+- Backpressure mechanisms for large datasets
+- Resource cleanup during errors
+- Checkpointing for resumable operations
+
+## Decision Points
+
+The Extract Orchestration Process makes several key decisions during execution:
+
+### Extraction Mode Selection
+- Full extraction when no previous extraction exists
+- Incremental extraction when possible for efficiency
+- Force full extraction when data integrity concerns exist
+
+### Quality Threshold Enforcement
+- Proceed despite minor quality issues
+- Halt for critical data integrity problems
+- Record all quality concerns for later analysis
+
+### Resource Allocation
+- Adjust batch sizes based on data volume
+- Manage connection pool for optimal throughput
+- Balance memory usage with processing speed
+
+## Monitoring and Control
+
+Throughout the extraction process, several monitoring mechanisms provide visibility and control:
+
+### Real-time Metrics
+- Extraction progress percentage
+- Records processed per second
+- Resource utilization statistics
+- Error and warning counts
+
+### Control Points
+- Ability to pause extraction if needed
+- Emergency shutdown for problematic extractions
+- Priority adjustment for concurrent extractions
+
+## Integration with Workflows
+
+The Extract Orchestration Process serves as the core supporting process for:
+
+- **API Extraction Workflow**: Handling the coordination of API-based extractions
+- **Database Extraction Workflow**: Managing the flow of database extraction operations
+
+By centralizing orchestration logic, we ensure consistent behavior, error handling, and monitoring across different extraction methods.
+
+## Design Principles
+
+The Extract Orchestration Process follows several key design principles:
+
+### Separation of Concerns
+- Orchestration logic separated from extraction mechanisms
+- Clear boundaries between orchestration and business rules
+- Distinct responsibilities for each phase of the process
+
+### Resilience by Design
+- Graceful handling of failures
+- Recovery mechanisms for common error scenarios
+- Isolation of failures to prevent cascading issues
+
+### Transparency
+- Complete visibility into extraction status
+- Detailed logging of decision points
+- Comprehensive metrics collection
+
+### Adaptability
+- Support for different extraction methods
+- Extensibility for new ERP systems
+- Configurability for different extraction requirements

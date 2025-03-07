@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Nathan Lunceford">
-<meta name="dcterms.date" content="2025-03-05">
+<meta name="dcterms.date" content="2025-03-06">
 
-<title>API Extraction Workflow – ReSight - Next Gen ETL</title>
+<title>DPP Data Extraction System: Services Overview – ReSight - Next Gen ETL</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -84,7 +84,9 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../dpp/core-business-use-cases.html">Distributor Partner Program</a></li><li class="breadcrumb-item"><a href="../../dpp/workflows/api-extraction-workflow.html">Workflows</a></li><li class="breadcrumb-item"><a href="../../dpp/workflows/api-extraction-workflow.html">API Extraction Workflow</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">
+      ReSight - Next Gen ETL
+      </li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -129,16 +131,16 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
  <span class="menu-text">Workflows</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 show">  
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../dpp/workflows/api-extraction-workflow.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../dpp/workflows/api-extraction-workflow.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">API Extraction Workflow</span></a>
   </div>
 </li>
@@ -358,26 +360,24 @@ ul.task-list li input[type="checkbox"] {
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">On this page</h2>
    
-  <ul>
-  <li><a href="#workflow-overview" id="toc-workflow-overview" class="nav-link active" data-scroll-target="#workflow-overview"><span class="header-section-number">1</span> Workflow Overview</a></li>
-  <li><a href="#process-steps" id="toc-process-steps" class="nav-link" data-scroll-target="#process-steps"><span class="header-section-number">2</span> Process Steps</a>
   <ul class="collapse">
-  <li><a href="#erp-extraction-triggered" id="toc-erp-extraction-triggered" class="nav-link" data-scroll-target="#erp-extraction-triggered"><span class="header-section-number">2.1</span> ERP Extraction Triggered</a></li>
-  <li><a href="#get-connection-parameters" id="toc-get-connection-parameters" class="nav-link" data-scroll-target="#get-connection-parameters"><span class="header-section-number">2.2</span> Get Connection Parameters</a></li>
-  <li><a href="#query-data-endpoints" id="toc-query-data-endpoints" class="nav-link" data-scroll-target="#query-data-endpoints"><span class="header-section-number">2.3</span> Query Data Endpoints</a></li>
-  <li><a href="#transform-to-standard-columns" id="toc-transform-to-standard-columns" class="nav-link" data-scroll-target="#transform-to-standard-columns"><span class="header-section-number">2.4</span> Transform to Standard Columns</a></li>
-  <li><a href="#save-to-parquet" id="toc-save-to-parquet" class="nav-link" data-scroll-target="#save-to-parquet"><span class="header-section-number">2.5</span> Save to Parquet</a></li>
-  <li><a href="#push-to-s3" id="toc-push-to-s3" class="nav-link" data-scroll-target="#push-to-s3"><span class="header-section-number">2.6</span> Push to S3</a></li>
+  <li><a href="#services-overview" id="toc-services-overview" class="nav-link active" data-scroll-target="#services-overview">Services Overview</a>
+  <ul class="collapse">
+  <li><a href="#service-dependency-graph" id="toc-service-dependency-graph" class="nav-link" data-scroll-target="#service-dependency-graph">Service Dependency Graph</a></li>
+  <li><a href="#manager-layer" id="toc-manager-layer" class="nav-link" data-scroll-target="#manager-layer">Manager Layer</a></li>
+  <li><a href="#engines-layer" id="toc-engines-layer" class="nav-link" data-scroll-target="#engines-layer">Engines Layer</a></li>
+  <li><a href="#accessors-layer" id="toc-accessors-layer" class="nav-link" data-scroll-target="#accessors-layer">Accessors Layer</a></li>
+  <li><a href="#utilities-layer" id="toc-utilities-layer" class="nav-link" data-scroll-target="#utilities-layer">Utilities Layer</a></li>
   </ul></li>
   </ul>
-<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="api-extraction-workflow.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="index.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../dpp/core-business-use-cases.html">Distributor Partner Program</a></li><li class="breadcrumb-item"><a href="../../dpp/workflows/api-extraction-workflow.html">Workflows</a></li><li class="breadcrumb-item"><a href="../../dpp/workflows/api-extraction-workflow.html">API Extraction Workflow</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">API Extraction Workflow</h1>
+<h1 class="title">DPP Data Extraction System: Services Overview</h1>
 </div>
 
 
@@ -394,7 +394,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 5, 2025</p>
+      <p class="date">March 6, 2025</p>
     </div>
   </div>
   
@@ -406,76 +406,193 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="workflow-overview" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="workflow-overview"><span class="header-section-number">1</span> Workflow Overview</h2>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="../images/api-extraction-workflow.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:30.0%"></p>
-</figure>
-</div>
+<section id="services-overview" class="level1">
+<h1>Services Overview</h1>
+<p>This document outlines all the services required for our Distributor Data Extraction System, following the IDesign architecture pattern. Each service has a specific responsibility and interacts with other services according to the defined communication rules.</p>
+<section id="service-dependency-graph" class="level2">
+<h2 class="anchored" data-anchor-id="service-dependency-graph">Service Dependency Graph</h2>
 </section>
-<section id="process-steps" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="process-steps"><span class="header-section-number">2</span> Process Steps</h2>
-<section id="erp-extraction-triggered" class="level3" data-number="2.1">
-<h3 data-number="2.1" class="anchored" data-anchor-id="erp-extraction-triggered"><span class="header-section-number">2.1</span> ERP Extraction Triggered</h3>
-<p>The workflow begins when an extraction request is initiated. This could happen:</p>
+<section id="manager-layer" class="level2">
+<h2 class="anchored" data-anchor-id="manager-layer">Manager Layer</h2>
+<section id="extractionmanager" class="level3">
+<h3 class="anchored" data-anchor-id="extractionmanager">ExtractionManager</h3>
+<p><strong>Responsibility</strong>: Orchestrates the complete data extraction workflow, from initiation to completion.</p>
+<p><strong>Key Functions</strong>:</p>
 <ul>
-<li>On a scheduled basis (e.g., nightly extractions)</li>
-<li>On-demand through user-initiated requests</li>
-<li>As part of a larger data processing workflow</li>
+<li>Coordinates the extraction process for both API and database sources</li>
+<li>Delegates specialized tasks to appropriate engines</li>
+<li>Manages the overall extraction state and progress</li>
+<li>Handles error scenarios and provides recovery mechanisms</li>
+<li>Ensures proper security context throughout the process</li>
 </ul>
 </section>
-<section id="get-connection-parameters" class="level3" data-number="2.2">
-<h3 data-number="2.2" class="anchored" data-anchor-id="get-connection-parameters"><span class="header-section-number">2.2</span> Get Connection Parameters</h3>
-<p>The system retrieves the necessary connection parameters for the specified ERP system and client:</p>
+</section>
+<section id="engines-layer" class="level2">
+<h2 class="anchored" data-anchor-id="engines-layer">Engines Layer</h2>
+<section id="configurationengine" class="level3">
+<h3 class="anchored" data-anchor-id="configurationengine">ConfigurationEngine</h3>
+<p><strong>Responsibility</strong>: Implements business logic for managing extraction configuration.</p>
+<p><strong>Key Functions</strong>:</p>
 <ul>
-<li>API endpoint URLs</li>
-<li>Connection settings</li>
-<li>Timeout configurations</li>
-</ul>
-<p>The system establishes a secure connection to the ERP API by:</p>
-<ul>
-<li>Retrieving secure credentials from the vault</li>
-<li>Applying the appropriate authentication method (API key, OAuth token, etc.)</li>
-<li>Establishing the connection with the ERP API</li>
-<li>Verifying successful authentication</li>
+<li>Determines which configuration parameters are needed for specific ERP types</li>
+<li>Processes raw configuration data into usable extraction settings</li>
+<li>Applies default values where needed</li>
+<li>Validates configuration completeness and correctness</li>
+<li>Manages configuration versioning and compatibility</li>
 </ul>
 </section>
-<section id="query-data-endpoints" class="level3" data-number="2.3">
-<h3 data-number="2.3" class="anchored" data-anchor-id="query-data-endpoints"><span class="header-section-number">2.3</span> Query Data Endpoints</h3>
-<p>With a successful connection established, the system queries the appropriate endpoints to extract the required data:</p>
+<section id="extractorengine" class="level3">
+<h3 class="anchored" data-anchor-id="extractorengine">ExtractorEngine</h3>
+<p><strong>Responsibility</strong>: Implements business logic for extracting data from various sources.</p>
+<p><strong>Key Functions</strong>:</p>
 <ul>
-<li>Sales orders</li>
-<li>Sales order details</li>
-<li>Inventory spec fields</li>
-<li>Customer details</li>
-<li>Vendor details</li>
-<li>Product spec fields</li>
+<li>Contains algorithms for different extraction methods</li>
+<li>Implements ERP-specific extraction strategies</li>
+<li>Manages data retrieval processes including pagination</li>
+<li>Handles extraction-specific error scenarios</li>
+<li>Optimizes extraction performance based on data characteristics</li>
 </ul>
 </section>
-<section id="transform-to-standard-columns" class="level3" data-number="2.4">
-<h3 data-number="2.4" class="anchored" data-anchor-id="transform-to-standard-columns"><span class="header-section-number">2.4</span> Transform to Standard Columns</h3>
-<p>The raw data from the ERP system is transformed to follow our standardized data model:</p>
+<section id="transformerengine" class="level3">
+<h3 class="anchored" data-anchor-id="transformerengine">TransformerEngine</h3>
+<p><strong>Responsibility</strong>: Implements business logic for transforming extracted data to standard formats.</p>
+<p><strong>Key Functions</strong>:</p>
 <ul>
-<li>Column names are mapped to our standard naming conventions</li>
-<li>Basic data quality checks are performed</li>
+<li>Applies field mapping rules for standardization</li>
+<li>Converts data types to consistent formats</li>
+<li>Implements calculation rules for derived fields</li>
+<li>Manages data cleansing operations</li>
+<li>Handles special transformation cases by data type</li>
 </ul>
 </section>
-<section id="save-to-parquet" class="level3" data-number="2.5">
-<h3 data-number="2.5" class="anchored" data-anchor-id="save-to-parquet"><span class="header-section-number">2.5</span> Save to Parquet</h3>
-<p>The transformed data is converted to Parquet format:</p>
+<section id="validationengine" class="level3">
+<h3 class="anchored" data-anchor-id="validationengine">ValidationEngine</h3>
+<p><strong>Responsibility</strong>: Implements business logic for validating data quality.</p>
+<p><strong>Key Functions</strong>:</p>
 <ul>
-<li>Efficient columnar storage format</li>
-<li>Compressed to save space</li>
-<li>Optimized for analytical queries</li>
-<li>Schema is preserved with appropriate data types</li>
+<li>Applies schema validation rules</li>
+<li>Implements business rule validations</li>
+<li>Checks data completeness and integrity</li>
+<li>Categorizes validation issues by severity</li>
+<li>Produces detailed validation reports</li>
 </ul>
 </section>
-<section id="push-to-s3" class="level3" data-number="2.6">
-<h3 data-number="2.6" class="anchored" data-anchor-id="push-to-s3"><span class="header-section-number">2.6</span> Push to S3</h3>
-<p>The Parquet files are uploaded to our S3 storage: - Organized by client and data type - Stored with appropriate metadata - Secured with proper access controls - Made available for downstream processing</p>
+<section id="lineageengine" class="level3">
+<h3 class="anchored" data-anchor-id="lineageengine">LineageEngine</h3>
+<p><strong>Responsibility</strong>: Implements business logic for tracking data provenance.</p>
+<p><strong>Key Functions</strong>:</p>
+<ul>
+<li>Determines what metadata should be captured during extraction</li>
+<li>Implements rules for lineage record structure</li>
+<li>Processes lineage information for reporting</li>
+<li>Manages the relationship between extractions and data assets</li>
+<li>Provides data history and traceability</li>
+</ul>
+</section>
+</section>
+<section id="accessors-layer" class="level2">
+<h2 class="anchored" data-anchor-id="accessors-layer">Accessors Layer</h2>
+<section id="vaultaccessor" class="level3">
+<h3 class="anchored" data-anchor-id="vaultaccessor">VaultAccessor</h3>
+<p><strong>Responsibility</strong>: Provides secure access to credentials and secrets.</p>
+<p><strong>Key Functions</strong>:</p>
+<ul>
+<li>Retrieves credentials from HashiCorp Vault</li>
+<li>Manages secure credential handling</li>
+<li>Implements credential caching with appropriate expiration</li>
+<li>Applies least-privilege access principles</li>
+<li>Handles credential rotation and revocation</li>
+</ul>
+</section>
+<section id="configurationaccessor" class="level3">
+<h3 class="anchored" data-anchor-id="configurationaccessor">ConfigurationAccessor</h3>
+<p><strong>Responsibility</strong>: Provides access to configuration storage.</p>
+<p><strong>Key Functions</strong>:</p>
+<ul>
+<li>Retrieves configuration data from FerretDB</li>
+<li>Stores updated configuration when needed</li>
+<li>Implements efficient querying for configuration data</li>
+<li>Manages configuration data caching</li>
+<li>Handles configuration database connection details</li>
+</ul>
+</section>
+<section id="erpapiaccessor" class="level3">
+<h3 class="anchored" data-anchor-id="erpapiaccessor">ERPApiAccessor</h3>
+<p><strong>Responsibility</strong>: Handles communication with ERP APIs.</p>
+<p><strong>Key Functions</strong>:</p>
+<ul>
+<li>Manages HTTP connections to ERP API endpoints</li>
+<li>Implements authentication and authorization with APIs</li>
+<li>Formats requests according to ERP-specific requirements</li>
+<li>Processes API responses into standardized formats</li>
+<li>Handles API-specific error responses and recovery</li>
+</ul>
+</section>
+<section id="erpdatabaseaccessor" class="level3">
+<h3 class="anchored" data-anchor-id="erpdatabaseaccessor">ERPDatabaseAccessor</h3>
+<p><strong>Responsibility</strong>: Manages direct database connections to ERP systems.</p>
+<p><strong>Key Functions</strong>:</p>
+<ul>
+<li>Establishes secure database connections</li>
+<li>Executes optimized queries for data extraction</li>
+<li>Manages connection pooling and resource cleanup</li>
+<li>Processes database result sets efficiently</li>
+<li>Handles database-specific error scenarios</li>
+</ul>
+</section>
+<section id="storageaccessor" class="level3">
+<h3 class="anchored" data-anchor-id="storageaccessor">StorageAccessor</h3>
+<p><strong>Responsibility</strong>: Manages storage of extracted and processed data.</p>
+<p><strong>Key Functions</strong>:</p>
+<ul>
+<li>Uploads data to S3 storage in appropriate formats</li>
+<li>Organizes storage structure by client, ERP, and data type</li>
+<li>Implements efficient storage operations</li>
+<li>Manages storage permissions and security</li>
+<li>Handles storage-specific error scenarios</li>
+</ul>
+</section>
+<section id="lineageaccessor" class="level3">
+<h3 class="anchored" data-anchor-id="lineageaccessor">LineageAccessor</h3>
+<p><strong>Responsibility</strong>: Manages persistence of lineage information.</p>
+<p><strong>Key Functions</strong>:</p>
+<ul>
+<li>Stores lineage records in the designated database</li>
+<li>Retrieves lineage information when needed</li>
+<li>Implements efficient lineage data querying</li>
+<li>Manages lineage database connections</li>
+<li>Handles lineage data relationships and integrity</li>
+</ul>
+</section>
+</section>
+<section id="utilities-layer" class="level2">
+<h2 class="anchored" data-anchor-id="utilities-layer">Utilities Layer</h2>
+<section id="securityutility" class="level3">
+<h3 class="anchored" data-anchor-id="securityutility">SecurityUtility</h3>
+<p><strong>Responsibility</strong>: Provides security services across the system.</p>
+<p><strong>Key Functions</strong>:</p>
+<ul>
+<li>Implements encryption and decryption operations</li>
+<li>Provides security validation functions</li>
+<li>Manages security logging and auditing</li>
+<li>Implements data masking for sensitive information</li>
+<li>Provides security-related helper functions</li>
+</ul>
+</section>
+<section id="monitoringutility" class="level3">
+<h3 class="anchored" data-anchor-id="monitoringutility">MonitoringUtility</h3>
+<p><strong>Responsibility</strong>: Provides monitoring and observability services.</p>
+<p><strong>Key Functions</strong>:</p>
+<ul>
+<li>Implements metric collection and reporting</li>
+<li>Manages distributed tracing</li>
+<li>Provides health check mechanisms</li>
+<li>Implements logging standardization</li>
+<li>Offers performance monitoring tools</li>
+</ul>
 
 
+</section>
 </section>
 </section>
 

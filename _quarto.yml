@@ -12,6 +12,60 @@ website:
   sidebar:
     style: "floating"
     contents:
+      - section: "Distributor Partner Program"
+        contents:
+          - text: "Core Business Use Cases"
+            href: dpp/core-business-use-cases.qmd
+
+          - section: "Workflows"
+            contents: 
+              - text: "API Extraction Workflow"
+                href: dpp/workflows/api-extraction-workflow.qmd
+              - text: "Database Extraction Workflow"
+                href: dpp/workflows/database-extraction-workflow.qmd
+            
+          - section: "Core Supporting Processes"
+            contents: 
+              - text: "Extract Orchestration Process"
+                href: dpp/core-supporting-processes/extract-orchestration-process.qmd
+            
+
+          - section: "Designs"
+            contents:
+              - text: "Services Overview"
+                href: dpp/designs/services-overview.qmd
+              - section: "Managers"
+                contents: 
+                  - text: "Extraction Manager Design"
+                    href: dpp/designs/managers/extraction-manager-design.qmd
+
+              - section: "Engines"
+                contents: 
+                  - text: "Extractor Engine Design"
+                    href: dpp/designs/managers/extractor-engine-design.qmd
+                  - text: "Transformer Engine Design"
+                    href: dpp/designs/engines/transformer-engine-design.qmd
+                  - text: "Validator Engine Design"
+                    href: dpp/designs/engines/validator-engine-design.qmd
+
+              - section: "Accessors"
+                contents: 
+                  - text: "Configuration Accessor Design"
+                    href: dpp/designs/accessors/configuration-accessor-design.qmd
+                  - text: "Vault Accessor Design"
+                    href: dpp/designs/accessors/vault-accessor-design.qmd
+                  - text: "Storage Accessor Design"
+                    href: dpp/designs/accessors/storage-accessor-design.qmd
+
+              - section: "Utilities"
+                contents: 
+                  - text: "Security Utility Design"
+                    href: dpp/designs/utilities/security-utility-design.qmd
+                  - text: "Monitoring Utility Design"
+                    href: dpp/designs/utilities/monitoring-utility-design.qmd
+     
+          
+          
       - section: "Archive"
         contents:
           - text: "Dev Plan and Overview"
@@ -32,21 +86,7 @@ website:
             href: archive/dpp-tasking-outline.qmd
           - text: "Design Document for Distributor Data Extraction Ingestion (Version 3)"
             href: archive/erp-extractor-design-v3.qmd
-      - section: "Distributor Partner Program"
-        contents: 
-          - text: "Overview"
-            href: dpp/dpp-overview.qmd
-          - text: "Core Business Use Cases"
-            href: dpp/core-business-use-cases.qmd
-          - section: "Workflows"
-            contents: 
-              - text: "API Extraction Workflow"
-                href: dpp/workflows/api-extraction-workflow.qmd
-              - text: "Database Extraction Workflow"
-                href: dpp/workflows/database-extraction-workflow.qmd
-
-
-
+ 
 format:
   html:
     theme:
